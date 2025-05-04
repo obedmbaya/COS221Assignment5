@@ -13,8 +13,8 @@
     */
 
     //Accessing the .env file
-    require_once __DIR__ . '/vendor/autoload.php';
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    require_once __DIR__ . '/../vendor/autoload.php';
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
     $dotenv->load();
 
     //Singleton for the database connection
@@ -69,7 +69,7 @@
     
     $database = Database::instance()->getConnection();
 
-    $query = "SELECT * FROM products";
+    $query = "SELECT * FROM products LIMIT 10";
 
     try {
         $statement = $database->prepare($query);
@@ -82,27 +82,25 @@
         if (count($products) > 0) {
             // Loop through each product and display the data
             foreach ($products as $product) {
-                echo "Product ID: " . $product['product_id'] . "<br>";
-                echo "Product Name: " . $product['product_name'] . "<br>";
-                echo "Category: " . $product['category'] . "<br>";
+                echo "ID: " . $product['id'] . "<br>";
+                echo "Title: " . $product['title'] . "<br>";
+                echo "Brand: " . $product['brand'] . "<br>";
                 echo "Description: " . $product['description'] . "<br>";
-                echo "Price: " . $product['price'] . "<br>";
-                echo "Stock Quantity: " . $product['stock_quantity'] . "<br>";
-                echo "Release Date: " . $product['release_date'] . "<br>";
+                echo "Initial Price: " . $product['initial_price'] . "<br>";
+                echo "Final Price: " . $product['final_price'] . "<br>";
+                echo "Currency: " . $product['currency'] . "<br>";
+                echo "Categories: " . $product['categories'] . "<br>";
+                echo "Image URL: " . $product['image_url'] . "<br>";
+                echo "Product Dimensions: " . $product['product_dimensions'] . "<br>";
+                echo "Date First Available: " . $product['date_first_available'] . "<br>";
                 echo "Manufacturer: " . $product['manufacturer'] . "<br>";
-                echo "Model Number: " . $product['model_number'] . "<br>";
-                echo "Screen Size: " . $product['screen_size'] . "<br>";
-                echo "Processor: " . $product['processor'] . "<br>";
-                echo "RAM (GB): " . $product['ram_gb'] . "<br>";
-                echo "Storage (GB): " . $product['storage_gb'] . "<br>";
-                echo "Camera Resolution: " . $product['camera_resolution'] . "<br>";
-                echo "Battery Capacity (mAh): " . $product['battery_capacity_mah'] . "<br>";
-                echo "Operating System: " . $product['operating_system'] . "<br>";
-                echo "Connectivity: " . $product['connectivity'] . "<br>";
-                echo "Weight (grams): " . $product['weight_grams'] . "<br>";
-                echo "Dimensions: " . $product['dimensions'] . "<br>";
-                echo "Warranty (months): " . $product['warranty_months'] . "<br>";
-                echo "<br>"; // Add a line break for better readability
+                echo "Department: " . $product['department'] . "<br>";
+                echo "Features: " . $product['features'] . "<br>";
+                echo "Is Available: " . $product['is_available'] . "<br>";
+                echo "Images: " . $product['images'] . "<br>";
+                echo "Country of Origin: " . $product['country_of_origin'] . "<br>";
+                echo "Created At: " . $product['created_at'] . "<br>";
+                echo "Updated At: " . $product['updated_at'] . "<br>";
             }
         } else {
             echo "No products found in the database.";
