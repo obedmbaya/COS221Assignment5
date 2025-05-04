@@ -1,33 +1,55 @@
 <?php 
 
+    //Accessing the .env file
+    require_once __DIR__ . '/vendor/autoload.php';
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
+
     //Singleton for the database connection
     //Makes use of the .env file to get the username, password, dbname etc. of the datase
+    class Database {
+        private static $instance = null;
+        private $connection = null;
+    
+        private function construct() {
 
-    class Database{
-        //Since it is a singleton, instance is what is called when you want to get the Database object
-        public static function instance(){
-            static $instance = null; // remember that this only ever gets called once
-            if($instance === null) $instance = new Database();
-                return $instance;
-        }
-        
-        private function __construct() {
-            $connection = new mysqli($host, $username, $password);
-            // Check if connected
-            // Might fail if password is incorrect, server is unreachable, etc
-            if($connection->connect_error)
-                die("Connection failure: " . $connection->connect_error);
-            else {
-                $connection->select_db("216_database");
-                echo "Connection success";
+            $host = $_ENV['DB_HOST'];
+            $port = $_ENV['DB_PORT'];
+            $db   = $_ENV['DB_DATABASE'];
+            $user = $_ENV['DB_USERNAME'];
+            $pass = $_ENV['DB_PASSWORD'];
+
+            $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
+
+            try {
+                
+                $this->connection = new PDO($dsn, $user, $pass);
+                $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            } catch (PDOException $e) {
+                die("DB Connection failed: " . $e->getMessage());
             }
-            // Do some queries and once done close the connection
-            $connection->close();
-
+    
         }
-        public function __destruct() { /* Disconnect from the database */ }
-        public function addUser($username){ /* Add to the database */ }
-        public function retrieveUser($username){ /* Retrieve from the database */ }
+    
+        public function destruct() {
+            $this->connection = null;
+            self::$instance = null;
+        }
+    
+        public static function instance() {
+            if (self::$instance === null) {
+                self::$instance = new Database();
+            }
+    
+            return self::$instance;
+        }
+    
+        public function getConnection() {
+            return $this->connection;
+        }
     }
+    
+    $database = Database::instance()->getConnection();
 
 ?>
