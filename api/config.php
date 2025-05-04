@@ -12,7 +12,6 @@
 
     */
 
-
     //Accessing the .env file
     require_once __DIR__ . '/vendor/autoload.php';
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -31,6 +30,11 @@
             $db   = $_ENV['DB_DATABASE'];
             $user = $_ENV['DB_USERNAME'];
             $pass = $_ENV['DB_PASSWORD'];
+            // $host = getenv('DB_HOST');
+            // $port = getenv('DB_PORT');
+            // $db   = getenv('DB_NAME');
+            // $user = getenv('DB_USER');
+            // $pass = getenv('DB_PASS');
 
             $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
 
