@@ -69,7 +69,7 @@
     
     $database = Database::instance()->getConnection();
 
-    $query = "SELECT * FROM products LIMIT 10";
+    $query = "SELECT * FROM u24581039_products LIMIT 10";
 
     try {
         $statement = $database->prepare($query);
