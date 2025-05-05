@@ -1,2 +1,5 @@
 #Ignore environment file
 .env
+
+#Ignore Composer dependancies
+/vendor/
