@@ -41,11 +41,6 @@
             $db   = $_ENV['DB_DATABASE'];
             $user = $_ENV['DB_USERNAME'];
             $pass = $_ENV['DB_PASSWORD'];
-            // $host = getenv('DB_HOST');
-            // $port = getenv('DB_PORT');
-            // $db   = getenv('DB_NAME');
-            // $user = getenv('DB_USER');
-            // $pass = getenv('DB_PASS');
 
             $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
 
@@ -79,45 +74,5 @@
     }
     
     $database = Database::instance()->getConnection();
-
-    $query = "SELECT * FROM products LIMIT 10";
-
-    try {
-        $statement = $database->prepare($query);
-        $statement->execute();
-
-        // Fetch all rows as an associative array
-        $products = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-        // Check if any products were found
-        if (count($products) > 0) {
-            // Loop through each product and display the data
-            foreach ($products as $product) {
-                echo "ID: " . $product['id'] . "<br>";
-                echo "Title: " . $product['title'] . "<br>";
-                echo "Brand: " . $product['brand'] . "<br>";
-                echo "Description: " . $product['description'] . "<br>";
-                echo "Initial Price: " . $product['initial_price'] . "<br>";
-                echo "Final Price: " . $product['final_price'] . "<br>";
-                echo "Currency: " . $product['currency'] . "<br>";
-                echo "Categories: " . $product['categories'] . "<br>";
-                echo "Image URL: " . $product['image_url'] . "<br>";
-                echo "Product Dimensions: " . $product['product_dimensions'] . "<br>";
-                echo "Date First Available: " . $product['date_first_available'] . "<br>";
-                echo "Manufacturer: " . $product['manufacturer'] . "<br>";
-                echo "Department: " . $product['department'] . "<br>";
-                echo "Features: " . $product['features'] . "<br>";
-                echo "Is Available: " . $product['is_available'] . "<br>";
-                echo "Images: " . $product['images'] . "<br>";
-                echo "Country of Origin: " . $product['country_of_origin'] . "<br>";
-                echo "Created At: " . $product['created_at'] . "<br>";
-                echo "Updated At: " . $product['updated_at'] . "<br>";
-            }
-        } else {
-            echo "No products found in the database.";
-        }
-    } catch (PDOException $e) {
-        echo "Error fetching products: " . $e->getMessage();
-    }
 
 ?>
