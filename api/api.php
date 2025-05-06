@@ -1,5 +1,6 @@
 <?php
 
+    require_once("config.php");
     require_once("signuplogin.php");
     require_once("search.php");
     require_once("signup.php");
