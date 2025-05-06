@@ -26,8 +26,8 @@
                     <h4 class="footer-heading">Quick Links</h4>
                     <ul class="footer-links">
                         <li><a href="index.php">Home</a></li>
-                        <li><a href="products.php">Products</a></li>
                         <li><a href="deals.php">Deals</a></li>
+                        <li><a href="wishlist.php">Wishlist</a></li>
                     </ul>
                 </div>
                 
