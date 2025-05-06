@@ -243,9 +243,13 @@
                 <button class="post-review-btn">POST</button>
             </div>
         </div>
-
-        <script src="js/view.js"></script>
     </div>
+
+    <?php
+        require_once 'footer.php';
+    ?>
+
+    <script src="js/view.js"></script>
 </body>
 
 </html>
