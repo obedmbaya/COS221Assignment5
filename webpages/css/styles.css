@@ -9,15 +9,16 @@ body {
     background-color: #fff;
 }
 
-/*CSS for the products/deals page*/
+/* CSS for the products/deals page */
 /********************************************************************************************************************/
+
 .container {
     display: flex;
     width: 100%;
     max-width: 1400px;
     margin: 20px auto;
     background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgb(0 0 0 / 10%);
 }
 
 .filter-section {
@@ -25,6 +26,12 @@ body {
     padding: 20px;
     border-right: 1px solid #ddd;
     background-color: #f9f9f9;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
 }
 
 .filter-section h2 {
@@ -36,6 +43,14 @@ body {
 .search-container {
     position: relative;
     margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
 }
 
 .search-container input {
@@ -65,11 +80,26 @@ body {
     margin-bottom: 20px;
 }
 
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
 .filter-group label {
     display: block;
     margin-bottom: 10px;
     font-weight: bold;
     color: #555;
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
 }
 
 .filter-group select {
@@ -100,7 +130,7 @@ body {
 
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 15px rgb(0 0 0 / 10%);
 }
 
 .product-image {
@@ -216,10 +246,11 @@ body {
     font-weight: bold;
 }
 
-/*CSS for the view page below*/
+/* CSS for the view page below */
 /********************************************************************************************************************/
+
 .view-container {
-    max-width: 1400px;
+    max-width: 1000px;
     margin: 0 auto;
 }
 
@@ -233,7 +264,7 @@ body {
     width: 67%;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgb(0 0 0 / 10%);
     padding: 20px;
     display: flex;
 }
@@ -265,7 +296,7 @@ body {
 }
 
 .carousel-control {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgb(255 255 255 / 70%);
     border: none;
     width: 30px;
     height: 30px;
@@ -278,7 +309,7 @@ body {
 }
 
 .carousel-control:hover {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgb(255 255 255 / 90%);
 }
 
 .image-thumbnails {
@@ -307,7 +338,7 @@ body {
     padding-left: 20px;
 }
 
-.product-name {
+.product-info-section .product-name {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 8px;
@@ -337,7 +368,7 @@ body {
     width: 33%;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgb(0 0 0 / 10%);
     padding: 20px;
 }
 
@@ -349,17 +380,6 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.store-name {
-    font-weight: bold;
-    color: #333;
-}
-
-.store-price {
-    color: #e63946;
-    font-weight: bold;
-    font-size: 18px;
 }
 
 .wishlist-btn {
@@ -391,7 +411,7 @@ body {
 .description-box {
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgb(0 0 0 / 10%);
     padding: 20px;
     margin-bottom: 30px;
 }
@@ -414,7 +434,7 @@ body {
 .product-info-box {
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgb(0 0 0 / 10%);
     padding: 20px;
     margin-bottom: 30px;
 }
@@ -432,6 +452,13 @@ body {
     border-bottom: none;
 }
 
+td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    border-bottom: none;
+}
+
 .info-table td {
     padding: 12px 8px;
 }
@@ -442,11 +469,15 @@ body {
     color: #555;
 }
 
+tr:hover {
+    background-color: #f5f5f5;
+}
+
 /* Recommended products section */
 .recommended-box {
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgb(0 0 0 / 10%);
     padding: 20px;
     margin-bottom: 30px;
     position: relative;
@@ -530,7 +561,7 @@ body {
     margin-bottom: 30px;
 }
 
-.reviews-section a{
+.reviews-section a {
     text-decoration: none;
 }
 
@@ -538,7 +569,7 @@ body {
     width: 67%;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgb(0 0 0 / 10%);
     padding: 20px;
 }
 
@@ -634,7 +665,7 @@ body {
     width: 33%;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgb(0 0 0 / 10%);
     padding: 20px;
 }
 
@@ -654,7 +685,8 @@ body {
     cursor: pointer;
 }
 
-.rating-star:hover, .rating-star.selected {
+.rating-star:hover,
+.rating-star.selected {
     color: #FFD700;
 }
 
@@ -685,8 +717,10 @@ body {
 .post-review-btn:hover {
     background-color: #3f3e8e;
 }
-/*CSS for the management page*/
+
+/* CSS for the management page */
 /********************************************************************************************************************/
+
 .manage-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -698,31 +732,16 @@ body {
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
 }
 
-h2, h3 {
+h3 {
     margin-top: 0;
     color: black;
 }
 
 form {
     margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 600;
-}
-
-select, input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
 }
 
 button {
@@ -762,19 +781,11 @@ table {
     margin-top: 20px;
 }
 
-th, td {
+th {
     text-align: left;
     padding: 12px;
     border-bottom: 1px solid #ddd;
-    border-bottom: none;
-}
-
-th {
     background-color: #f2f2f2;
-}
-
-tr:hover {
-    background-color: #f5f5f5;
 }
 
 .form-row {
@@ -807,10 +818,12 @@ tr:hover {
     display: flex;
     gap: 10px;
 }
-/*Footer CSS below*/
+
+/* Footer CSS below */
 /********************************************************************************************************************/
+
 .footer-container {
-    font-family: 'Arial', sans-serif;
+    font-family: Arial, sans-serif;
     color: #333;
 }
 
@@ -930,6 +943,18 @@ tr:hover {
     color: #4c4faf;
 }
 
+.copyright-links a {
+    color: #999;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.copyright-links a:hover {
+    color: #4c4faf;
+}
+
 .social-icons {
     display: flex;
     margin-top: 15px;
@@ -972,17 +997,3 @@ tr:hover {
 .copyright-links {
     margin-top: 10px;
 }
-
-.copyright-links a {
-    color: #999;
-    text-decoration: none;
-    margin: 0 10px;
-    font-size: 14px;
-    transition: color 0.3s;
-}
-
-.copyright-links a:hover {
-    color: #4c4faf;
-}
-
-
