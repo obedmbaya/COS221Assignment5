@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>#### Reviews</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        /* Header styles */
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .search-bar {
+            flex-grow: 1;
+            max-width: 500px;
+            margin: 0 2rem;
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+        }
+        
+        .header-icons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .header-icons a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* Main content area */
+        main {
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+            padding: 0 1rem;
+        }
+        
+        /* Product Review Page Styles */
+        .product-review-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .product-thumbnail {
+            width: 120px;
+            height: 120px;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            color: #888;
+        }
+        
+        .product-info h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        
+        .product-category {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-rating {
+            display: flex;
+            align-items: center;
+        }
+        
+        .stars {
+            color: #f39c12;
+            margin-right: 0.5rem;
+        }
+        
+        /* Simplified Review Summary Section */
+        .review-summary-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .review-summary {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1.5rem;
+        }
+        
+        .review-stats {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .review-average {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-right: 1.5rem;
+            color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .average-stars {
+            font-size: 1.2rem;
+            color: #f39c12;
+        }
+        
+        .review-total {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .rating-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex-grow: 1;
+        }
+        
+        .rating-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+        
+        .rating-label {
+            color: #7f8c8d;
+            width: 30px;
+        }
+        
+        .rating-count {
+            color: #7f8c8d;
+            width: 30px;
+            text-align: right;
+        }
+        
+        .add-review-btn {
+            display: inline-block;
+            background-color: #2c3e50;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .add-review-btn:hover {
+            background-color: #1a252f;
+        }
+        
+        /* Individual Reviews */
+        .reviews-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .review-card {
+            border-bottom: 1px solid #eee;
+            padding: 1.5rem 0;
+        }
+        
+        .review-card:last-child {
+            border-bottom: none;
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        
+        .reviewer-info {
+            font-weight: 500;
+        }
+        
+        .review-date {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .review-rating {
+            margin-bottom: 0.75rem;
+            color: #f39c12;
+        }
+        
+        .review-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .review-text {
+            color: #555;
+            margin-bottom: 1rem;
+        }
+        
+        .review-images {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .review-image {
+            width: 80px;
+            height: 80px;
+            background-color: #eee;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+        }
+        
+        .review-helpful {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .helpful-btn {
+            background-color: transparent;
+            border: 1px solid #ddd;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .helpful-btn:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .page-item {
+            margin: 0 0.25rem;
+        }
+        
+        .page-link {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #2c3e50;
+            border-radius: 4px;
+        }
+        
+        .page-link:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .page-item.active .page-link {
+            background-color: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">PriceCheck</div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search for products...">
+            </div>
+            <div class="header-icons">
+                <a href="#" title="Account">Account</a>
+                <a href="#" title="Wishlist">Wishlist</a>
+                <a href="#" title="Cart">Cart (0)</a>
+            </div>
+        </div>
+    </header>
+    
+    
+    <main>
+        <!-- Product Review -->
+        <section class="product-review-header">
+            <div class="product-thumbnail">Product Image</div>
+            <div class="product-info">
+                <h1>!!!Headphones!!!</h1>
+                <div class="product-rating">
+                    <span class="stars">★★★★☆</span>
+                    <span>4.2 out of 5 (42 Reviews)</span>
+                </div>
+                <p><a href="product.html">Back to Product</a></p>
+            </div>
+        </section>
+        
+        <!-- Simplified Review Summary -->
+        <section class="review-summary-section">
+            <!-- Not the best yet, still need to make good, really bad atm -->
+            <div class="review-summary">
+                <div class="review-stats">
+                    <!-- Overall average need to add all and divide by num (will implement in JS) -->
+                    <div class="review-average">
+                        4.2
+                        <div class="average-stars">★★★★☆</div>
+                        <!-- Number of reviews, use with calc later -->
+                        <div class="review-total">42 reviews</div>
+                    </div>
+                    <div class="rating-breakdown">
+                        <div class="rating-row">
+                            <!-- How many gave 5 stars -->
+                             <!--  -->
+                            <span class="rating-label">5★</span>
+                            <!-- NUmber of 5 starts -->
+                            <span class="rating-count">25</span>
+                        </div>
+                        <div class="rating-row">
+                            <span class="rating-label">4★</span>
+                            <span class="rating-count">11</span>
+                        </div>
+                        <div class="rating-row">
+                            <span class="rating-label">3★</span>
+                            <span class="rating-count">4</span>
+                        </div>
+                        <div class="rating-row">
+                            <span class="rating-label">2★</span>
+                            <span class="rating-count">2</span>
+                        </div>
+                        <div class="rating-row">
+                            <span class="rating-label">1★</span>
+                            <span class="rating-count">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="add-review-btn" id="openReviewModal">Write a Review</button>
+        </section>
+        
+        <!-- Reviews -->
+        <section class="reviews-section">
+            <h2 class="section-title">Customer Reviews (42)</h2>
+            
+            <!-- Review -->
+            <div class="review-card">
+                <div class="review-header">
+                    <!-- Name -->
+                    <span class="reviewer-info">Zaman</span>
+                    <!-- Date -->
+                    <span class="review-date">Tomorrow</span>
+                </div>
+                <!-- Whhat review they gave -->
+                <div class="review-rating">★★★★★</div>
+                <!-- Title -->
+                <h3 class="review-title">womp womp</h3>
+                <!-- Comment -->
+                <p class="review-text">Tung Tung Tung Tung Tung Sahoor</p>
+                <!-- Images -->
+                <div class="review-images">
+                    <div class="review-image">Image 1</div>
+                    <div class="review-image">Image 2</div>
+                </div>
+            </div>
+            
+            <!-- Review -->
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="reviewer-info">Jared</span>
+                    <span class="review-date">The day After</span>
+                </div>
+                <div class="review-rating">★★★★☆☆</div>
+                <h3 class="review-title">I was on another planet!!!</h3>
+                <p class="review-text">I started elevating at the brr brr bata bing enlightened my ears</p>
+
+            </div>
+            
+            <!-- Review -->
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="reviewer-info">Michael Deez Nutz</span>
+                    <span class="review-date">April 5, 2025</span>
+                </div>
+                <div class="review-rating">★★★★★</div>
+                <h3 class="review-title">Worth every cent</h3>
+                <p class="review-text">TEEEN out of TEEEEN</p>
+                <div class="review-images">
+                    <div class="review-image">Image 1</div>
+                </div>
+            </div>
+            
+            <!-- Review -->
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="reviewer-info">Josh</span>
+                    <span class="review-date">Never</span>
+                </div>
+                <div class="review-rating">★★★☆☆</div>
+                <h3 class="review-title">Changed who I am </h3>
+                <p class="review-text">As soon as I put these in my ears, I knew I didn't like the opposite gender!</p>
+            </div>
+            
+            <!-- Review -->
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="reviewer-info">Ben Dover</span>
+                    <span class="review-date">March 27, 2025</span>
+                </div>
+                <div class="review-rating">★★★★★</div>
+                <h3 class="review-title">Best headphones I've ever owned</h3>
+                <p class="review-text">A whole new WORLD!</p>
+
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination">
+                <div class="page-item active"><a href="#" class="page-link">1</a></div>
+                <div class="page-item"><a href="#" class="page-link">2</a></div>
+                <div class="page-item"><a href="#" class="page-link">3</a></div>
+                <div class="page-item"><a href="#" class="page-link">4</a></div>
+                <div class="page-item"><a href="#" class="page-link">5</a></div>
+                <div class="page-item"><a href="#" class="page-link">Next »</a></div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
