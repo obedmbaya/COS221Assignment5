@@ -8,7 +8,7 @@ require_once "/config.php";
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     http_response_code(401);
     echo json_encode([
-        "status" => "error",
+        "status" => "failed",
         "data" => "Unauthorized request method"
         ]);
     die();
@@ -36,8 +36,8 @@ if ($data["type"] === "Register") {
     if (empty($firstName) || empty($surname) || empty($email) || empty($password) || empty($userType)) {
         http_response_code(400);
         echo json_encode([
-            "status" => "error", 
-            "message" => "All fields must be filled in before signing up."
+            "status" => "failed", 
+            "data" => "All fields must be filled in before signing up."
         ]);
         exit(); 
     }
@@ -46,7 +46,7 @@ if ($data["type"] === "Register") {
 else {
     http_response_code(401);
     echo json_encode([
-        "status" => "error",
+        "status" => "failed",
         "data" => "Incorrect type"
         ]);
     die();
