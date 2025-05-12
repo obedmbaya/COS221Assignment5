@@ -1,27 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>#### Reviews</title>
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/review.css">
-</head>
-<body>
-    <!-- Header -->
-    <header>
-        <div class="header-container">
-            <div class="logo">PriceCheck</div>
-            <div class="search-bar">
-                <input type="text" placeholder="Search for products...">
-            </div>
-            <div class="header-icons">
-                <a href="#" title="Account">Account</a>
-                <a href="#" title="Wishlist">Wishlist</a>
-                <a href="#" title="Cart">Cart (0)</a>
-            </div>
-        </div>
-    </header>
+<?php
+    $additional_css = '<link rel="stylesheet" href="css/review.css">';
+    // $additional_js = '<script src="js/profile.js"></script>';
+    $page_title = "Reviews";
+    include_once 'header.php';
+?>
     
     
     <main>
