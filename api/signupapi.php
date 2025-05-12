@@ -163,7 +163,7 @@ if ($data["type"] === "Register") {
         //no errors we proceed to registering the user
 
         
-        $query = "INSERT INTO users(`name`, `surname`, `email`, `password`, `user_type`, `api_key`, `salt`) VALUES (?, ?, ?, ?, ?, ?, ?);";
+        $query = "INSERT INTO users(`name`, `surname`, `email`, `password_hash`, `user_type`, `api_key`, `salt`) VALUES (?, ?, ?, ?, ?, ?, ?);";
         $stmt = $database->prepare($query);
         if (!$stmt) {
             http_response_code(500);
