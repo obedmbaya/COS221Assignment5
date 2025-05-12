@@ -1,0 +1,99 @@
+<?php
+
+header("Content-Type", "application/json");
+require_once "/config.php";
+
+
+//user did not signup with correct method
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    http_response_code(401);
+    echo json_encode([
+        "status" => "failed",
+        "data" => "Unauthorized request method"
+        ]);
+    die();
+}
+
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
+
+if ($data['type'] === "Login") {
+
+if (empty($data['email']) || empty($data['password'])) {
+    http_response_code(400);
+    echo json_encode([
+        "status" => "error", 
+        "message" => "All fields must be filled in before loging in."
+    ]);
+    exit();
+}
+
+$email = htmlspecialchars($data["email"]);
+$password = htmlspecialchars($data["password"]);
+
+$regexSymbol = "/[^a-zA-Z0-9]+/";
+$regexNum = "/[0-9]+/";
+$regexHigh = "/[A-Z]+/";
+$regexlow = "/[a-z]+/";
+$regexEmail = "/^[^\s@]+@[^\s@]+\.[^\s@]+$/i";
+
+
+$errors = array();
+
+
+if (!preg_match($regexEmail, $email)) {
+    array_push($errors, "Please enter a valid email address (e.g. user@example.com).");
+}
+
+
+if (!empty($errors)) {
+    
+    http_response_code(400);
+    echo json_encode([
+        "status" => "error",
+        "errors" => $errors
+    ]);
+    exit();
+}
+
+
+$query = "SELECT * FROM users WHERE email = ?;";
+$stmt_pwd = $database->prepare($query);
+$stmt_pwd->execute([$data['email']]);
+$usr = $stmt_pwd->fetch(PDO::FETCH_ASSOC);
+
+if (!$usr) {
+    http_response_code(404);
+
+    echo json_encode([
+        "status" => "failed",
+        "data" => "user does not exist"
+    ]);
+    exit();
+}
+
+$inputHash = hash("sha256", $usr["salt"] . $password);
+if ($usr['password'] !== $inputHash) {
+    http_response_code(401);
+    echo json_encode([
+        "status" => "failed",
+        "message" => "Invalid credentials."
+    ]);
+    exit();
+}
+
+
+
+http_response_code(200);
+echo json_encode([
+    "status" => "success",
+    "timestamp" => round(microtime(true) * 1000),
+    "data" => [
+        "apikey" => $usr['api_key'],
+        "theme" => $usr['theme']
+    ]
+]);
+exit();
+
+
+}
