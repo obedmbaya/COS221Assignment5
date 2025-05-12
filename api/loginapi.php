@@ -1,7 +1,7 @@
 <?php
 
 header("Content-Type", "application/json");
-require_once "/config.php";
+require_once "config.php";
 
 
 //user did not signup with correct method
@@ -55,9 +55,11 @@ if (!empty($errors)) {
 
 
 $query = "SELECT * FROM users WHERE email = ?;";
-$stmt_pwd = $database->prepare($query);
-$stmt_pwd->execute([$data['email']]);
-$usr = $stmt_pwd->fetch(PDO::FETCH_ASSOC);
+$stmt_email = $database->prepare($query);
+$stmt_email->bind_param("s",$data['email']);
+$stmt_email->execute();
+$result = $stmt_email->get_result();
+$usr = $result->fetch_assoc();
 
 if (!$usr) {
     http_response_code(404);
@@ -70,7 +72,7 @@ if (!$usr) {
 }
 
 $inputHash = hash("sha256", $usr["salt"] . $password);
-if ($usr['password'] !== $inputHash) {
+if ($usr['password_hash'] !== $inputHash) {
     http_response_code(401);
     echo json_encode([
         "status" => "failed",
@@ -87,10 +89,18 @@ echo json_encode([
     "timestamp" => round(microtime(true) * 1000),
     "data" => [
         "apikey" => $usr['api_key'],
-        "theme" => $usr['theme']
     ]
 ]);
 exit();
 
 
+}
+
+else {
+    http_response_code(400);
+    echo json_encode([
+        "status" => "failed",
+        "data" => "Invalid request type."
+    ]);
+    exit();
 }
