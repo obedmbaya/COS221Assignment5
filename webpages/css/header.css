@@ -41,3 +41,11 @@
             color: white;
             text-decoration: none;
         }
+        
+        a,
+        a:visited,
+        a:hover,
+        a:active {
+            text-decoration: none;
+            color: white;
+        }

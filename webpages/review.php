@@ -1,7 +1,7 @@
 <?php
     $additional_css = '<link rel="stylesheet" href="css/review.css">';
     // $additional_js = '<script src="js/profile.js"></script>';
-    $page_title = "Reviews";
+    $page_title = "CompareIt | Reviews";
     include_once 'header.php';
 ?>
     
@@ -147,5 +147,8 @@
             </div>
         </section>
     </main>
+    <?php
+        require_once 'footer.php';
+    ?>
 </body>
 </html>

@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CompareIt helps you find the best deals online by comparing prices across top retailers.">
+    <meta name="keywords" content="CompareIt, price comparison, deals, sales, e-commerce, shop smart">
+    <meta name="author" content="ctrl + alt + elite">
+
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="img/favicon.png" type="image/x-icon">
     <title><?php echo isset($page_title) ? $page_title : 'E-Commerce Website'; ?></title>
     <link rel="stylesheet" href="css/header.css">
     <?php
@@ -21,14 +27,14 @@
         <!-- Header -->
         <header>
             <div class="header-container">
-                <div class="logo">PriceCheck</div>
+                <a href = "index.php"><div class="logo">CompareIt</div></a>
                 <div class="search-bar">
                     <input type="text" placeholder="Search for products...">
                 </div>
                 <div class="header-icons">
-                    <a href="#" title="Account">Account</a>
-                    <a href="#" title="Wishlist">Wishlist</a>
-                    <a href="#" title="Cart">Cart (0)</a>
+                    <a href="deals.php" title="Deals">Deals</a>
+                    <a href="wishlist.php" title="Wishlist">Wishlist (0)</a>
+                    <a href="login.php" title="Account">Account</a>
                 </div>
             </div>
         

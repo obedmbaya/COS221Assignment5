@@ -1,18 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>CompareIt | View</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="CompareIt helps you find the best deals online by comparing prices across top retailers.">
-    <meta name="keywords" content="CompareIt, price comparison, deals, sales, e-commerce, shop smart">
-    <meta name="author" content="ctrl + alt + elite">
-
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" href="img/favicon.png" type="image/x-icon">
-</head>
-
-<body>
+<?php
+    $additional_css = '<link rel="stylesheet" href="css/styles.css">';
+    // $additional_js = '<script src="Link to js file goes here"></script>'; <!-- "js/header.js" for example  -->
+    $page_title = "Profile";
+    include_once 'header.php';
+?>
     <div class="view-container">
         <div class="product-top-section">
             <div class="product-main-box">
