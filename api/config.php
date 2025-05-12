@@ -53,12 +53,16 @@ class Database {
 
     }
 
-    public function __destruct() {
-        if ($this->connection) {
-            $this->connection->close();
-        }
-        self::$instance = null;
-    }
+    // public function __destruct() {
+    //     if ($this->connection && !($this->connection->connect_errno)) {
+    //         try {
+    //             $this->connection->close();
+    //         } catch (Exception $e) {
+    //             error_log("Database connection close error: " . $e->getMessage());
+    //         }
+    //     }
+    //     self::$instance = null;
+    // }
 
     public static function instance() {
         if (self::$instance === null) {
