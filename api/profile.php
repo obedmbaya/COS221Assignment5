@@ -1,7 +1,7 @@
 <?php
 
 header("Content-Type", "application/json");
-require_once "/config.php";
+require_once "config.php";
 
 
 //user did not signup with correct method
@@ -18,7 +18,23 @@ $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
 if ($data['type'] === "ProfileChange") {
-    if (empty($data['email']) || empty($data['password'])) {
+
+    $firstName = htmlspecialchars($data["name"]);
+    $surname = htmlspecialchars($data["surname"]);
+    $email = htmlspecialchars($data["email"]);
+    $password = htmlspecialchars($data["password"]);
+    $userType = htmlspecialchars($data["user_type"]);
+
+    
+    $regexName = "/^[a-zA-Z]+$/";
+    $regexSymbol = "/[^a-zA-Z0-9]+/";
+    $regexNum = "/[0-9]+/";
+    $regexHigh = "/[A-Z]+/";
+    $regexlow = "/[a-z]+/";
+    $regexEmail = "/^[^\s@]+@[^\s@]+\.[^\s@]+$/i";
+
+    if (empty($firstName) || empty($surname) || empty($email) || empty($password) || empty($userType)) {
+
         http_response_code(400);
         echo json_encode([
             "status" => "failed", 
@@ -27,9 +43,7 @@ if ($data['type'] === "ProfileChange") {
         exit();
     }
 
-    $email = htmlspecialchars($data["email"]);
-    $password = htmlspecialchars($data["password"]); 
-    $newPassword = htmlspecialchars($data["new_password"]);
-    $newPasswordConfirm = htmlspecialchars($data["new_password_confirm"]);
+    
+    
 
 }
