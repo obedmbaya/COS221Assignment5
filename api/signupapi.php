@@ -92,9 +92,12 @@ if ($data["type"] === "Register") {
 
         $emailquery = "SELECT email FROM users WHERE email = ?";
         $stmt_email = $database->prepare($emailquery);
-        $stmt_email->execute([$email]);
-        $result_email = $stmt_email->fetch(PDO::FETCH_ASSOC); //if false then no email is found which is good
+        $stmt_email->bind_param("s", $email);
+        $stmt_email->execute(); //if false then no email is found which is good
         //echo var_dump($results_email);
+
+        $result = $stmt_email->get_result();
+        $result_email = $result->fetch_assoc();
 
         
         if ($result_email) {
@@ -109,7 +112,7 @@ if ($data["type"] === "Register") {
         }
         
 
-        $stmt_email = null;
+        $stmt_email->close();
         
 
         //no errors we proceed to registering the user
@@ -127,15 +130,15 @@ if ($data["type"] === "Register") {
 
         
 
-        //instance from config.php 
-        $stmt =  $database->prepare($query);
-        $stmt->execute([$firstName, $surname, $email, $hash, $type, $api_key, $salt]);
+       
+        $stmt->bind_param("sssssss", $firstName, $surname, $email, $hash, $userType, $api_key, $salt);
+        $stmt->execute();
+
+        $stmt->close();
+        $database->close();
 
         
-
         
-        $stmt = null;
-        $database = null;
 
         http_response_code(200);
         echo json_encode([
