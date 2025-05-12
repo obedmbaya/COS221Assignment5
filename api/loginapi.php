@@ -22,8 +22,8 @@ if ($data['type'] === "Login") {
 if (empty($data['email']) || empty($data['password'])) {
     http_response_code(400);
     echo json_encode([
-        "status" => "error", 
-        "message" => "All fields must be filled in before loging in."
+        "status" => "failed", 
+        "data" => "All fields must be filled in before loging in."
     ]);
     exit();
 }
@@ -31,10 +31,7 @@ if (empty($data['email']) || empty($data['password'])) {
 $email = htmlspecialchars($data["email"]);
 $password = htmlspecialchars($data["password"]);
 
-$regexSymbol = "/[^a-zA-Z0-9]+/";
-$regexNum = "/[0-9]+/";
-$regexHigh = "/[A-Z]+/";
-$regexlow = "/[a-z]+/";
+
 $regexEmail = "/^[^\s@]+@[^\s@]+\.[^\s@]+$/i";
 
 
@@ -50,8 +47,8 @@ if (!empty($errors)) {
     
     http_response_code(400);
     echo json_encode([
-        "status" => "error",
-        "errors" => $errors
+        "status" => "failed",
+        "data" => $errors
     ]);
     exit();
 }
@@ -77,7 +74,7 @@ if ($usr['password'] !== $inputHash) {
     http_response_code(401);
     echo json_encode([
         "status" => "failed",
-        "message" => "Invalid credentials."
+        "data" => "Invalid credentials."
     ]);
     exit();
 }
