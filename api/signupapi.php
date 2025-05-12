@@ -40,7 +40,114 @@ if ($data["type"] === "Register") {
             "data" => "All fields must be filled in before signing up."
         ]);
         exit(); 
+
+        $errors = array();
+        $nameCleaned = preg_replace('/\s+/', '', $firstName);
+        $surnameCleaned = preg_replace('/\s+/', '', $surname);
+        if (!preg_match($regexName, $nameCleaned)) {
+            array_push($errors, "Name must contain letters only.");
+        }
+
+        if (!preg_match($regexName, $surnameCleaned)) {
+            array_push($errors, "Surname must contain letters only.");
+        }
+
+        if (!preg_match($regexEmail, $email)) {
+            array_push($errors, "Please enter a valid email address (e.g. user@example.com).");
+        }
+        
+        if (strlen($password) > 8) {
+            if (!preg_match($regexHigh, $password)) {
+                array_push($errors, "Password must contain at least one uppercase letter.");
+            }
+
+            if (!preg_match($regexlow, $password)) {
+                array_push($errors, "Password must contain at least one lowercase letter.");
+            }
+
+            if (!preg_match($regexNum, $password)) {
+                array_push($errors, "Password must contain at least one digit.");
+            }
+
+            if (!preg_match($regexSymbol, $password)) {
+                array_push($errors, "Password needs at least one symbol (e.g. !@#$).");
+            }
+        }
+
+        else {
+            array_push($errors, "Password must be longer than 8 characters");
+        }
+
+        if (!empty($errors)) {
+            
+            http_response_code(400);
+            echo json_encode([
+                "status" => "failed",
+                "data" => $errors
+            ]);
+            exit();
+        }
+
+        //check if the users email is in the databse already
+
+        $emailquery = "SELECT email FROM users WHERE email = ?";
+        $stmt_email = $database->prepare($emailquery);
+        $stmt_email->execute([$email]);
+        $result_email = $stmt_email->fetch(PDO::FETCH_ASSOC); //if false then no email is found which is good
+        //echo var_dump($results_email);
+
+        
+        if ($result_email) {
+            http_response_code(409);
+            
+            echo json_encode([
+                "status" => "failed",
+                "message" => "Unsuccessful, " . htmlspecialchars($email) . " is already taken."
+            ]);
+
+            exit();
+        }
+        
+
+        $stmt_email = null;
+        
+
+        //no errors we proceed to registering the user
+
+        
+        $query = "INSERT INTO users(`name`, `surname`, `email`, `password`, `user_type`, `api_key`, `salt`) VALUES (?, ?, ?, ?, ?, ?, ?);";
+        //$query2 = "DELETE FROM users WHERE id = 1;";
+        $salt = bin2hex(random_bytes(16));
+        $dataToHash = $salt . $password;
+        $hash = hash("sha256", $dataToHash);
+
+        //32 bit API-KEY && also checks if its already in databse
+        $api_key = checkAPI(getRandomString(32), $database);
+
+
+        
+
+        //instance from config.php 
+        $stmt =  $database->prepare($query);
+        $stmt->execute([$firstName, $surname, $email, $hash, $type, $api_key, $salt]);
+
+        
+
+        
+        $stmt = null;
+        $database = null;
+
+        http_response_code(200);
+        echo json_encode([
+            "status" => "success",
+            "timestamp" => round(microtime(true) * 1000),
+            "data" => [
+                "apikey" => $api_key
+            ]
+            ]);
+        die();
     }
+
 }
 
 else {
