@@ -3,6 +3,51 @@
 header("Content-Type", "application/json");
 require_once "/config.php";
 
+function getRandomString($length) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, strlen($characters) - 1)];
+    }
+    return $randomString;
+}
+
+function checkAPI($currapi, $database) {
+    $query_api = "SELECT api_key FROM users WHERE api_key = ?;";
+    $stmt_api = $database->prepare($query_api);
+    $stmt_api->bind_param("s", $currapi);
+    $stmt_api->execute();
+
+    $result = $stmt_api->get_result();
+    $result_api = $result->fetch_assoc();
+    
+    $stmt_api->close();
+    
+    if ($result_api) {
+        return checkAPI(getRandomString(32), $database);
+    }
+
+    return $currapi;
+}
+
+function matchAPI($currapi, $database) {
+    $queryAPI = "SELECT api_key FROM users WHERE api_key = ?;";
+    $stmt_api = $database->prepare($queryAPI);
+    $stmt_api->bind_param("s", $currapi);
+    $stmt_api->execute();
+
+    $result = $stmt_api->get_result();
+    $result_api = $result->fetch_assoc();
+    
+    $stmt_api->close();
+
+    if ($result_api) {
+        return true;
+    }
+
+    return false;
+}
+
 
 //user did not signup with correct method
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -119,16 +164,21 @@ if ($data["type"] === "Register") {
 
         
         $query = "INSERT INTO users(`name`, `surname`, `email`, `password`, `user_type`, `api_key`, `salt`) VALUES (?, ?, ?, ?, ?, ?, ?);";
-        //$query2 = "DELETE FROM users WHERE id = 1;";
+        $stmt = $database->prepare($query);
+        if (!$stmt) {
+            http_response_code(500);
+            echo json_encode([
+                "status" => "failed",
+                "data" => "Database error: " . $database->error
+            ]);
+            die();
+        }
         $salt = bin2hex(random_bytes(16));
         $dataToHash = $salt . $password;
         $hash = hash("sha256", $dataToHash);
 
         //32 bit API-KEY && also checks if its already in databse
         $api_key = checkAPI(getRandomString(32), $database);
-
-
-        
 
        
         $stmt->bind_param("sssssss", $firstName, $surname, $email, $hash, $userType, $api_key, $salt);
