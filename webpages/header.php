@@ -29,12 +29,14 @@
             <div class="header-container">
                 <a href = "index.php"><div class="logo">CompareIt</div></a>
                 <div class="search-bar">
+                    <img src="img/search.png" alt="Search" class="search-icon">
                     <input type="text" placeholder="Search for products...">
                 </div>
                 <div class="header-icons">
                     <a href="deals.php" title="Deals">Deals</a>
-                    <a href="wishlist.php" title="Wishlist">Wishlist (0)</a>
+                    <a href="wishlist.php" title="Wishlist">Wishlist (4)</a>
                     <a href="login.php" title="Account">Account</a>
+                    <a href="manage.php" title="Account">Manage</a>
                 </div>
             </div>
         
