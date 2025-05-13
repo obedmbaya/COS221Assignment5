@@ -1,152 +1,162 @@
 <?php
     $additional_css = '<link rel="stylesheet" href="css/review.css">';
-    // $additional_js = '<script src="js/profile.js"></script>';
+    // $additional_js = '<script src="js/review.js"></script>';
     $page_title = "CompareIt | Reviews";
     include_once 'header.php';
 ?>
     
-    
     <main>
         <!-- Product Review -->
         <section class="product-review-header">
-            <div class="product-thumbnail">Product Image</div>
+            <div class="product-thumbnail" style="background-image: url('https://www.hponline.co.za/cdn/shop/files/laptops-7k8a0ea-40178403147989_800x.png?v=1686754731')"></div>
             <div class="product-info">
-                <h1>!!!Headphones!!!</h1>
+                <h1>HP Pavillion 15-inch Laptop</h1>
                 <div class="product-rating">
-                    <span class="stars">★★★★☆</span>
-                    <span>4.2 out of 5 (42 Reviews)</span>
+                    <div class="stars">
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star half-filled">★</span>
+                    </div>
+                    <span>4.5 out of 5 (42 Reviews)</span>
                 </div>
                 <p><a href="product.html">Back to Product</a></p>
             </div>
         </section>
         
-        <!-- Simplified Review Summary -->
-        <section class="review-summary-section">
-            <!-- Not the best yet, still need to make good, really bad atm -->
-            <div class="review-summary">
-                <div class="review-stats">
-                    <!-- Overall average need to add all and divide by num (will implement in JS) -->
-                    <div class="review-average">
-                        4.2
-                        <div class="average-stars">★★★★☆</div>
-                        <!-- Number of reviews, use with calc later -->
-                        <div class="review-total">42 reviews</div>
-                    </div>
-                    <div class="rating-breakdown">
-                        <div class="rating-row">
-                            <!-- How many gave 5 stars -->
-                             <!--  -->
-                            <span class="rating-label">5★</span>
-                            <!-- NUmber of 5 starts -->
-                            <span class="rating-count">25</span>
-                        </div>
-                        <div class="rating-row">
-                            <span class="rating-label">4★</span>
-                            <span class="rating-count">11</span>
-                        </div>
-                        <div class="rating-row">
-                            <span class="rating-label">3★</span>
-                            <span class="rating-count">4</span>
-                        </div>
-                        <div class="rating-row">
-                            <span class="rating-label">2★</span>
-                            <span class="rating-count">2</span>
-                        </div>
-                        <div class="rating-row">
-                            <span class="rating-label">1★</span>
-                            <span class="rating-count">0</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <button class="add-review-btn" id="openReviewModal">Write a Review</button>
-        </section>
-        
-        <!-- Reviews -->
+        <!-- Reviews Section -->
         <section class="reviews-section">
-            <h2 class="section-title">Customer Reviews (42)</h2>
-            
-            <!-- Review -->
-            <div class="review-card">
-                <div class="review-header">
-                    <!-- Name -->
-                    <span class="reviewer-info">Zaman</span>
-                    <!-- Date -->
-                    <span class="review-date">Tomorrow</span>
+            <div class="reviews-box">
+                <h2 class="section-title">Customer Reviews</h2>
+                <div class="overall-rating">
+                    <div class="rating-value">4.5</div>
+                    <div class="stars">
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star half-filled">★</span>
+                    </div>
                 </div>
-                <!-- Whhat review they gave -->
-                <div class="review-rating">★★★★★</div>
-                <!-- Title -->
-                <h3 class="review-title">womp womp</h3>
-                <!-- Comment -->
-                <p class="review-text">Tung Tung Tung Tung Tung Sahoor</p>
-                <!-- Images -->
-                <div class="review-images">
-                    <div class="review-image">Image 1</div>
-                    <div class="review-image">Image 2</div>
+                
+                <!-- Review 1 -->
+                <div class="review-item">
+                    <div class="reviewer-name">Zaman</div>
+                    <div class="review-rating">
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                    </div>
+                    <div class="review-text">
+                        Tung Tung Tung Tung Tung Sahoor
+                    </div>
+                </div>
+                
+                <!-- Review 2 -->
+                <div class="review-item">
+                    <div class="reviewer-name">Jared</div>
+                    <div class="review-rating">
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star">★</span>
+                    </div>
+                    <div class="review-text">
+                        I started elevating at the brr brr bata bing enlightened my ears
+                    </div>
+                </div>
+                
+                <!-- Review 3 -->
+                <div class="review-item">
+                    <div class="reviewer-name">Michael Deez Nutz</div>
+                    <div class="review-rating">
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                    </div>
+                    <div class="review-text">
+                        TEEEN out of TEEEEN
+                    </div>
+                </div>
+                
+                <!-- Review 4 -->
+                <div class="review-item">
+                    <div class="reviewer-name">Josh</div>
+                    <div class="review-rating">
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                    </div>
+                    <div class="review-text">
+                        As soon as I put these in my ears, I knew I didn't like the opposite gender!
+                    </div>
+                </div>
+                
+                <!-- Review 5 -->
+                <div class="review-item">
+                    <div class="reviewer-name">Ben Dover</div>
+                    <div class="review-rating">
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                        <span class="star filled">★</span>
+                    </div>
+                    <div class="review-text">
+                        A whole new WORLD!
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination">
+                    <div class="page-item active"><a href="#" class="page-link">1</a></div>
+                    <div class="page-item"><a href="#" class="page-link">2</a></div>
+                    <div class="page-item"><a href="#" class="page-link">3</a></div>
+                    <div class="page-item"><a href="#" class="page-link">4</a></div>
+                    <div class="page-item"><a href="#" class="page-link">5</a></div>
+                    <div class="page-item"><a href="#" class="page-link">Next »</a></div>
                 </div>
             </div>
             
-            <!-- Review -->
-            <div class="review-card">
-                <div class="review-header">
-                    <span class="reviewer-info">Jared</span>
-                    <span class="review-date">The day After</span>
+            <!-- Write review section -->
+            <div class="write-review-box">
+                <h2 class="section-title">Write a Review</h2>
+                <div class="rate-this-product">Rate this product:</div>
+                <div class="rating-stars">
+                    <span class="rating-star" onclick="setRating(1)">★</span>
+                    <span class="rating-star" onclick="setRating(2)">★</span>
+                    <span class="rating-star" onclick="setRating(3)">★</span>
+                    <span class="rating-star" onclick="setRating(4)">★</span>
+                    <span class="rating-star" onclick="setRating(5)">★</span>
                 </div>
-                <div class="review-rating">★★★★☆☆</div>
-                <h3 class="review-title">I was on another planet!!!</h3>
-                <p class="review-text">I started elevating at the brr brr bata bing enlightened my ears</p>
-
-            </div>
-            
-            <!-- Review -->
-            <div class="review-card">
-                <div class="review-header">
-                    <span class="reviewer-info">Michael Deez Nutz</span>
-                    <span class="review-date">April 5, 2025</span>
-                </div>
-                <div class="review-rating">★★★★★</div>
-                <h3 class="review-title">Worth every cent</h3>
-                <p class="review-text">TEEEN out of TEEEEN</p>
-                <div class="review-images">
-                    <div class="review-image">Image 1</div>
-                </div>
-            </div>
-            
-            <!-- Review -->
-            <div class="review-card">
-                <div class="review-header">
-                    <span class="reviewer-info">Josh</span>
-                    <span class="review-date">Never</span>
-                </div>
-                <div class="review-rating">★★★☆☆</div>
-                <h3 class="review-title">Changed who I am </h3>
-                <p class="review-text">As soon as I put these in my ears, I knew I didn't like the opposite gender!</p>
-            </div>
-            
-            <!-- Review -->
-            <div class="review-card">
-                <div class="review-header">
-                    <span class="reviewer-info">Ben Dover</span>
-                    <span class="review-date">March 27, 2025</span>
-                </div>
-                <div class="review-rating">★★★★★</div>
-                <h3 class="review-title">Best headphones I've ever owned</h3>
-                <p class="review-text">A whole new WORLD!</p>
-
-            </div>
-            
-            <!-- Pagination -->
-            <div class="pagination">
-                <div class="page-item active"><a href="#" class="page-link">1</a></div>
-                <div class="page-item"><a href="#" class="page-link">2</a></div>
-                <div class="page-item"><a href="#" class="page-link">3</a></div>
-                <div class="page-item"><a href="#" class="page-link">4</a></div>
-                <div class="page-item"><a href="#" class="page-link">5</a></div>
-                <div class="page-item"><a href="#" class="page-link">Next »</a></div>
+                <textarea class="review-textarea" placeholder="Write your review here..."></textarea>
+                <button class="post-review-btn">POST</button>
             </div>
         </section>
     </main>
+
+    <!-- Please add the script to its own JS file -->
+    <script>
+        function setRating(rating) {
+            //Remove 'selected' class from all stars
+            const stars = document.querySelectorAll('.rating-star');
+            stars.forEach(star => star.classList.remove('selected'));
+            
+            //Adds 'selected' class to stars up to the clicked one
+            for (let i = 0; i < rating; i++) {
+                stars[i].classList.add('selected');
+            }
+        }
+    </script>
+    
     <?php
         require_once 'footer.php';
     ?>
