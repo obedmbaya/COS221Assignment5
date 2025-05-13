@@ -5,8 +5,10 @@
     include_once 'header.php';
 ?>
     <main>
-        <h1 class="page-title">My Wishlist</h1>
-        <p class="page-description">Items you've saved for later. Add them to your cart whenever you're ready!</p>
+        <div class="wishlist-title">
+            <h1 class="page-title">My Wishlist</h1>
+            <p class="page-description">Items you've saved for later. Add them to your cart whenever you're ready!</p>
+        </div>
         
         <div class="wishlist-container">
             <!-- Wishlist table header -->
@@ -21,14 +23,14 @@
             <!-- Wishlist items -->
             <div class="wishlist-item">
                 <!-- pic -->
-                <div class="item-image">Image</div>
+                <div class="item-image" style="background-image: url('https://www.incredible.co.za/api/catalog/product/b/2/b2640322_td01_v1_ecommerce_7549.png?width=700&height=700&store=incredibleconnection&image-type=image')"></div>
                 <!-- Name and Category... can add more if needed, more from the backend API, maybe ask Jared -->
                 <div class="item-details">
-                    <h3 class="item-name">Wireless Headphones</h3>
-                    <p class="item-category">Electronics</p>
+                    <h3 class="item-name">Anker 20W USB-C Fast Charger</h3>
+                    <p class="item-category">Accessories</p>
                 </div>
                 <!-- Price -->
-                <div class="item-price">$129.99</div>
+                <div class="item-price">R499</div>
                 <!-- Availability -->
                 <div class="item-stock">In Stock</div>
                 <div class="item-actions">
@@ -40,12 +42,12 @@
             </div>
             <!-- Item -->
             <div class="wishlist-item">
-                <div class="item-image">Image</div>
+                <div class="item-image" style="background-image: url('https://store.nintendo.co.za/cdn/shop/products/HACA_011_imgeKBWA_F_R_ad-0_869x869.png?v=1632293466')"></div>
                 <div class="item-details">
-                    <h3 class="item-name">Smart Watch</h3>
-                    <p class="item-category">Electronics</p>
+                    <h3 class="item-name">Nintendo Switch OLED</h3>
+                    <p class="item-category">Gaming</p>
                 </div>
-                <div class="item-price">$199.99</div>
+                <div class="item-price">R7999</div>
                 <div class="item-stock">In Stock</div>
                 <div class="item-actions">
                     <button class="btn btn-primary">Add to Cart</button>
@@ -54,12 +56,12 @@
             </div>
             <!-- Item -->
             <div class="wishlist-item">
-                <div class="item-image">Image</div>
+                <div class="item-image" style="background-image: url('https://images.samsung.com/is/image/samsung/p6pim/za/2302/gallery/za-galaxy-s23-s918-sm-s918bzkqafa-534860088?$684_547_PNG$')"></div>
                 <div class="item-details">
-                    <h3 class="item-name">Leather Wallet</h3>
-                    <p class="item-category">Accessories</p>
+                    <h3 class="item-name">Samsung Galaxy S23 Ultra</h3>
+                    <p class="item-category">Phone</p>
                 </div>
-                <div class="item-price">$59.99</div>
+                <div class="item-price">R19,499</div>
                 <div class="item-stock out-of-stock">Out of Stock</div>
                 <div class="item-actions">
                     <!-- Butt 1 -->
@@ -71,12 +73,12 @@
             </div>
             <!-- Item -->
             <div class="wishlist-item">
-                <div class="item-image">Image</div>
+                <div class="item-image" style="background-image: url('https://p3-ofp.static.pub//fes/cms/2024/07/05/umcrxcnsm2br1itju6gvundeb9s6tf364734.png')"></div>
                 <div class="item-details">
-                    <h3 class="item-name">Running Shoes</h3>
-                    <p class="item-category">Sports & Fitness</p>
+                    <h3 class="item-name">Lenovo ThinkPad X1 Carbon</h3>
+                    <p class="item-category">Computer</p>
                 </div>
-                <div class="item-price">$89.99</div>
+                <div class="item-price">R25,799</div>
                 <div class="item-stock">In Stock</div>
                 <div class="item-actions">
                     <button class="btn btn-primary">Add to Cart</button>
