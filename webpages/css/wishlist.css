@@ -39,7 +39,9 @@
     align-items: center;
     justify-content: center;
     border-radius: 4px;
-    color: #888;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .item-details {
@@ -85,12 +87,12 @@
 }
 
 .btn-primary {
-    background-color: #2c3e50;
+    background-color:  #4c4faf;
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: #1a252f;
+    background-color: #3f3e8e;
 }
 
 .btn-danger {
@@ -126,4 +128,19 @@
 .empty-wishlist h3 {
     margin-bottom: 1rem;
     color: #7f8c8d;
+}
+
+.wishlist-title{
+    background-color: white;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.page-title{
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.page-description{
+    text-align: center;
 }

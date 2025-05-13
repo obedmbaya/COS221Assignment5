@@ -848,10 +848,12 @@ tr:hover {
 
 .newsletter-input {
     flex: 1;
-    padding: 12px 15px;
+    padding: 0 15px;
     border: 1px solid #ddd;
     border-radius: 4px 0 0 4px;
     font-size: 16px;
+    height: 44px;
+    box-sizing: border-box;
 }
 
 .newsletter-btn {
@@ -859,12 +861,16 @@ tr:hover {
     height: 44px;
     color: white;
     border: none;
-    padding: 12px 25px;
+    padding: 0 25px;
     border-radius: 0 4px 4px 0;
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
     transition: background-color 0.3s;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .newsletter-btn:hover {
