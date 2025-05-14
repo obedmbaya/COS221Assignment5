@@ -123,6 +123,11 @@
                 <button type="button" class="success">Add Product to Retailer</button>
             </form>
         </div>
+
+        <div class="box">
+            <h2></h2>
+            <button type="button" class="success">Populate Database</button>
+        </div>
     </div>   
 </body>
 
