@@ -4,4 +4,4 @@
 #Ignore Composer dependancies
 /vendor/
 
-/api/config.php
+api/config.php
