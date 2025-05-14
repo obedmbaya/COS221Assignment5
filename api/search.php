@@ -1,6 +1,7 @@
 <?php
 
-private function search($data){
+    // private
+    function search($data){
         // Base SQL query to select product information with joins to related tables
         // 1=1 is used as a placeholder to easily add AND conditions later
         $query = "SELECT p.ProductID, p.ProductName, p.Description, p.Brand, p.IMG_Reference pp.Price, r.RetailerName
@@ -29,6 +30,7 @@ private function search($data){
                 }
             }
         }
+
         // Add sorting if it is specified
         if (isset($data["sort"]) && in_array($data["sort"], ["Price", "ProductName"])){
             $query .= " ORDER BY " . $data["sort"];
@@ -66,7 +68,8 @@ private function search($data){
         $this->sendResponse("success", $products, 200);
     }
 
-    private function sendResponse($status, $data, $httpCode = 200){
+    // private 
+    function sendResponse($status, $data, $httpCode = 200){
         http_response_code($code);
         echo json_encode(
             [
