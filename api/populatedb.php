@@ -1,15 +1,16 @@
 <?php
 
-    require ("config.php");
+    require_once ("config.php");
 
     function populateDB($data){
 
-        validate($data);
+        // validate($data);
 
         $conn = Database::instance()->getConnection();
         $products = $data["products"];
 
-        foreach ($products as $product) {
+        foreach ($products["products"] as $key => $product) {
+
             $name         = isset($product['name']) ? $product['name'] : null;
             $description  = isset($product['description']) ? $product['description'] : null;
             $brand        = isset($product['brand']) ? $product['brand'] : null;
@@ -20,20 +21,24 @@
             $link         = isset($product['link']) ? $product['link'] : null;
 
             //Product table ==> only name, description, brand and img_reference
-
-            $stmt = $conn->prepare("INSERT INTO Product (ProductName, Description, Brand, IMG_Reference)
+            if ($name != null){
+                
+                $stmt = $conn->prepare("INSERT INTO Product (ProductName, Description, Brand, IMG_Reference)
                                     VALUES (?, ?, ?, ?)");
             
-            if (!$stmt){
-                die("Prepare statement failed");
+                if (!$stmt){
+                    die("Prepare statement failed");
+                }
+
+                $stmt->bind_param("ssss", $name, $description, $brand, $img_reference);
+                $stmt->execute();
+                $stmt->close();
+                
             }
 
-            $stmt->bind_param("ssss", $name, $description, $brand, $img_reference);
-            $stmt->execute();
-            $stmt->close();
-            
         }
 
+        response("HTTP/1.1 200 OK", "success", "Successfully added products");
     }
 
     function validate($data){
@@ -66,7 +71,7 @@
     }
 
     function response($header, $status, $returnData){
-        header();
+        header($header);
         header("Content-type: application/json");
         echo json_encode([
             "status" => $status,

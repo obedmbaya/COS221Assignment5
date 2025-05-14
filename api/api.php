@@ -1,9 +1,9 @@
 <?php
 
     require_once("config.php");
-    require_once("signuplogin.php");
-    require_once("search.php");
-    require_once("signup.php");
+    // require_once("signuplogin.php");
+    // require_once("search.php");
+    // require_once("signup.php");
     require_once("populatedb.php");
 
     $json = file_get_contents('php://input');
@@ -13,17 +13,17 @@
 
         if (isset($data["type"]) && $data["type"] === "Signup"){
 
-            handleSignup($data);
+            // handleSignup($data);
 
         } else if (isset($data["type"]) && $data["type"] === "Login"){
 
-            handleLogin($data);
+            // handleLogin($data);
 
         } else if (isset($data["type"]) && $data["type"] === "Register"){
 
-            handleSearch($data);
+            // handleSearch($data);
 
-        } else if (isset($data["type"]) && data["type"] === "populateDB"){
+        } else if (isset($data["type"]) && $data["type"] === "populateDB"){
 
             populateDB($data);
 
