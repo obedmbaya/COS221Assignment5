@@ -1,24 +1,5 @@
 <?php
 
-require 'config.php';
-//try to connect to database and output error message if it does not connect
-
-try {
-    $db = Database::Instance()->getConnection();
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
-        "status" => "error",
-        "message" => $e->getMessage()
-    ]);
-    exit;
-}
-
-// get data passed as json object
-
-$rawData = file_get_contents("php://input");
-$data = json_decode($rawData, true);
-
 // expect output  {
 //     apikey: "someapikey",
 //     type: "some type",
@@ -89,14 +70,6 @@ if ($data["type"] == "SaveContacts") {
     }
 
 }
-else{
-     http_response_code(400);
-    echo json_encode([
-        "status" => "error",
-        "message" => "Invalid or missing type value"
-    ]);
-    exit;
 
-}
 
 ?>
