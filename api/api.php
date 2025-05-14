@@ -4,7 +4,7 @@
     require_once("signuplogin.php");
     require_once("search.php");
     require_once("signup.php");
-    require_once("populateDB");
+    require_once("populatedb.php");
 
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
