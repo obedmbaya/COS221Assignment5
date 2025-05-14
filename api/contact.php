@@ -10,7 +10,7 @@
 
 
 
-if ($data["type"] == "SaveContacts") {
+
 
     $email= $data["email"];
     $phone= $data["phone"];
@@ -69,7 +69,6 @@ if ($data["type"] == "SaveContacts") {
 
     }
 
-}
 
 
 ?>
