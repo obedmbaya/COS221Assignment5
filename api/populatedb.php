@@ -27,7 +27,7 @@
                     $source         = $listing["source"]          ?? null;
                     $title          = $listing["title"]           ?? null;
                     $rating         = $listing["rating"]          ?? null;
-                    $extractedPrice = $listing["extracted_price"] ?? null;
+                    $extractedPrice = $listing["extracted_price"] * 18.91 ?? null;
 
                     if ($name != null){
                         $stmt = $conn->prepare("INSERT INTO Product (ProductName, Brand, IMG_Reference)
