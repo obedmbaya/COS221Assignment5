@@ -60,6 +60,35 @@ private function search($data){
         $this->sendResponse("success", $products, 200);
     }
 
+    private function editProduct($data){
+        if (empty($data["ProductID"]) ||
+        empty($data["ProductName"]) ||
+        empty($data["Description"]) ||
+        empty($data["Brand"]) ||
+        empty($data["IMG_Reference"])){
+            $this->sendResponse("error", "Missing reqired fields", 400);
+            return;
+        }
+
+        $query = "UPDATE Product SET ProductName = ?, 
+                                    Description = ?, 
+                                    Brand = ?, 
+                                    IMG_Reference = ?, 
+                                WHERE ProductID = ?";
+        $stmt = $this->database->prepare($query);
+        $stmt->bind_param("ssssi", $data["ProductName"], $data["Description"], $data["Brand"], $data["IMG_Reference"], $data["ProductID"]);
+        $result = $stmt->execute();
+
+        if ($result){
+            $this->sendResponse("success", "Product successfully updated", 200);
+        }
+        else{
+            $this->sendResponse("error", "Failed to update product", 500);
+        }
+
+        $stmt->close();
+    }
+
     private function sendResponse($status, $data, $httpCode = 200){
         http_response_code($code);
         echo json_encode(
