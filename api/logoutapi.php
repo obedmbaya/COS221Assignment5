@@ -1,17 +1,43 @@
 <?php
 
-header("Content-Type", "application/json");
+/*
+API Endpoint Usage Guide
+
+
+Logout API (logoutapi.php): (POST)
+
+  - Request method: POST
+  - Request JSON body:
+    {
+      "type": "Logout",
+      "api_key": "user_api_key_string"
+    }
+
+  - Success Response (HTTP 200):
+    {
+      "status": "success",
+      "timestamp": number,
+      "data": "User logged out successfully"
+    }
+
+  - Failure Responses:
+    - 400: Missing API key or invalid request type
+    - 401: Invalid API key
+    - 405: Unauthorized request method
+
+*/
+
+header("Content-Type: application/json");
 require_once "config.php";
 
-
-//user did not signup with correct method
+// User did not use correct request method
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    http_response_code(401);
+    http_response_code(405); // Method Not Allowed
     echo json_encode([
         "status" => "failed",
         "data" => "Unauthorized request method"
-        ]);
-    die();
+    ]);
+    exit();
 }
 
 $json = file_get_contents('php://input');
@@ -22,40 +48,45 @@ if ($data['type'] === "Logout") {
         http_response_code(400);
         echo json_encode([
             "status" => "failed", 
-            "data" => "All fields must be filled in before loging out."
+            "data" => "API key must be provided before logging out."
         ]);
         exit();
     }
 
-    $api_key = htmlspecialchars($data["api_key"]);
+    $api_key = $data["api_key"];
 
-    $query = "SELECT * FROM users WHERE api_key = ?";
+    // Check if API key exists (only need to verify existence)
+    $query = "SELECT 1 FROM users WHERE api_key = ? LIMIT 1";
     $stmt = $database->prepare($query);
     $stmt->bind_param("s", $api_key);
     $stmt->execute();
     
     $result = $stmt->get_result();
-    $usr = $result->fetch_assoc();
-    
+    $api_key_exists = $result->num_rows > 0;
     $stmt->close();
 
-    if ($usr) {
-
-        session_start();
-        session_destroy();
-        
+    if ($api_key_exists) {
+        // API key is valid, send success response
+        http_response_code(200);
         echo json_encode([
             "status" => "success",
             "timestamp" => round(microtime(true) * 1000),
             "data" => "User logged out successfully"
         ]);
-    } 
-    
-    else {
+        exit();
+    } else {
         http_response_code(401);
         echo json_encode([
             "status" => "failed",
             "data" => "Invalid API key"
         ]);
+        exit();
     }
+} else {
+    http_response_code(400);
+    echo json_encode([
+        "status" => "failed",
+        "data" => "Invalid request type"
+    ]);
+    exit();
 }
