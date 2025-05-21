@@ -1,6 +1,5 @@
 <?php
 
-<<<<<<< HEAD
 // expect output  {
 //     apikey: "someapikey",
 //     type: "some type",
@@ -8,7 +7,6 @@
 //     email:"test@gmail.com"
 //     message: "I have a problem"
 // }
-=======
 require 'config.php';
 
 $db = Database::Instance()->getConnection(); 
@@ -34,7 +32,6 @@ if (!$data) {
     ]);
     exit;
 }
->>>>>>> 6350266d6af9e91bc50a7542357636a6a69d1dc6
 
 if (isset($data["type"]) && $data["type"] === "SaveContacts") {
 
@@ -44,17 +41,6 @@ if (isset($data["type"]) && $data["type"] === "SaveContacts") {
     $apikey = isset($data["apikey"]) ? trim($data["apikey"]) : "";
     $message = isset($data["message"]) ? trim($data["message"]) : "";
 
-<<<<<<< HEAD
-
-
-    $email= $data["email"];
-    $phone= $data["phone"];
-    $apikey= $data["apikey"];
-    $message= $data["message"];
-    if(empty($email) || empty($phone) || empty($apikey) || empty($message)){
-        http_response_code(401);
-        echo json_encode(["status" => "error", "timestamp" => time(), "data" => "Missing required fields"]);
-=======
     if (empty($email) || empty($phone) || empty($apikey) || empty($message)) {
         http_response_code(400);
         echo json_encode([
@@ -62,7 +48,6 @@ if (isset($data["type"]) && $data["type"] === "SaveContacts") {
             "timestamp" => time(),
             "data" => "Missing required fields"
         ]);
->>>>>>> 6350266d6af9e91bc50a7542357636a6a69d1dc6
         exit;
     }
 
@@ -120,11 +105,6 @@ if (isset($data["type"]) && $data["type"] === "SaveContacts") {
         exit;
     }
 
-<<<<<<< HEAD
-
-
-?>
-=======
     $insert->bind_param("sssss", $firstname, $surname, $email, $phone, $message);
 
     if ($insert->execute()) {
@@ -156,4 +136,3 @@ if (isset($data["type"]) && $data["type"] === "SaveContacts") {
     exit;
 }
 ?>
->>>>>>> 6350266d6af9e91bc50a7542357636a6a69d1dc6
