@@ -1,6 +1,9 @@
 <?php
 
-private function search($data){
+    // private
+    function search($data){
+        // Base SQL query to select product information with joins to related tables
+        // 1=1 is used as a placeholder to easily add AND conditions later
         $query = "SELECT p.ProductID, p.ProductName, p.Description, p.Brand, p.IMG_Reference pp.Price, r.RetailerName
                   FROM Product p
                   JOIN ProductPrice pp ON p.ProductID = pp.ProductID
@@ -8,11 +11,13 @@ private function search($data){
                   WHERE 1=1"; //1=1 "cleanly combine optional filters"
         
         $params = [];
-        $types = "";
-
+        $types = ""; // String to hold parameter types (s=string, i=integer, etc)
+        
+        // Check if search criteria are provided and is an array. ie, check if Ange is in backend, where backend is an array
         if (isset($data["search"]) && is_array($data["search"])){
             foreach($data["search"] as $entry => $value){
-                if (in_array($entry, ["ProductName", "Brand", "Description"])){
+                if (in_array($entry, ["ProductName", "Brand", "Description"])){ //Only allowing search functionality on these attributes, we can add more, later on if needed (prolly might have to)
+                    // Check if fuzzy search is enabled 
                     if (!empty($data["fuzzy"])){
                         $query .= " AND p.$entry LIKE ?";
                         $params[] = "%$value$";
@@ -25,7 +30,8 @@ private function search($data){
                 }
             }
         }
-        
+
+        // Add sorting if it is specified
         if (isset($data["sort"]) && in_array($data["sort"], ["Price", "ProductName"])){
             $query .= " ORDER BY " . $data["sort"];
             if (isset($data["order"]) && in_array(strtolower($data["order"]), ["ASC", "DESC"])){
@@ -49,8 +55,10 @@ private function search($data){
 
         $stmtResult = $stmt->get_result();
         
+        //An array to store the products after filtration
         $products = [];
 
+        // Fetch each row and add to products array
         while ($entries = $stmtResult->fetch_assoc()){
             $products[] = $entries;
         }
