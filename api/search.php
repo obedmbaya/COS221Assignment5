@@ -118,6 +118,32 @@
         $stmt->close();
     }
 
+    private function viewProduct($data){
+        if (empty($data["ProductID"])){
+            $this->sendResponse("error", "Missing ProductID", 400);
+            return;
+        }
+
+        $product_id = $data["ProductID"];
+        $query = "SELECT p.ProductID, p.ProductName, p.Description, p.Brand, pp.Price, r.RetailerName
+                  FROM Product p
+                  JOIN ProductPrice pp ON p.ProductID = pp.ProductID
+                  JOIN Retailer r ON pp.RetailerID = r.RetailerID
+                  WHERE p.ProductID = ?";
+        $stmt = $this->database->prepare($query);
+        $stmt->bind_param("i", "$product_id");
+        $result = $stmt->execute();
+        $stmtResult = $stmt->get_result();
+        $product = $stmtResult->fetch_assoc();
+
+        if ($product){
+            $his->sendResponse("success", $product, 200);
+        }
+        else{
+            $this->sendResponse("error", "Product not found", 404);
+        }
+    }
+
     private function sendResponse($status, $data, $httpCode = 200){
         http_response_code($code);
         echo json_encode(
