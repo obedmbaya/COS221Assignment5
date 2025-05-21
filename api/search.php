@@ -97,6 +97,27 @@
         $stmt->close();
     }
 
+    private function deleteProduct($data){
+        if (empty($data["ProductID"])){
+            $this->sendResponse("error", "Missing ProductID", 400);
+            return;
+        }
+
+        $query = "DELETE FROM Product WHERE ProductID = ?";
+        $stmt = $this->database->prepare($query);
+        $stmt->bind_param("i", $data["ProductID"]);
+        $result = $stmt->execute();
+
+        if ($result){
+            $this-sendResponse("Success", "Product successfully deleted", 200);
+        }
+        else{
+            $this->sendResponse("error", "Failed to delete product", 500);
+        }
+
+        $stmt->close();
+    }
+
     private function sendResponse($status, $data, $httpCode = 200){
         http_response_code($code);
         echo json_encode(
