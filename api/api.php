@@ -5,6 +5,7 @@
     // require_once("search.php");
     // require_once("signup.php");
     require_once("populatedb.php");
+    require_once("getProducts.php");
 
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
@@ -26,6 +27,11 @@
         } else if (isset($data["type"]) && $data["type"] === "populateDB"){
 
             populateDB($data);
+
+        }
+        else if (isset($data["type"]) && $data["type"] === "getAllProducts"){
+
+            getAllProducts();
 
         }
 
