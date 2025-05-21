@@ -5,7 +5,7 @@ if (btnPopulate){
         getData(function(products){
 
             var data = {
-                "products":products,
+                "data" : products,
                 "type" : "populateDB"
             }
 
@@ -29,7 +29,7 @@ if (btnPopulate){
 
 function getData(callback) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'data.json', true);
+    xhr.open('GET', 'new-data.json', true);
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
