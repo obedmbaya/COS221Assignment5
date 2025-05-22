@@ -68,7 +68,7 @@
         $this->sendResponse("success", $products, 200);
     }
 
-    private function editProduct($data){
+    function editProduct($data){
         if (empty($data["ProductID"]) ||
         empty($data["ProductName"]) ||
         empty($data["Description"]) ||
@@ -97,7 +97,7 @@
         $stmt->close();
     }
 
-    private function deleteProduct($data){
+    function deleteProduct($data){
         if (empty($data["ProductID"])){
             $this->sendResponse("error", "Missing ProductID", 400);
             return;
@@ -118,7 +118,7 @@
         $stmt->close();
     }
 
-    private function viewProduct($data){
+    function viewProduct($data){
         if (empty($data["ProductID"])){
             $this->sendResponse("error", "Missing ProductID", 400);
             return;
@@ -144,7 +144,7 @@
         }
     }
 
-    private function sendResponse($status, $data, $httpCode = 200){
+    function sendResponse($status, $data, $httpCode = 200){
         http_response_code($code);
         echo json_encode(
             [
