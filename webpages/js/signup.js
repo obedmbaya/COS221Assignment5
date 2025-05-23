@@ -23,6 +23,7 @@
                 if (response.status === "success") {
                   localStorage.setItem("apiKey", response.data.apikey);
                   alert("Registration successful! API key saved.");
+                  window.location.href = "view.php";
                 } else {
                   alert("Registration failed: " + JSON.stringify(response));
                 }
