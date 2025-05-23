@@ -22,7 +22,7 @@
                 var response = JSON.parse(xhr.responseText);
                 if (response.status === "success") {
                   localStorage.setItem("apiKey", response.data.apikey);
-                  alert("Registration successful! API key saved.");
+                  alert("Registration successful!");
                   window.location.href = "view.php";
                 } else {
                   alert("Registration failed: " + JSON.stringify(response));
