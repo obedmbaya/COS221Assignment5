@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (response.status === "success") {
               localStorage.setItem("apiKey", response.data.apikey);
               alert("Login successful!");
-              window.location.href = "view.php";
+              window.location.href = "index.php";
             } else {
               alert("Login failed: " + JSON.stringify(response));
             }
