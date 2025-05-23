@@ -18,14 +18,14 @@
             foreach($data["search"] as $entry => $value){
                 if (in_array($entry, ["ProductName", "Brand", "Description"])){ //Only allowing search functionality on these attributes, we can add more, later on if needed (prolly might have to)
                     // Check if fuzzy search is enabled 
-                    if (!empty($data["fuzzy"])){
+                    if (!isset($data["fuzzy"]) || $data["fuzzy"] == true){
                         $query .= " AND p.$entry LIKE ?";
                         $params[] = "%$value$";
-                    }
-                    else{
+                    } else {
                         $query .= " AND p.$entry =?";
                         $params[] = $value;
                     }
+
                     $types .= "s";
                 }
             }
