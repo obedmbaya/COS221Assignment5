@@ -48,9 +48,51 @@ include 'header.php';
                                 
                           
                             
-                                <!-- linking php for login -->
 
                             <form action= "process_signup.php" method="POST" id="signup-form">
+                                                               
+                            <!-- Account Type Selection -->
+
+                        <div class="mb-6">
+                            <label class="block mb-3 text-sm font medium text-gray-700">Account Type</label>
+                            <div class="grid grid-cols-1 gap-3">
+                                <label class="relative flex items-center p-4 border-2 border-gray-200 rounding-lg cursor-pointer hover:border-brand transition-colors account-type-option">
+                                    <input type="radio" name="account_type" value="customer" class="sr-only account-type-radio" checked>
+                                    <div class="flex items-center space-x-3">
+                                        <div class="radio-custom w-4 h-4 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                                            <div class="w-2 h-2 bg-brand rounded-full hidden radio-dot"></div>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-900">Customer</div>
+                                <div class="text-sm text-gray-500">Browse and compare product prices</div>
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Retailer selection -->
+
+                      <label class="relative flex items-center p-4 border-2 border-gray-200 rounding-lg cursor-pointer hover:border-brand transition-colors account-type-option">
+                                    <input type="radio" name="account_type" value="Retailer" class="sr-only account-type-radio">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="radio-custom w-4 h-4 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                                            <div class="w-2 h-2 bg-brand rounded-full hidden radio-dot"></div>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-900">Retailer</div>
+                                <div class="text-sm text-gray-500">List your products and manage inventory</div>
+                            </div>
+                        </div>
+                    </label>
+
+                   
+                    </div>
+                </div>
+
+
+
+ 
+
+
                                 
                                 <div class="mb-6">
                                     <label for="fullname" class="block mb-2 text-sm font-medium text-gray-700">Full Name</label>
@@ -58,6 +100,18 @@ include 'header.php';
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand focus:border-brand">
 
                                     </div>
+
+                                    <!-- Business Name Field -->
+
+                                <div class="mb-6 hidden" id="business-name-field">
+                                    <label for="business_name" class="block mb-2 text-sm font-medium text-gray-700">Business Name</label>
+                                    <input type="text" id="business_name" name="business_name" placeholder="Enter your business name" 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand focus:border-brand">
+
+                                    </div>
+
+
+                                    
                                 <div class="mb-8">
                                     <label for="email" class="block mb-2 text-sm font-medium text-gray-700">Email</label>
                                     <input type="email" id="email" name="email" placeholder="Enter your email" required
@@ -93,6 +147,9 @@ include 'header.php';
                     </div>
                 </div>
             </main>
+
+            
+
 
 
  <?php
