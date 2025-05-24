@@ -311,6 +311,105 @@ function checkAPI($currapi, $database) {
     return $currapi;
 }
 
+// --- REVIEW ENDPOINT ---
+
+function getReview($data){
+    $conn = Database::instance()->getConnection();
+    $product_id = $data["ProductID"];
+
+    if (!$product_id){
+        $this->sendResponse("error", "ProductID is required", 400);
+        return;
+    }
+
+    $stmt = $conn->prepare("SELECT * FROM Review WHERE ProductUD = ?");
+    $stmt->bind_param("i", $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $reviews = [];
+
+    while($row = $result->fetch_assoc()){
+        $reviews[] = $row;
+    }
+
+    $stmt->close();
+    $this->sendResponse("Success", $reviews, 200);
+}
+
+function insertReview($data){
+    $conn = Database::instance()->getConnection();
+    $product_id = $data["ProductID"];
+    $user_id = $data["UserID"];
+    $rating = $data["Rating"];
+    $comment = $data["Comment"] ?? null;
+
+    if ($product_id == null || $user_id == null || $rating == null){
+        $this->sendResponse("error", "ProductID, UserID and Rating are required", 400);
+        return;
+    }
+
+    $stmt = $conn->prepare("INSERT INTO Review (ProductID, UserID, Rating, Comment, ReviewDate) VALUES (?, ?, ?, ?, NOW())");
+    $stmt->bind_param("iiis", $product_id, $user_id, $rating, $comment);
+    $result = $stmt->execute();
+
+    if ($result){
+        $this->sendResponse("success", "Review added successfully", 201);
+    }
+    else{
+        $this->sendResponse("error", "Failed to add review", 500);
+    }
+
+    $stmt->close();
+}
+
+function updateReview($data){
+    $conn = Database::instance()->getConnection();
+    $review_id = $data["ReviewID"];
+    $rating = $data["Rating"];
+    $comment = $data["Comment"] ?? null;
+
+    if (!$review_id || ! $rating){
+        $this->sendResponse("error", "ReviewID and Rating are required", 400);
+        return;
+    }
+
+    $stmt = $conn->prepare("UPDATE Review SET Rating = ?, Comment = ? WHERE ReviewID = ?")
+    $stmt->bind_param("isi", $rating, $comment, $review_id);
+    $result = $stmt->execute();
+
+    if ($result){
+        $this->sendResponse("success", "Review updated successfully", 200);
+    }
+    else{
+        $this->sendResponse("error", "Failed to update review", 500);
+    }
+
+    $stmt->close();
+
+}
+
+function deleteReview($data){
+    $conn = Database::instance()->getConnection();
+    $review_id = $data["ReviewID"];
+
+    if (!$review_id){
+        $this->sendResponse("error", "ReviewID is required", 400);
+        return;
+    }
+
+    $stmt = $conn->prepare("DELETE FROM Review WHERE ReviewID = ?");
+    $stmt->bind_param("i", $review_id);
+    $result = $stmt->execute();
+
+    if ($result){
+        $this->sendResponse("success", "Review deleted successfully", 200);
+    } else {
+        $this->sendResponse("error", "Failed to delete review", 500);
+    }
+
+    $stmt->close();
+}
 // --- RESPONSE UTILITY ---
 function sendResponse($status, $data, $httpCode = 200) {
     http_response_code($httpCode);
