@@ -48,7 +48,6 @@ include 'header.php';
                                 
                           
                             
-                                <!-- linking php for login -->
 
                             <form action= "process_signup.php" method="POST" id="signup-form">
                                                                
@@ -148,6 +147,9 @@ include 'header.php';
                     </div>
                 </div>
             </main>
+
+            
+
 
 
  <?php
