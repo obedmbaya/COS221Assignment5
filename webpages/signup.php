@@ -101,6 +101,18 @@ include 'header.php';
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand focus:border-brand">
 
                                     </div>
+
+                                    <!-- Business Name Field -->
+
+                                <div class="mb-6 hidden" id="business-name-field">
+                                    <label for="business_name" class="block mb-2 text-sm font-medium text-gray-700">Business Name</label>
+                                    <input type="text" id="business_name" name="business_name" placeholder="Enter your business name" 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand focus:border-brand">
+
+                                    </div>
+
+
+                                    
                                 <div class="mb-8">
                                     <label for="email" class="block mb-2 text-sm font-medium text-gray-700">Email</label>
                                     <input type="email" id="email" name="email" placeholder="Enter your email" required
