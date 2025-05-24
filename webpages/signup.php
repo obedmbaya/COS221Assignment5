@@ -70,6 +70,21 @@ include 'header.php';
                         </div>
                     </label>
 
+                    <!-- Retailer selection -->
+
+                      <label class="relative flex items-center p-4 border-2 border-gray-200 rounding-lg cursor-pointer hover:border-brand transition-colors account-type-option">
+                                    <input type="radio" name="account_type" value="Retailer" class="sr-only account-type-radio">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="radio-custom w-4 h-4 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                                            <div class="w-2 h-2 bg-brand rounded-full hidden radio-dot"></div>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-900">Retailer</div>
+                                <div class="text-sm text-gray-500">List your products and manage inventory</div>
+                            </div>
+                        </div>
+                    </label>
+
                    
                     </div>
                 </div>
