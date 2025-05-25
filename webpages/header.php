@@ -7,10 +7,11 @@
     <meta name="keywords" content="CompareIt, price comparison, deals, sales, e-commerce, shop smart">
     <meta name="author" content="ctrl + alt + elite">
 
-    <link rel="stylesheet" href="css/styles.css">
+    <!-- <link rel="stylesheet" href="css/styles.css"> -->
     <link rel="icon" href="img/favicon.png" type="image/x-icon">
     <title><?php echo isset($page_title) ? $page_title : 'E-Commerce Website'; ?></title>
     <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/footer.css">
     <?php
     // Add page-specific CSS if needed
     if (isset($additional_css)) {
@@ -39,5 +40,4 @@
                     <a href="manage.php" title="Account">Manage</a>
                 </div>
             </div>
-        
-    </header>
+        </header>
