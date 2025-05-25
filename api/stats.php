@@ -65,12 +65,12 @@
 
         validateApikey($data);
 
-        if (!isset($data["retailerID"])){
+        if (!isset($data["userID"])){
             header("HTTP/1.1 400 Bad Request");
             header("Content-type: application/json");
             echo json_encode([
                 "status" => "failed",
-                "data" => "Please provide a retailerID."
+                "data" => "Please provide a userID."
             ]);
             exit;
         }
@@ -84,7 +84,7 @@
             die("Failed to prepare query: " . $conn->error);
         }
 
-        $stmt->bind_param(s, $data["retailerID"]);
+        $stmt->bind_param(s, $data["userID"]);
         $stmt->execute();
         $result = $stmt->get_result();
         $retailer = $result->fetch_assoc();
