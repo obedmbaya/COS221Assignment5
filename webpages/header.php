@@ -27,7 +27,7 @@
         <!-- Header -->
         <header>
             <div class="header-container">
-                <a href = "index.php"><div class="logo">CompareIt</div></a>
+                <a href = "launch.php"><div class="logo">CompareIt</div></a>
                 <div class="search-bar">
                     <img src="img/search.png" alt="Search" class="search-icon">
                     <input type="text" placeholder="Search for products...">
