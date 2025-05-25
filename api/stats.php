@@ -21,7 +21,7 @@
                     "Brand": "Apple",
                     "IMG_Reference": "https://hghuiuiuh",
                     "Price": 1234.34,
-                    "Retailer": "Takealot"
+                    "RetailerName": "Takealot"
                 },
                 ... with 4 other products
             ]
@@ -134,7 +134,7 @@
             $result = $stmt->get_result();
 
             if ($result->num_rows == 0){
-                $output = false;
+                $output = false; 
             }
 
             $stmt->close();
