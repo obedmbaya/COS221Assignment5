@@ -886,48 +886,48 @@ function handleGetRetailerById(){
 
 }
 
-function validateApikey($data){
+// function validateApikey($data){
 
-    $output = true;
+//     $output = true;
 
-    if (!isset($data["apikey"])){
+//     if (!isset($data["apikey"])){
 
-        $output = false;
+//         $output = false;
 
-    } else {
+//     } else {
 
-        $conn = Database::instance()->getConnection();
-        $apikey = $data["apikey"];
+//         $conn = Database::instance()->getConnection();
+//         $apikey = $data["apikey"];
 
-        $stmt = $conn->prepare("SELECT 1
-                        FROM  ApiKey
-                        WHERE KeyValue = ?");
-        if (!$stmt){
-            die("Failed to prepare apikey validation query");
-        }
+//         $stmt = $conn->prepare("SELECT 1
+//                         FROM  ApiKey
+//                         WHERE KeyValue = ?");
+//         if (!$stmt){
+//             die("Failed to prepare apikey validation query");
+//         }
 
-        $stmt->bind_param("s", $apikey);
-        $stmt->execute();
-        $result = $stmt->get_result();
+//         $stmt->bind_param("s", $apikey);
+//         $stmt->execute();
+//         $result = $stmt->get_result();
 
-        if ($result->num_rows == 0){
-            $output = false; 
-        }
+//         if ($result->num_rows == 0){
+//             $output = false; 
+//         }
 
-        $stmt->close();
+//         $stmt->close();
 
-    }
+//     }
 
-    if (!$output){
-        header("HTTP/1.1 401 Unauthorized");
-        header("Content-type: application/json");
-        echo json_encode([
-            "status" => "failed",
-            "data" => "Invalid API Key or no API Key was provided."
-        ]);
-        exit;
-    }
+//     if (!$output){
+//         header("HTTP/1.1 401 Unauthorized");
+//         header("Content-type: application/json");
+//         echo json_encode([
+//             "status" => "failed",
+//             "data" => "Invalid API Key or no API Key was provided."
+//         ]);
+//         exit;
+//     }
 
-}
+// }
 
 ?>
