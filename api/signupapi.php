@@ -1,42 +1,21 @@
 <?php
 
-/*
-API Endpoint Usage Guide
 
-
-Register API (signupapi.php): (POST)
-
-  - Request method: POST
-  - Request JSON body:
-    {
-      "type": "Register",
-      "name": "FirstName",
-      "surname": "LastName",
-      "email": "user@example.com",
-      "password": "StrongPassword1!",
-      "user_type": "TypeOfUser"    // e.g., "admin", "user"
-    }
-
-  - Success Response (HTTP 200):
-    {
-      "status": "success",
-      "timestamp": number,
-      "data": {
-        "apikey": "newly_generated_api_key_string"
-      }
-    }
-
-  - Failure Responses:
-    - 400: Missing fields or validation errors (returns array of errors)
-    - 409: Email already registered
-    - 405: Unauthorized request method
-    - 400: Incorrect request type
-
----
-*/
 
 header("Content-Type: application/json");
 require_once "config.php";
+
+function sendResponse($status, $data, $code = 200)
+{
+    http_response_code($code);
+    echo json_encode([
+        "status" => $status,
+        "timestamp" => time(),
+        "data" => $data
+    ]);
+    exit();
+}
+
 
 function getRandomString($length) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -48,7 +27,7 @@ function getRandomString($length) {
 }
 
 function checkAPI($currapi, $database) {
-    $query_api = "SELECT 1 FROM users WHERE api_key = ? LIMIT 1;";
+    $query_api = "SELECT 1 FROM User WHERE ApiKey = ? LIMIT 1;";
     $stmt_api = $database->prepare($query_api);
     $stmt_api->bind_param("s", $currapi);
     $stmt_api->execute();
@@ -67,16 +46,16 @@ function checkAPI($currapi, $database) {
 
 // User did not signup with correct method
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    http_response_code(405); // Method Not Allowed
-    echo json_encode([
-        "status" => "failed",
-        "data" => "Unauthorized request method"
-    ]);
-    exit();
+
+    sendResponse("failed", "Unauthorized request method.", 405);
 }
 
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
+
+if ($data === null) {
+    sendResponse("failed", "Invalid JSON format", 400);
+}
 
 // Correct type
 if ($data["type"] === "Register") {
@@ -85,7 +64,6 @@ if ($data["type"] === "Register") {
     $surname = $data["surname"];
     $email = $data["email"];
     $password = $data["password"];
-    $userType = $data["user_type"];
 
     $regexName = "/^[a-zA-Z]+$/";
     $regexSymbol = "/[^a-zA-Z0-9]+/";
@@ -94,14 +72,11 @@ if ($data["type"] === "Register") {
     $regexlow = "/[a-z]+/";
     $regexEmail = "/^[^\s@]+@[^\s@]+\.[^\s@]+$/i";
 
-    if (empty($firstName) || empty($surname) || empty($email) || empty($password) || empty($userType)) {
-        http_response_code(400);
-        echo json_encode([
-            "status" => "failed", 
-            "data" => "All fields must be filled in before signing up."
-        ]);
-        exit(); 
+    if (empty($firstName) || empty($surname) || empty($email) || empty($password)) {
+
+        sendResponse("failed", "All fields must be filled in before signing up.", 400); 
     }
+
 
     $errors = array();
     $nameCleaned = preg_replace('/\s+/', '', $firstName);
@@ -140,16 +115,12 @@ if ($data["type"] === "Register") {
     }
 
     if (!empty($errors)) {
-        http_response_code(400);
-        echo json_encode([
-            "status" => "failed",
-            "data" => $errors
-        ]);
-        exit();
+
+        sendResponse("failed", $errors, 400);
     }
 
     // Check if the user's email is in the database already
-    $emailquery = "SELECT 1 FROM users WHERE email = ? LIMIT 1";
+    $emailquery = "SELECT 1 FROM User WHERE email = ? LIMIT 1";
     $stmt_email = $database->prepare($emailquery);
     $stmt_email->bind_param("s", $email);
     $stmt_email->execute();
@@ -159,49 +130,33 @@ if ($data["type"] === "Register") {
     $stmt_email->close();
     
     if ($email_exists) {
-        http_response_code(409);
-        echo json_encode([
-            "status" => "failed",
-            "data" => "Unsuccessful, " . $email . " is already taken."
-        ]);
-        exit();
+
+        sendResponse("failed", "Unsuccessful, " . $email . " is already taken.", 400);
     }
 
     // No errors, proceed to registering the user
-    $query = "INSERT INTO users(`name`, `surname`, `email`, `password_hash`, `user_type`, `api_key`, `salt`) VALUES (?, ?, ?, ?, ?, ?, ?);";
+    $query = "INSERT INTO User(`FirstName`, `LastName`, `Email`, `Password`, `Salt`, `ApiKey`, `UserType`) VALUES (?, ?, ?, ?, ?, ?, 'Standard');";
     $stmt = $database->prepare($query);
     if (!$stmt) {
-        http_response_code(500);
-        echo json_encode([
-            "status" => "failed",
-            "data" => "Database error: " . $database->error
-        ]);
-        exit();
+
+        sendResponse("failed", "Database error: " . $database->error, 500);
     }
     
     $salt = bin2hex(random_bytes(16));
     $hash = hash("sha256", $salt . $password);
     $api_key = checkAPI(getRandomString(32), $database);
     
-    $stmt->bind_param("sssssss", $firstName, $surname, $email, $hash, $userType, $api_key, $salt);
+    $stmt->bind_param("ssssss", $firstName, $surname, $email, $hash, $salt, $api_key);
     $stmt->execute();
     $stmt->close();
 
-    http_response_code(200);
-    echo json_encode([
-        "status" => "success",
-        "timestamp" => round(microtime(true) * 1000),
-        "data" => [
-            "apikey" => $api_key
-        ]
-    ]);
-    exit();
-} else {
-    http_response_code(400);
-    echo json_encode([
-        "status" => "failed",
-        "data" => "Incorrect type"
-    ]);
-    exit();
+
+    sendResponse("success", ["apikey" => $api_key]);
+
+} 
+
+else {
+
+    sendResponse("failed", "Incorrect type", 400);
 }
 
