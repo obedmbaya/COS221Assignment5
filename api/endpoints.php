@@ -558,7 +558,7 @@ function getReview($data){
         return;
     }
 
-    $stmt = $conn->prepare("SELECT * FROM Review WHERE ProductUD = ?");
+    $stmt = $conn->prepare("SELECT * FROM Review WHERE ProductID = ?");
     $stmt->bind_param("i", $product_id);
     $stmt->execute();
     $result = $stmt->get_result();
