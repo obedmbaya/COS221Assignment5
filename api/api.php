@@ -7,8 +7,13 @@
     require_once("populatedb.php");
     require_once("getProducts.php");
 
+
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
+
+    if ($data === null) {
+        sendResponse("failed", "Invalid JSON format", 400);
+    }
 
     if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
@@ -45,5 +50,14 @@
             "data" => $results
         ]);
     }
+
+    function sendResponse($status, $data, $httpCode = 200) {
+        http_response_code($httpCode);
+        echo json_encode([
+            "status" => $status,
+            "data" => $data
+        ]);
+        exit;
+    }   
 
 ?>
