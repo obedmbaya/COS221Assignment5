@@ -76,10 +76,10 @@
         }
 
         $conn = Database::instance()->getConnection();
-        $stmt = $conn->prepare("SELECT *
+        $stmt = $conn->prepare("SELECT u.UserID, u.FirstName, u.LastName, u.Email, r.RetailerID, r.RetailerName, r.SiteReference, r.Email
                                 FROM Retailer as r
                                 JOIN User as u ON r.Email = u.Email
-                                WHERE u.UserID = ?");
+                                WHERE u.UserID = ? AND u.UserType = 'Retailer");
         if (!$stmt){
             die("Failed to prepare query: " . $conn->error);
         }
