@@ -84,7 +84,7 @@
             die("Failed to prepare query: " . $conn->error);
         }
 
-        $stmt->bind_param("s", $data["retailerID"]);
+        $stmt->bind_param(s, $data["retailerID"]);
         $stmt->execute();
         $result = $stmt->get_result();
         $retailer = $result->fetch_assoc();
@@ -106,7 +106,7 @@
             "status" => "success",
             "data" => $retailer
         ]);
-        
+
     }
 
     function validateApikey($data){
