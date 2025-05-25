@@ -69,6 +69,17 @@ function getRetailerIdByEmail($email) {
     return $row ? $row['RetailerID'] : null;
 }
 
+function isAdmin($apiKey) {
+    $conn = Database::instance()->getConnection();
+    $stmt = $conn->prepare("SELECT UserType FROM User WHERE ApiKey = ?");
+    $stmt->bind_param("s", $apiKey);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $stmt->close();
+    return ($row && strtolower($row['userType']) === 'admin');
+}
+
 function addProduct($data) {
     $conn = Database::instance()->getConnection();
 
