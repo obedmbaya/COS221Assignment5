@@ -58,22 +58,131 @@ function search($data) {
     sendResponse("success", $products, 200);
 }
 
-function editProduct($data) {
-    if (empty($data["ProductID"]) ||
+function getRetailerIdByEmail($email) {
+    $conn = Database::instance()->getConnection();
+    $stmt = $conn->prepare("SELECT RetailerID FROM Retailer WHERE Email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $stmt->close();
+    return $row ? $row['RetailerID'] : null;
+}
+
+function addProduct($data) {
+    $conn = Database::instance()->getConnection();
+
+    if (
         empty($data["ProductName"]) ||
         empty($data["Description"]) ||
         empty($data["Brand"]) ||
-        empty($data["IMG_Reference"])) {
+        empty($data["IMG_Reference"]) ||
+        empty($data["RetailerEmail"]) ||
+        empty($data["Price"])
+    ) {
         sendResponse("error", "Missing required fields", 400);
         return;
     }
 
+    $retailerId = getRetailerIdByEmail($data["RetailerEmail"]);
+    if (!$retailerId) {
+        sendResponse("error", "Invalid retailer email", 403);
+        return;
+    }
+
+    $query = "INSERT INTO Product (ProductName, Description, Brand, IMG_Reference) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ssss", $data["ProductName"], $data["Description"], $data["Brand"], $data["IMG_Reference"]);
+    $result = $stmt->execute();
+    $stmt->close();
+
+    // getting ProductID by querying for the most recent matching product
+    $query2 = "SELECT ProductID FROM Product WHERE ProductName = ? AND Description = ? AND Brand = ? AND IMG_Reference = ? ORDER BY ProductID DESC LIMIT 1";
+    $stmt2 = $conn->prepare($query2);
+    $stmt2->bind_param("ssss", $data["ProductName"], $data["Description"], $data["Brand"], $data["IMG_Reference"]);
+    $stmt2->execute();
+    $result2 = $stmt2->get_result();
+    $row = $result2->fetch_assoc();
+    $stmt2->close();
+
+    if ($row && $result) {
+        $productId = $row['ProductID'];
+        $stmt3 = $conn->prepare("INSERT INTO ProductPrice (ProductID, RetailerID, Price, URL) VALUES (?, ?, ?, ?)");
+        $url = $data["URL"] ?? null;
+        $stmt3->bind_param("iids", $productId, $retailerId, $data["Price"], $url);
+        $stmt3->execute();
+        $stmt3->close();
+        sendResponse("success", "Product successfully added", 201);
+    } else {
+        sendResponse("error", "Failed to add product", 500);
+    }
+}
+
+function editProduct($data) {
     $conn = Database::instance()->getConnection();
+
+    if (
+        empty($data["ProductID"]) ||
+        empty($data["ProductName"]) ||
+        empty($data["Description"]) ||
+        empty($data["Brand"]) ||
+        empty($data["IMG_Reference"]) ||
+        empty($data["RetailerEmail"])
+    ) {
+        sendResponse("error", "Missing required fields", 400);
+        return;
+    }
+
+    $retailerId = getRetailerIdByEmail($data["RetailerEmail"]);
+    if (!$retailerId) {
+        sendResponse("error", "Invalid retailer email", 403);
+        return;
+    }
+
+    // checking ownership of product with retailer
+    $stmt = $conn->prepare("SELECT 1 FROM ProductPrice WHERE ProductID = ? AND RetailerID = ?");
+    $stmt->bind_param("ii", $data["ProductID"], $retailerId);
+    $stmt->execute();
+    $stmt->store_result();
+    if ($stmt->num_rows === 0) {
+        $stmt->close();
+        sendResponse("error", "Unauthorized: You do not own this product", 403);
+        return;
+    }
+    $stmt->close();
+
+    // update product
     $query = "UPDATE Product SET ProductName = ?, Description = ?, Brand = ?, IMG_Reference = ? WHERE ProductID = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("ssssi", $data["ProductName"], $data["Description"], $data["Brand"], $data["IMG_Reference"], $data["ProductID"]);
     $result = $stmt->execute();
     $stmt->close();
+
+    // optionally update price and URL if provided, we can remove it if not needed
+    if (!empty($data["Price"]) || !empty($data["URL"])) {
+        $query2 = "UPDATE ProductPrice SET ";
+        $params = [];
+        $types = "";
+        if (!empty($data["Price"])) {
+            $query2 .= "Price = ?";
+            $params[] = $data["Price"];
+            $types .= "d"; // assuming Price is a decimal
+        }
+        if (!empty($data["URL"])) {
+            if (!empty($params)) $query2 .= ", ";
+            $query2 .= "URL = ?";
+            $params[] = $data["URL"];
+            $types .= "s";
+        }
+        $query2 .= " WHERE ProductID = ? AND RetailerID = ?";
+        $params[] = $data["ProductID"];
+        $params[] = $retailerId;
+        $types .= "ii";
+        $stmt2 = $conn->prepare($query2);
+        $stmt2->bind_param($types, ...$params);
+        $stmt2->execute();
+        $stmt2->close();
+    }
 
     if ($result) {
         sendResponse("success", "Product successfully updated", 200);
@@ -83,83 +192,53 @@ function editProduct($data) {
 }
 
 function deleteProduct($data) {
-    if (empty($data["ProductID"])) {
-        sendResponse("error", "Missing ProductID", 400);
+    $conn = Database::instance()->getConnection();
+
+    if (empty($data["ProductID"]) || empty($data["RetailerEmail"])) {
+        sendResponse("error", "Missing ProductID or RetailerEmail", 400);
         return;
     }
 
-    $conn = Database::instance()->getConnection();
-    $query = "DELETE FROM Product WHERE ProductID = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $data["ProductID"]);
-    $result = $stmt->execute();
-    $stmt->close();
-
-    if ($result) {
-        sendResponse("success", "Product successfully deleted", 200);
-    } else {
-        sendResponse("error", "Failed to delete product", 500);
-    }
-}
-
-function viewProduct($data) {
-    if (empty($data["ProductID"])) {
-        sendResponse("error", "Missing ProductID", 400);
+    $retailerId = getRetailerIdByEmail($data["RetailerEmail"]);
+    if (!$retailerId) {
+        sendResponse("error", "Invalid retailer email", 403);
         return;
     }
 
-    $conn = Database::instance()->getConnection();
-    $product_id = $data["ProductID"];
-    $query = "SELECT p.ProductID, p.ProductName, p.Description, p.Brand, pp.Price, r.RetailerName
-              FROM Product p
-              JOIN ProductPrice pp ON p.ProductID = pp.ProductID
-              JOIN Retailer r ON pp.RetailerID = r.RetailerID
-              WHERE p.ProductID = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $product_id);
+    // checking ownership of product with retailer
+    $stmt = $conn->prepare("SELECT 1 FROM ProductPrice WHERE ProductID = ? AND RetailerID = ?");
+    $stmt->bind_param("ii", $data["ProductID"], $retailerId);
     $stmt->execute();
-    $stmtResult = $stmt->get_result();
-    $product = $stmtResult->fetch_assoc();
-    $stmt->close();
-
-    if ($product) {
-        sendResponse("success", $product, 200);
-    } else {
-        sendResponse("error", "Product not found", 404);
-    }
-}
-
-function addProduct($data) {
-    $conn = Database::instance()->getConnection();
-
-    if (empty($data["ProductName"]) || empty($data["Description"]) || empty($data["Brand"]) || empty($data["IMG_Reference"])) {
-        sendResponse("error", "Missing required fields", 400);
+    $stmt->store_result();
+    if ($stmt->num_rows === 0) {
+        $stmt->close();
+        sendResponse("error", "Unauthorized: You do not own this product", 403);
         return;
     }
-
-    $query = "INSERT INTO Product (ProductName, Description, Brand, IMG_Reference) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($query);
-    if (!$stmt) {
-        sendResponse("error", "Database error: " . $conn->error, 500);
-        return;
-    }
-
-    $stmt->bind_param(
-        "ssss",
-        $data["ProductName"],
-        $data["Description"],
-        $data["Brand"],
-        $data["IMG_Reference"]
-    );
-
-    $result = $stmt->execute();
     $stmt->close();
 
-    if ($result) {
-        sendResponse("success", "Product successfully added", 201);
-    } else {
-        sendResponse("error", "Failed to add product", 500);
+    // delete from ProductPrice first. this way we can maintain referential integrity
+    $stmt2 = $conn->prepare("DELETE FROM ProductPrice WHERE ProductID = ? AND RetailerID = ?");
+    $stmt2->bind_param("ii", $data["ProductID"], $retailerId);
+    $stmt2->execute();
+    $stmt2->close();
+
+    // delete product (if no other retailers are linked to it)
+    $stmt3 = $conn->prepare("SELECT COUNT(*) as cnt FROM ProductPrice WHERE ProductID = ?");
+    $stmt3->bind_param("i", $data["ProductID"]);
+    $stmt3->execute();
+    $result = $stmt3->get_result();
+    $row = $result->fetch_assoc();
+    $stmt3->close();
+
+    if ($row['cnt'] == 0) {
+        $stmt4 = $conn->prepare("DELETE FROM Product WHERE ProductID = ?");
+        $stmt4->bind_param("i", $data["ProductID"]);
+        $stmt4->execute();
+        $stmt4->close();
     }
+
+    sendResponse("success", "Product successfully deleted", 200);
 }
 
 // --- CONTACT ENDPOINT ---
