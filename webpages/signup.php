@@ -6,87 +6,63 @@ include 'header.php';
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>CompareIt - Signup</title> 
+<title>CompareIt - Sign Up</title> 
+<link rel="stylesheet" href="css/signup.css">
 
-<script src ="https://cdn.tailwindcss.com"></script>
- <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'mont': ['Arial', 'sans-serif'],
-                        'playfair': ['"Playfair Display"', 'serif'],
-                    },
-                    colors: {
-                        'brand': '#4c4faf',
-                        'brand-dark': '#3f3e8e',
-                    }
-                }
-            }
-        }
-    </script>
+
 </head>
-<style>
-    body,html{
-        font-family:Arial, sans-serif;
-    }
-
-    
-</style>
 
 
-<body class="font-mont flex flex-col min-h-screen bg-gray-50">
-    <main class="flex-grow py-24">
-        <div class="container mx-auto px-4">
-            <div class="max-w-md mx-auto h-auto">
-                <div class="bg-white rounded-lg shadow-lg p-8 my-8">
-                    <div class="text-center mb-8">
-                        <h2 class="text-2xl font-bold mb-2">Create Account</h2>
-                        <p class="text-gray-600">Join CompareIt to start comparing prices</p>
-                    </div>
+<body>
+<div class="main-content">
+<div class="signup-container">
+    <div class="logo">
+        <h1>CompareIt</h1>
+        <p>Join the future of price comparison</p>
+
+</div>
+
+<div class="success-message" id="successMessage">
+    <strong>Account created successfully!</strong>
+</div>
+
+
+
                                 
                                 
                           
                             
 
-                            <form action= "process_signup.php" method="POST" id="signup-form">
+                            <form action= "process_signup.php" method="POST" id="signup-form" enctype="multipart/form-data">
                                                                
                             <!-- Account Type Selection -->
 
-                        <div class="mb-6">
-                            <label class="block mb-3 text-sm font medium text-gray-700">Account Type</label>
-                            <div class="grid grid-cols-1 gap-3">
-                                <label class="relative flex items-center p-4 border-2 border-gray-200 rounding-lg cursor-pointer hover:border-brand transition-colors account-type-option">
-                                    <input type="radio" name="account_type" value="customer" class="sr-only account-type-radio" checked>
-                                    <div class="flex items-center space-x-3">
-                                        <div class="radio-custom w-4 h-4 border-2 border-gray-300 rounded-full flex items-center justify-center">
-                                            <div class="w-2 h-2 bg-brand rounded-full hidden radio-dot"></div>
-                            </div>
-                            <div>
-                                <div class="font-medium text-gray-900">Customer</div>
-                                <div class="text-sm text-gray-500">Browse and compare product prices</div>
+                        <div class="account-type-selector">
+                        <h3>Choose Your Account Type</h3>
+                        <div class="account-types">
+                                <div class="account-type-option">
+                                    <input type="radio" id="customer"name="account_type" value="customer" checked>
+                                    <label for="customer" class="account-type-card">
+                                        <span class="icon">👤</span>
+                                        <h4>Customer</h4>
+                                        <p>Browse and compare product prices</p>
+                                        </label>
+                                </div>
+
+                         <div class="account-type-option">
+                            
+                                    <input type="radio" id="retailer"name="account_type" value="retailer">
+                                    <label for="retailer" class="account-type-card">
+                                        <span class="icon">🏪</span>
+                                        <h4>Retailer</h4>
+                                        <p>List your products and manage inventory</p>
+                                        </label>
+                                </div>
                             </div>
                         </div>
-                    </label>
 
-                    <!-- Retailer selection -->
 
-                      <label class="relative flex items-center p-4 border-2 border-gray-200 rounding-lg cursor-pointer hover:border-brand transition-colors account-type-option">
-                                    <input type="radio" name="account_type" value="Retailer" class="sr-only account-type-radio">
-                                    <div class="flex items-center space-x-3">
-                                        <div class="radio-custom w-4 h-4 border-2 border-gray-300 rounded-full flex items-center justify-center">
-                                            <div class="w-2 h-2 bg-brand rounded-full hidden radio-dot"></div>
-                            </div>
-                            <div>
-                                <div class="font-medium text-gray-900">Retailer</div>
-                                <div class="text-sm text-gray-500">List your products and manage inventory</div>
-                            </div>
-                        </div>
-                    </label>
-
-                   
-                    </div>
-                </div>
+                        
 
 
 
@@ -94,60 +70,89 @@ include 'header.php';
 
 
                                 
-                                <div class="mb-6">
-                                    <label for="fullname" class="block mb-2 text-sm font-medium text-gray-700">Full Name</label>
-                                    <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand focus:border-brand">
+                                <div class="form-group">
+                                    <label for="fullname">Full Name</label>
+                                    <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
 
                                     </div>
 
                                     <!-- Business Name Field -->
 
-                                <div class="mb-6 hidden" id="business-name-field">
-                                    <label for="business_name" class="block mb-2 text-sm font-medium text-gray-700">Business Name</label>
-                                    <input type="text" id="business_name" name="business_name" placeholder="Enter your business name" 
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-brand focus:border-brand">
+                                <div class="form-group retailer-fields" id="business-name-field">
+                                    <label for="business_name">Business Name</label>
+                                    <input type="text" id="business_name" name="business_name" placeholder="Enter your business name">
+
+                                    </div>
+
+                                    <div class="form-group retailer-fields" id="registration-number-field">
+                                    <label for="registration_number">Business Registration Number</label>
+                                    <input type="text" id="registration_number" name="registration_number" placeholder="Enter your business registration number">
 
                                     </div>
 
 
                                     
-                                <div class="mb-8">
-                                    <label for="email" class="block mb-2 text-sm font-medium text-gray-700">Email</label>
-                                    <input type="email" id="email" name="email" placeholder="Enter your email" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-brand focus:border-brand">
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
 
 
                                 </div>
-                                <div class="mb-8">
-                                    <label for="password" class="block mb-2 text-sm font-medium text-gray-700">Password</label>
-                                    <input type="password" id="password" name="password" placeholder="Create a password" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-brand focus:border-brand">
-                                    <p class="mt-1 text-sm text-gray-500">Password must be at least 8 characters long and include a number and special character</p>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                    <label for="password" >Password</label>
+                                    <input type="password" id="password" name="password" placeholder="Create a password" required>
+                                    <div class="password-requirements">
+                                   Password must be at least 8 characters long and include a number and special character
+                                </div>
                                 </div>
 
-                                <div class="mb-8">
-                                    <label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-700">Confirm Password</label>
-                                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-brand focus:border-brand">
+                                <div class="form-group">
+                                    <label for="confirm-password">Confirm Password</label>
+                                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+
 
                                     </div>
+                                </div>
+
+                                <div class="retailer-fields" id="retailer-verification-section">
+                                    <div class="verification-section">
+                                        <h4>
+                                            <span>🔒</span>
+                                            Retailer Verification required
+                                        </h4>
+                                        <p>
+                                            To maintain platform integrity, we require verification documents for retailer accounts.
+                                            Please upload one of the following: 
+                                        </p>
+                                        <p><strong>Business License or Registration Certificate</strong></p>
+
+                                        <div class="file-upload-area" id="fileUploadArea">
+                                            <div class="upload-text">Click to upload document</div>
+                                            <div class="upload-subtext">(PDF, JPG, PNG - Max 5MB)</div>
+                                            <input type="file" id="verification_document" name="verification_document"
+                                              accept=".pdf,.jpg,.jpeg,.png" style="display:none;">
+
+                                        </div>
+
+                                        <div class="verification-status" id="verificationStatus">
+                                            Document uploaded successfully. Verification pending.
+                                    </div>
+                                </div>
+                            </div>
+
                            
-                                <button type="submit" 
-                                class="w-full bg-brand text-white py-3 px-4 rounded-md hover:bg-brand-dark transition duration-200">
+                                <button type="submit"  class="submit-btn" id="submitBtn">
                                 Create Account
                             </button>
                             </form>
-                            <div class="text-center mt-8">
+                            <div class="login-link">
                             <!-- linking login page -->
 
-                            <p class="text-sm text-gray-600">Already have an account? <a href="login.php"  class="text-brand font-medium">Log in</a></p>
+                                Already have an account? <a href="login.php" >Log in</a>
                             </div>
                         </div>
                     </div>
-                </div>
-            </main>
-
             
 
 
