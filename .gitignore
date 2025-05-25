@@ -3,5 +3,3 @@
 
 #Ignore Composer dependancies
 /vendor/
-
-api/config.php
