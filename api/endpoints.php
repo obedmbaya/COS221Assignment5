@@ -71,23 +71,23 @@ function getRetailerIdByEmail($email) {
 
 function isAdmin($apiKey) {
     $conn = Database::instance()->getConnection();
-    $stmt = $conn->prepare("SELECT user_type FROM users WHERE api_key = ?");
+    $stmt = $conn->prepare("SELECT UserType FROM User WHERE ApiKey = ?");
     $stmt->bind_param("s", $apiKey);
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     $stmt->close();
-    return ($row && strtolower($row['user_type']) === 'admin');
+    return ($row && strtolower($row['UserType']) === 'retailer');
 }
 
 function addProduct($data) {
     $conn = Database::instance()->getConnection();
 
-    if (empty($data["apiKey"])) {
+    if (empty($data["ApiKey"])) {
         sendResponse("error", "Missing API key", 403);
         return;
     }
-    if (!isAdmin($data["apiKey"])) {
+    if (!isAdmin($data["ApiKey"])) {
         sendResponse("error", "Unauthorized: Only admins can add products", 403);
         return;
     }
@@ -223,11 +223,11 @@ function editProduct($data) {
 function deleteProduct($data) {
     $conn = Database::instance()->getConnection();
 
-    if (empty($data["apiKey"])) {
+    if (empty($data["ApiKey"])) {
         sendResponse("error", "Missing API key", 403);
         return;
     }
-    if (!isAdmin($data["apiKey"])) {
+    if (!isAdmin($data["ApiKey"])) {
         sendResponse("error", "Unauthorized: Only admins can delete products", 403);
         return;
     }
@@ -326,7 +326,7 @@ function validateApikey($data){
 
     $output = true;
 
-    if (!isset($data["apikey"])){
+    if (!isset($data["ApiKey"])){
 
         $output = false;
 
@@ -372,16 +372,16 @@ function saveContacts($data) {
 
     $email = $data["email"] ?? null;
     $phone = $data["phone"] ?? null;
-    $apikey = $data["apikey"] ?? null;
+    $apikey = $data["ApiKey"] ?? null;
     $message = $data["message"] ?? null;
 
-    if (empty($email) || empty($phone) || empty($apikey) || empty($message)) {
+    if (empty($email) || empty($phone) || empty($message)) {
         sendResponse("error", "Missing required fields", 401);
         return;
     }
 
     // Validate API key and get user info
-    $stmt = $db->prepare("SELECT Firstname, Surname FROM users WHERE apikey=?");
+    $stmt = $db->prepare("SELECT FirstName, LastName FROM User WHERE ApiKey=?");
     $stmt->bind_param("s", $apikey);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -393,7 +393,7 @@ function saveContacts($data) {
         return;
     }
 
-    $firstname = $user["Firstname"];
+    $firstname = $user["Firstame"];
     $surname = $user["Surname"];
 
     $insert = $db->prepare("INSERT INTO contacts (Firstname, Surname, email, phone, message) VALUES (?, ?, ?, ?, ?)");
