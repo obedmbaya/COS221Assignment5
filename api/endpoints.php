@@ -203,7 +203,6 @@ function compare($data){
         "data" => $products
     ]);
 
-
 }
 
 function validateApikey($data){
