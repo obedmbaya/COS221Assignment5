@@ -879,7 +879,7 @@ tr:hover {
 
 /* footer section */
 .main-footer {
-    background-color: black;
+    background-color: #4c4faf;
     color: #fff;
     padding: 60px 0 30px;
 }
@@ -933,7 +933,7 @@ tr:hover {
 }
 
 .footer-links a:hover {
-    color: #4c4faf;
+    color: white;
 }
 
 .social-icons {
@@ -954,7 +954,7 @@ tr:hover {
 }
 
 .social-icon:hover {
-    background-color: #4c4faf;
+    background-color: #3f3e8e;
     transform: translateY(-3px);
 }
 
@@ -988,7 +988,7 @@ tr:hover {
 }
 
 .copyright-links a:hover {
-    color: #4c4faf;
+    color: white;
 }
 
 
