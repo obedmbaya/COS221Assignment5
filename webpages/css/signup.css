@@ -3,12 +3,10 @@
         padding: 0;
         box-sizing: border-box;
     }
-    body{
-        font-family:Arial, sans-serif;
-        background: white;
-        min-height: 100vh;
-       padding: 20px 0;
-    }
+
+    body {
+    background-color: #fff;
+}
 
     .signup-container {
         background: white;
@@ -141,8 +139,8 @@
     }
 
     input[type="text"],
-    input[type="email"],
-    input[type="password"],
+    .signup-container input[type="email"],
+    .signup-container input[type="password"],
     input[type="tel"],
     input[type="url"],
     input[type="file"],
