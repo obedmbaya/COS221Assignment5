@@ -646,6 +646,159 @@ function deleteReview($data){
 
     $stmt->close();
 }
+
+//---- PRODUCT PRICE -----
+function addProductPrice($data){
+    $conn = Database::instance()->getConnection();
+
+    if (empty($data["ApiKey"])) {
+        sendResponse("error", "Missing API key", 403);
+        return;
+    }
+    if (!isAdmin($data["ApiKey"])) {
+        sendResponse("error", "Unauthorized: Only admins can add product prices", 403);
+        return;
+    }
+
+    $product_id = $data["ProductID"] ?? null;
+    $retailer_id = $data["RetailerID"] ?? null;
+    $price = $data["Price"] ?? null;
+    $url = $data["URL"] ?? null;
+
+    if (!$product_id || !$retailer_id || !$price) {
+        sendResponse("error", "Missing required fields: ProductID, RetailerID, Price", 400);
+        return;
+    }
+
+    // check if the product and the retailer exist
+    $stmt = $conn->prepare("SELECT 1 FROM Product WHERE ProductID = ?");
+    $stmt->bind_param("i", $product_id);
+    $stmt->execute();
+    $stmt->store_result();
+    if ($stmt->num_rows === 0) {
+        $stmt->close();
+        sendResponse("error", "Invalid ProductID", 404);
+        return;
+    }
+
+    $stmt = $conn->prepare("SELECT 1 FROM Retailer WHERE RetailerID = ?");
+    $stmt->bind_param("i", $retailer_id);
+    $stmt->execute();
+    $stmt->store_result();
+    if ($stmt->num_rows === 0) {
+        $stmt->close();
+        sendResponse("error", "Invalid RetailerID", 400);
+        return;
+    }
+
+    // add product price
+    $stmt = $conn->prepare("INSERT INTO ProductPrice (ProductID, RetailerID, Price, URL) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("iids", $product_id, $retailer_id, $price, $url);
+    if ($stmt->execute()) {
+        $stmt->close();
+        sendResponse("success", "Product price added successfully", 200);
+    } else {
+        $stmt->close();
+        sendResponse("error", "Failed to add product price", 500);
+    }
+
+    $stmt->close();
+
+}
+
+function editProductPrice($data){
+    $conn = Database::instance()::getConnection();
+
+    if (empty($data["ApiKey"])) {
+        sendResponse("error", "Missing API key", 400);
+        return;
+    }
+
+    if (!isAdmin($data["ApiKey"])) {
+        sendResponse("error", "Unauthorized: Only admins can edit product prices", 403);
+        return;
+    }
+
+    $price_id = $data["PriceID"] ?? null;
+    $price = $data["Price"] ?? null;
+    $url = $data["URL"] ?? null;
+
+    if (!$price_id || !$price === null) {
+        sendResponse("error", "Missing required fields: PriceID, Price", 400);
+        return;
+    }
+
+    // determine if the price exists
+    $stmt = $conn->prepare("SELECT 1 FROM ProductPrice WHERE PriceID = ?");
+    $stmt->bind_param("i", $price_id);
+    $stmt->execute();
+    $stmt->store_result();
+    if ($stmt->num_rows === 0) {
+        $stmt->close();
+        sendResponse("error", "Invalid PriceID", 404);
+        return;
+    }
+    $stmt->close();
+
+    // now we can update the price
+    $query = "UPDATE ProductPrice SET Price = ?, URL = ? WHERE PriceID = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("dsi", $price, $url, $price_id);
+    if ($stmt->execute()) {
+        $stmt->close();
+        sendResponse("success", "Product price updated successfully", 200);
+    } else {
+        $stmt->close();
+        sendResponse("error", "Failed to update product price", 500);
+    }
+
+    $stmt->close();
+}
+
+function deleteProductPrice($data){
+    $conn = Database::instance()->getConnection();
+
+    if (empty($data["ApiKey"])) {
+        sendResponse("error", "Missing API key", 400);
+        return;
+    }
+
+    if (!isAdmin($data["ApiKey"])) {
+        sendResponse("error", "Unauthorized: Only admins can delete product prices", 403);
+        return;
+    }
+
+    $price_id = $data["PriceID"] ?? null;
+
+    if (!$price_id) {
+        sendResponse("error", "Missing required field: PriceID", 400);
+        return;
+    }
+
+    // determine if the price exists
+    $stmt = $conn->prepare("SELECT 1 FROM ProductPrice WHERE PriceID = ?");
+    $stmt->bind_param("i", $price_id);
+    $stmt->execute();
+    $stmt->store_result();
+    if ($stmt->num_rows === 0) {
+        $stmt->close();
+        sendResponse("error", "Invalid PriceID", 404);
+        return;
+    }
+    $stmt->close();
+
+    // now we can delete the price
+    $stmt = $conn->prepare("DELETE FROM ProductPrice WHERE PriceID = ?");
+    $stmt->bind_param("i", $price_id);
+    if ($stmt->execute()) {
+        $stmt->close();
+        sendResponse("success", "Product price deleted successfully", 200);
+    } else {
+        $stmt->close();
+        sendResponse("error", "Failed to delete product price", 500);
+    }
+}
+
 // --- RESPONSE UTILITY ---
 function sendResponse($status, $data, $httpCode = 200) {
     http_response_code($httpCode);
