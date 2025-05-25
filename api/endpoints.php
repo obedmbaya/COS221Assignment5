@@ -406,7 +406,7 @@ function updateReview($data){
         return;
     }
 
-    $stmt = $conn->prepare("UPDATE Review SET Rating = ?, Comment = ? WHERE ReviewID = ?")
+    $stmt = $conn->prepare("UPDATE Review SET Rating = ?, Comment = ? WHERE ReviewID = ?");
     $stmt->bind_param("isi", $rating, $comment, $review_id);
     $result = $stmt->execute();
 
