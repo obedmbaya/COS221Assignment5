@@ -1,4 +1,4 @@
- *{
+ .signup-page *{
         margin:0;
         padding: 0;
         box-sizing: border-box;
@@ -138,7 +138,7 @@
 
     }
 
-    input[type="text"],
+     .signup-page input[type="text"],
     .signup-container input[type="email"],
     .signup-container input[type="password"],
     input[type="tel"],
@@ -332,6 +332,10 @@
 
         }
 
+        .main-content{
+            padding: 16px;
+        }
+
         .account-types {
             flex-direction: column;
         }
@@ -339,5 +343,11 @@
         .form-row{
             flex-direction: column;
             gap: 0;
+        }
+
+        .form-options{
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
         }
     }
