@@ -71,17 +71,26 @@ function getRetailerIdByEmail($email) {
 
 function isAdmin($apiKey) {
     $conn = Database::instance()->getConnection();
-    $stmt = $conn->prepare("SELECT UserType FROM User WHERE ApiKey = ?");
+    $stmt = $conn->prepare("SELECT user_type FROM users WHERE api_key = ?");
     $stmt->bind_param("s", $apiKey);
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     $stmt->close();
-    return ($row && strtolower($row['userType']) === 'admin');
+    return ($row && strtolower($row['user_type']) === 'admin');
 }
 
 function addProduct($data) {
     $conn = Database::instance()->getConnection();
+
+    if (empty($data["apiKey"])) {
+        sendResponse("error", "Missing API key", 403);
+        return;
+    }
+    if (!isAdmin($data["apiKey"])) {
+        sendResponse("error", "Unauthorized: Only admins can add products", 403);
+        return;
+    }
 
     if (
         empty($data["ProductName"]) ||
@@ -131,6 +140,15 @@ function addProduct($data) {
 
 function editProduct($data) {
     $conn = Database::instance()->getConnection();
+
+    if (empty($data["apiKey"])) {
+        sendResponse("error", "Missing API key", 403);
+        return;
+    }
+    if (!isAdmin($data["apiKey"])) {
+        sendResponse("error", "Unauthorized: Only admins can edit products", 403);
+        return;
+    }
 
     if (
         empty($data["ProductID"]) ||
@@ -204,6 +222,15 @@ function editProduct($data) {
 
 function deleteProduct($data) {
     $conn = Database::instance()->getConnection();
+
+    if (empty($data["apiKey"])) {
+        sendResponse("error", "Missing API key", 403);
+        return;
+    }
+    if (!isAdmin($data["apiKey"])) {
+        sendResponse("error", "Unauthorized: Only admins can delete products", 403);
+        return;
+    }
 
     if (empty($data["ProductID"]) || empty($data["RetailerEmail"])) {
         sendResponse("error", "Missing ProductID or RetailerEmail", 400);
