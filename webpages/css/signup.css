@@ -1,14 +1,12 @@
- *{
+ .signup-page *{
         margin:0;
         padding: 0;
         box-sizing: border-box;
     }
-    body{
-        font-family:Arial, sans-serif;
-        background: white;
-        min-height: 100vh;
-       padding: 20px 0;
-    }
+
+    body {
+    background-color: #fff;
+}
 
     .signup-container {
         background: white;
@@ -140,9 +138,9 @@
 
     }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
+     .signup-page input[type="text"],
+    .signup-container input[type="email"],
+    .signup-container input[type="password"],
     input[type="tel"],
     input[type="url"],
     input[type="file"],
@@ -334,6 +332,10 @@
 
         }
 
+        .main-content{
+            padding: 16px;
+        }
+
         .account-types {
             flex-direction: column;
         }
@@ -341,5 +343,11 @@
         .form-row{
             flex-direction: column;
             gap: 0;
+        }
+
+        .form-options{
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
         }
     }
