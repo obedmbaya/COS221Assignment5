@@ -1,5 +1,4 @@
 <?php
-<?php
 
 require_once("config.php");
 
@@ -127,6 +126,39 @@ function viewProduct($data) {
         sendResponse("success", $product, 200);
     } else {
         sendResponse("error", "Product not found", 404);
+    }
+}
+
+function addProduct($data) {
+    $conn = Database::instance()->getConnection();
+
+    if (empty($data["ProductName"]) || empty($data["Description"]) || empty($data["Brand"]) || empty($data["IMG_Reference"])) {
+        sendResponse("error", "Missing required fields", 400);
+        return;
+    }
+
+    $query = "INSERT INTO Product (ProductName, Description, Brand, IMG_Reference) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($query);
+    if (!$stmt) {
+        sendResponse("error", "Database error: " . $conn->error, 500);
+        return;
+    }
+
+    $stmt->bind_param(
+        "ssss",
+        $data["ProductName"],
+        $data["Description"],
+        $data["Brand"],
+        $data["IMG_Reference"]
+    );
+
+    $result = $stmt->execute();
+    $stmt->close();
+
+    if ($result) {
+        sendResponse("success", "Product successfully added", 201);
+    } else {
+        sendResponse("error", "Failed to add product", 500);
     }
 }
 
