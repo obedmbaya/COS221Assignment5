@@ -1,37 +1,53 @@
     document.addEventListener("DOMContentLoaded", function () {
 
       // account type selection functionality
-      const accountTypeRadios = document.querySelectorAll('.account-type-radio');
-      const businessNameField = document.getElementById('business-name-field');
+      const accountTypeRadios = document.querySelectorAll('input[name="account_type"]');
+      const retailerFields = document.querySelectorAll('.retailer-fields');
       const businessNameInput = document.getElementById('business_name');
+      const registrationNumberInput = document.getElementById('registration_number');
+      const verificationDocument = document.getElementById('verification_document');
+
+
 
       function updateAccountType(){
-        const selectedType = document.querySelector('.account-type-radio:checked').value;
+        const selectedType = document.querySelector('input[name="account_type"]:checked').value;
 
         accountTypeRadios.forEach(radio => {
-          const option = radio.closest('.account-type-option');
-           const radioDot = option.querySelector('.radio-dot');
+          const label = radio.nextElementSibling;
+           
 
            if(radio.checked){
-            option.classList.add('border-brand', 'bg-blue-50');
-            option.classList.remove('border-gray-200');
-            radioDot.classList.remove('hidden');
+            label.classList.add('selected');
            }else{
-             option.classList.remove('border-brand', 'bg-blue-50');
-            option.classList.add('border-gray-200');
-            radioDot.classList.add('hidden');
+            label.classList.remove('selected');
             
            }
 
         });
-        //show/hide business name field for retailers
-        if(selectedType === 'Retailer'){
-          businessNameField.classList.remove('hidden');
+        //show/hide fields meant  for retailers
+        if(selectedType === 'retailer'){
+          retailerFields.forEach(field=>{
+            field.style.display = 'block';
+
+          });
+        
           businessNameInput.required = true;
+          registrationNumberInput.required = true;
+          verificationDocument.required = true;
         }else{
-          businessNameField.classList.add('hidden');
+         retailerFields.forEach(field=>{
+            field.style.display = 'none';
+
+          });
+        
           businessNameInput.required = false;
-          businessNameInput.value = '';
+          registrationNumberInput.required = false;
+          verificationDocument.required = false;
+
+          businessNameInput.value='';
+          registrationNumberInput.value='';
+          verificationDocument.value='';
+
 
         }
       }
@@ -41,6 +57,41 @@
       });
       //account type initialized on page load
       updateAccountType();
+
+      const fileUploadArea = document.getElementById('fileUploadArea');
+      const verificationStatus = document.getElementById('verificationStatus');
+
+      if(fileUploadArea){
+        fileUploadArea.addEventListener('click', function(){
+          verificationDocument.click();
+        } );
+
+        verificationDocument.addEventListener('change', function(){
+          const file = this.files[0];
+          if(file) {
+            if(file.size > 5*1024*1024){
+              alert('File size must be less than 5MB');
+              this.value= '';
+              return;
+            }
+
+            const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+            if(!allowedTypes.includes(file.type)){
+              alert('Please upload a PDF, JPG, or PNG file');
+              this.value='';
+              return;
+            }
+
+            fileUploadArea.querySelector('.upload-text').textContent = file.name;
+            fileUploadArea.querySelector('.upload-subtext').textContent = 'File selected - Click to change';
+
+            verificationStatus.style.display = 'block';
+            verificationStatus.textContent='Document uploaded successfully. Verification pending.'
+
+          }
+        });
+      }
+
         // form submission logic
       document.getElementById("registerForm").addEventListener("submit", function (event) {
         event.preventDefault();
