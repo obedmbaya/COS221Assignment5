@@ -2,7 +2,8 @@
 require_once(__DIR__ . "/api/config.php");
 // require_once("populatedb.php");
 // require_once("getProducts.php");
-require_once "endpointsauthentication.php"; // <-- Add this line
+require_once "endpointsauthentication.php";
+require_once "endpoints.php";
 
 // Utility function for sending JSON responses
 function sendResponse($status, $data, $httpCode = 200) {
