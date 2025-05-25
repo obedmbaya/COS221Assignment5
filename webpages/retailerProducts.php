@@ -5,7 +5,7 @@
 ?>
     <div class="container">
         <div class="header">
-        <a href="adminDash.php" class="back-btn">← Back to Dashboard</a>
+        <a href="retailerDash.php" class="back-btn">← Back to Dashboard</a>
             <h1>Your Products</h1>
             <a href="addProductForm.php"><button class="btn btn-primary" id="addProductBtn">+ Add Product</button></a>
             

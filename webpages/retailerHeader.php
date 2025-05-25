@@ -9,8 +9,8 @@
     <meta name="description" content="Admin Dashboard for CompareIt">
     <title><?php echo isset($page_title) ? $page_title : 'Admin Dashboard'; ?></title>
     <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/adminSidebar.css">
-    <!-- <link rel="stylesheet" href="css/adminDash.css"> -->
+    <link rel="stylesheet" href="css/sidebar.css">
+    
     <?php
     if (isset($additional_css)) {
         echo $additional_css;

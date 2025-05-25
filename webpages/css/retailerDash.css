@@ -6,24 +6,18 @@
     --border-gray: #e0e0e0;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
-}
-
 body {
     padding-top: 70px; /* Match your header height */
     background-color: var(--soft-white);
     color: var(--text-gray);
     font-family: 'Inter', sans-serif;
+    margin-left: 0; /* Remove sidebar margin */
 }
 
 .admin-content-wrapper {
     max-width: 1200px;
-    margin: 0 auto;
-    /* padding: 20px; */
+    margin: 0 auto; /* This centers the content */
+    padding: 20px; /* Simplified padding */
 }
 
 .dashboard-card {
@@ -33,6 +27,7 @@ body {
     width: 100%;
     overflow: hidden;
 }
+
 
 .dashboard-header {
     background-color: var(--primary-blue);

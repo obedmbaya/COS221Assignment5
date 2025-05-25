@@ -1,7 +1,7 @@
 <?php
     $additional_css = '<link rel="stylesheet" href="css/retailerDash.css">'; 
     $page_title = "CompareIt | Admin Dashboard";
-    include_once 'adminHeader.php';
+    include_once 'header.php';
 ?>
 
 <!-- Main Content -->
@@ -39,7 +39,7 @@
         </div>
         
         <div class="dashboard-actions">
-            <a href="adminProducts.php" class="btn btn-primary">Manage Products</a>            <a href="#" class="logout-link">Logout</a>
+            <a href="retailerProducts.php" class="btn btn-primary">Manage Products</a>            <a href="#" class="logout-link">Logout</a>
         </div>
     </div>
 </div>

@@ -11,7 +11,7 @@
     <div class="form-container">
         <div class="form-header">
             <h1>Edit Product</h1>
-            <button class="btn btn-outline" onclick="window.location.href='retailerProducts.html'">← Back to Products</button>
+            <button class="btn btn-outline" onclick="window.location.href='retailerProducts.php'">← Back to Products</button>
         </div>
         
         <form id="productForm">
@@ -87,7 +87,7 @@
             
             <!-- Form Footer with Buttons -->
             <div class="form-footer">
-                <button type="button" class="btn btn-outline" onclick="window.location.href='retailerProducts.html'">Cancel</button>
+                <button type="button" class="btn btn-outline" onclick="window.location.href='retailerProducts.php'">Cancel</button>
                 <button type="submit" class="btn btn-primary">Save Changes</button>
             </div>
         </form>
