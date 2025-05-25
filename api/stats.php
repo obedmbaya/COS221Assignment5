@@ -34,15 +34,6 @@
 
     function handleTopRated($data){
 
-        // if (!isset($data["type"])){
-        //     header("HTTP/1.1 400 Bad Request");
-        //     header("Content-type: application/json");
-        //     echo json_encode([
-        //         "status" => "failed",
-        //         "data" => "Please provide a type"
-        //     ]);
-        // }
-
         $conn = Database::instance()->getConnection();
         $stmt = $conn->prepare("SELECT r.ProductID, p.ProductName, p.Description, p.Brand, p.IMG_Reference, p.Price, p.Retailer, AVG(r.Rating) AS Rating
                         FROM Review r
@@ -67,6 +58,55 @@
             "data" => $products
         ]);
 
+    }
+
+    //Imma also put getRetailerById in here even tho it's not a stats endpoint
+    function handleGetRetailerById(){
+
+        validateApikey($data);
+
+        if (!isset($data["retailerID"])){
+            header("HTTP/1.1 400 Bad Request");
+            header("Content-type: application/json");
+            echo json_encode([
+                "status" => "failed",
+                "data" => "Please provide a retailerID."
+            ]);
+            exit;
+        }
+
+        $conn = Database::instance()->getConnection();
+        $stmt = $conn->prepare("SELECT *
+                                FROM Retailer as r
+                                JOIN User as u ON r.Email = u.Email
+                                WHERE u.UserID = ?");
+        if (!$stmt){
+            die("Failed to prepare query: " . $conn->error);
+        }
+
+        $stmt->bind_param("s", $data["retailerID"]);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $retailer = $result->fetch_assoc();
+        $stmt->close();
+
+        if (!$retailer) {
+            header("HTTP/1.1 404 Not Found");
+            header("Content-type: application/json");
+            echo json_encode([
+                "status" => "failed",
+                "data" => "Retailer not found with the provided ID."
+            ]);
+            exit;
+        }
+
+        header("HTTP/1.1 200 OK");
+        header("Content-type: application/json");
+        echo json_encode([
+            "status" => "success",
+            "data" => $retailer
+        ]);
+        
     }
 
     function validateApikey($data){
