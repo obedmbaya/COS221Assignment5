@@ -1,4 +1,11 @@
 /* Wishlist styles matching retailer dashboard */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
 .wishlist-items-container {
     display: flex;
     flex-direction: column;

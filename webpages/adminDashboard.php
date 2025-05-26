@@ -23,7 +23,7 @@
                     <p class="user-email">don.alpha@gmail.com</p> <!-- Displaying Admin Email -->
                 </div>
             </div>
-            <button class="logout-btn">Logout</button> <!-- Logout Button -->
+            <button class="logout-btn" onclick="window.location.href='logout.php'">Logout</button> <!-- Logout Button -->
         </div>
 
         <!-- Tab Navigation -->

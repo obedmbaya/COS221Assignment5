@@ -15,7 +15,7 @@
         <div class="content">
             <h1>CompareIt</h1>
             <p>Find the best prices on your favourite tech products.</p>
-            <a href="deals.php" class="start-btn">Start Comparing</a>
+            <a href="index.php" class="start-btn">Start Comparing</a>
 </div>
 </div>
 </body>

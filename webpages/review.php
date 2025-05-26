@@ -143,19 +143,7 @@
         </section>
     </main>
 
-    <!-- Please add the script to its own JS file -->
-    <script>
-        function setRating(rating) {
-            //Remove 'selected' class from all stars
-            const stars = document.querySelectorAll('.rating-star');
-            stars.forEach(star => star.classList.remove('selected'));
-            
-            //Adds 'selected' class to stars up to the clicked one
-            for (let i = 0; i < rating; i++) {
-                stars[i].classList.add('selected');
-            }
-        }
-    </script>
+    <script src="js/review.js"></script>
     
     <?php
         require_once 'footer.php';

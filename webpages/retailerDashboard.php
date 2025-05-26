@@ -23,7 +23,7 @@
                     <p class="user-email">retailer@example.com</p>
                 </div>
             </div>
-            <button class="logout-btn">Logout</button>
+            <button class="logout-btn" onclick="window.location.href='logout.php'">Logout</button>
         </div>
 
         <!-- Tab Navigation -->
