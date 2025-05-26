@@ -21,23 +21,31 @@
         echo $additional_js;
     }
     ?>
-    </head>
-    <!DOCTYPE html>
-    <html lang="en">
-    <body>
-        <!-- Header -->
-        <header>
-            <div class="header-container">
-                <a href = "launch.php"><div class="logo">CompareIt</div></a>
-                <div class="search-bar">
-                    <img src="img/search.png" alt="Search" class="search-icon">
-                    <input type="text" placeholder="Search for products...">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="launch.php"><div class="brand-logo">CompareIt</div></a>
+            <div class="search-bar">
+                <input type="text" placeholder="Search for products...">
+            </div>
+            <div class="header-icons">
+                <!-- Links for non-logged-in users -->
+                <div id="guest-links" style="display: none;">
+                    <a href="login.php" title="Login">Login</a>
+                    <a href="signup.php" title="Sign Up">Sign Up</a> 
                 </div>
-                <div class="header-icons">
-                    <a href="deals.php" title="Deals">Deals</a>
-                    <a href="wishlist.php" title="Wishlist">Wishlist (4)</a>
-                    <a href="login.php" title="Account">Account</a>
-                    <a href="manage.php" title="Account">Manage</a>
+                
+                <!-- Links for logged-in users -->
+                <div id="user-links" style="display: none;">
+                    <a href="wishlist.php" title="Wishlist">Wishlist</a>
+                    <a href="userDashboard.php" title="Dashboard">Dashboard</a> <!-- needs a script to check user type and go to appropriate dashboard -->
+                    <a href="#" id="logout-btn" title="Logout">Logout</a>
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
+
+    <!-- Include the header JavaScript -->
+    <script src="js/header.js"></script>
