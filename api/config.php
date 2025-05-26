@@ -36,21 +36,21 @@
     
         private function __construct() {
 
-
             $host = $_ENV['DB_HOST'];
             $port = $_ENV['DB_PORT'];
             $db   = $_ENV['DB_DATABASE'];
             $user = $_ENV['DB_USERNAME'];
             $pass = $_ENV['DB_PASSWORD'];
 
-            
             $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
 
-            $this->connection = new mysqli($host, $user, $pass, $db, $port);
+            try {
+                
+                $this->connection = new PDO($dsn, $user, $pass);
+                $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            if ($this->connection->connect_error) {
-
-                die("DB Connection failed: " . $this->connection->connect_error);
+            } catch (PDOException $e) {
+                die("DB Connection failed: " . $e->getMessage());
             }
     
         }

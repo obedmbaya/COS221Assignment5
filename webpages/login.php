@@ -60,7 +60,7 @@ include 'header.php';
     <?php
         include 'footer.php';
 
-        echo '<script src="js/login.js"></script>';
+        // echo '<script src="js/login.js"></script>';
     ?>
   
  </body>
