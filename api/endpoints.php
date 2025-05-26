@@ -490,7 +490,7 @@ function registerUser($data) {
     }
 
     // Check if email exists
-    $emailquery = "SELECT email FROM users WHERE email = ?";
+    $emailquery = "SELECT Email FROM User WHERE Email = ?";
     $stmt_email = $database->prepare($emailquery);
     $stmt_email->bind_param("s", $email);
     $stmt_email->execute();
@@ -504,7 +504,7 @@ function registerUser($data) {
     }
 
     // Register user
-    $query = "INSERT INTO users(`name`, `surname`, `email`, `password_hash`, `user_type`, `api_key`, `salt`) VALUES (?, ?, ?, ?, ?, ?, ?);";
+    $query = "INSERT INTO User(`FirstName`, `LastName`, `Email`, `Password`, `UserType`, `ApiKey`, `Salt`) VALUES (?, ?, ?, ?, ?, ?, ?);";
     $stmt = $database->prepare($query);
     if (!$stmt) {
         sendResponse("failed", "Database error: " . $database->error, 500);

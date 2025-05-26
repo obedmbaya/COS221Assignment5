@@ -1,4 +1,4 @@
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
 
       // account type selection functionality
       const accountTypeRadios = document.querySelectorAll('input[name="account_type"]');
@@ -93,26 +93,37 @@
       }
 
         // form submission logic
-      document.getElementById("registerForm").addEventListener("submit", function (event) {
+      document.getElementById("signup-form").addEventListener("submit", function (event) {
         event.preventDefault();
-        //getting the selected account type
-        const selectedAccountType = document.querySelector('.account-type-radio:checked').value;
+        // Get full name and split into first and last name
+        const fullName = document.getElementById("fullname").value.trim();
+        let name = "";
+        let surname = "";
+        if (fullName.includes(" ")) {
+          name = fullName.substring(0, fullName.lastIndexOf(" ")).trim();
+          surname = fullName.substring(fullName.lastIndexOf(" ") + 1).trim();
+        } else {
+          name = fullName;
+          surname = "";
+        }
+        var selectedAccountType = document.querySelector('input[name="account_type"]:checked').value;
+        if (selectedAccountType=="customer"){
+          selectedAccountType="Standard";
 
+        }else{
+          selectedAccountType="Retailer";
+        }
         var payload = {
-          type: "Register",
-          name: document.getElementById("name").value,
-          surname: document.getElementById("surname").value,
+          type: "Signup",
+          name: name,
+          surname: surname,
           email: document.getElementById("email").value,
           password: document.getElementById("password").value,
-          user_type: selectedAccountType,
-          account_type: selectedAccountType,
-          business_name:selectedAccountType === 'vendor' ? document.getElementById("business_name").value : null
+          user_type: selectedAccountType
         };
-
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "signupapi.php", true);
+        xhr.open("POST", "../api/api.php", true);
         xhr.setRequestHeader("Content-Type", "application/json");
-
         xhr.onreadystatechange = function () {
           if (xhr.readyState === 4) {
             if (xhr.status === 200) {
@@ -123,17 +134,19 @@
                   alert("Registration successful!");
                   window.location.href = "index.php";
                 } else {
-                  alert("Registration failed: " + JSON.stringify(response));
+                  alert("Registration failed: " + JSON.stringify(response.data));
                 }
               } catch (e) {
                 alert("Invalid response from server.");
+                console.log(e);
+              
               }
             } else {
               alert("Request failed. Status: " + xhr.status);
             }
           }
         };
-
+        console.log(payload);
         xhr.send(JSON.stringify(payload));
       });
     });
