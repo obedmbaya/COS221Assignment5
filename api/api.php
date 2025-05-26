@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             populateDB($data);
             break;
         case "getAllProducts":
-            getAllProducts();
+           // getAllProducts();
             break;
         case "search":
             search($data);

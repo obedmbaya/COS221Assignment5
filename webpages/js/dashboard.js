@@ -1,18 +1,20 @@
-// Dashboard JavaScript functionality
 document.addEventListener('DOMContentLoaded', function() {
     initializeTabs(); // Initialize tab switching functionality
+    initializeCharts(); // Sets up Chart.js charts
     
-    initializeCharts(); //Sets up Chart.js charts
+    const productSelect = document.getElementById('productSelect');
+    const customerProductSelect = document.getElementById('customerProductSelect');
     
-    const productSelect = document.getElementById('productSelect'); // Product selection for admin
-    const customerProductSelect = document.getElementById('customerProductSelect'); // Product selection for customer
-    
-    if (productSelect) { // Add event listener for product selection in admin dashboard
+    if (productSelect) {
         productSelect.addEventListener('change', updateProductChart);
     }
     
-    if (customerProductSelect) { // Add event listener for product selection in customer dashboard
+    if (customerProductSelect) {
         customerProductSelect.addEventListener('change', updateCustomerProductChart);
+    }
+
+    if (document.getElementById('users')) {
+        loadUsers();
     }
 });
 
@@ -26,28 +28,30 @@ function initializeTabs() {
             
             tabBtns.forEach(tab => tab.classList.remove('active'));
             tabPanes.forEach(pane => pane.classList.remove('active'));
-            this.classList.add('active'); // Highlight the clicked tab button
-            document.getElementById(targetTab).classList.add('active'); // Show the corresponding tab pane
+            this.classList.add('active');
+            document.getElementById(targetTab).classList.add('active');
+
+            if (targetTab === 'users') {
+                loadUsers();
+            }
         });
     });
 }
 
-let overallRatingsChart; // Overall ratings chart for admin
-let productRatingsChart; // Product-specific ratings chart for admin
-let customerProductRatingsChart; // Customer product ratings chart
+let overallRatingsChart;
+let productRatingsChart;
+let customerProductRatingsChart;
 
 function initializeCharts() {
-    // Overall ratings chart (admin only)
     const overallCtx = document.getElementById('overallRatingsChart');
     if (overallCtx) {
-        overallRatingsChart = new Chart(overallCtx, { // Overall ratings distribution chart
-            // Using Chart.js to create a bar chart for overall ratings
+        overallRatingsChart = new Chart(overallCtx, {
             type: 'bar',
             data: {
                 labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
                 datasets: [{
                     label: 'Number of Reviews',
-                    data: [245, 189, 567, 2156, 9733], // Sample review count data for overall ratings e.g. data[0] = num of 1 Star reviews, data[1] = num of 2 Stars reviews, etc.
+                    data: [245, 189, 567, 2156, 9733],
                     backgroundColor: [
                         '#e74c3c',
                         '#f39c12',
@@ -92,7 +96,6 @@ function initializeCharts() {
         });
     }
     
-    // Product-specific ratings chart (admin)
     const productCtx = document.getElementById('productRatingsChart');
     if (productCtx) {
         productRatingsChart = new Chart(productCtx, {
@@ -134,7 +137,6 @@ function initializeCharts() {
         });
     }
     
-    // Customer product ratings chart
     const customerCtx = document.getElementById('customerProductRatingsChart');
     if (customerCtx) {
         customerProductRatingsChart = new Chart(customerCtx, {
@@ -177,7 +179,6 @@ function initializeCharts() {
     }
 }
 
-// Sample product data
 const productData = {
     iphone14: {
         name: 'iPhone 14 Pro Max',
@@ -209,19 +210,17 @@ const productData = {
     },
 };
 
-// Update product chart for admin
 function updateProductChart() {
-    const selectedProduct = document.getElementById('productSelect').value; // Get selected product from dropdown
-    const data = productData[selectedProduct]; // Get product data based on selection
+    const selectedProduct = document.getElementById('productSelect').value;
+    const data = productData[selectedProduct];
     
-    if (productRatingsChart && data) { 
-        productRatingsChart.data.datasets[0].data = data.data; // Update chart data with selected product's ratings
-        productRatingsChart.options.plugins.title.text = data.name + ' - Rating Distribution'; // Update chart title with product name
-        productRatingsChart.update(); // Refresh the chart to reflect changes
+    if (productRatingsChart && data) {
+        productRatingsChart.data.datasets[0].data = data.data;
+        productRatingsChart.options.plugins.title.text = data.name + ' - Rating Distribution';
+        productRatingsChart.update();
     }
 }
 
-// Update product chart for customer
 function updateCustomerProductChart() {
     const selectedProduct = document.getElementById('customerProductSelect').value;
     const data = productData[selectedProduct];
@@ -233,10 +232,9 @@ function updateCustomerProductChart() {
     }
 }
 
-// Product management functions
 function editProduct(productId) {
-    const editForm = document.getElementById('editProductForm'); // Get the edit product form element
-    const products = { // Sample product data for editing
+    const editForm = document.getElementById('editProductForm');
+    const products = {
         '001': {
             name: 'iPhone 14 Pro Max',
             brand: 'Apple',
@@ -269,13 +267,11 @@ function editProduct(productId) {
 }
 
 function saveProduct() {
-    // Get form values
     const name = document.getElementById('editProductName').value;
     const brand = document.getElementById('editProductBrand').value;
     const description = document.getElementById('editProductDescription').value;
     const image = document.getElementById('editProductImage').value;
     
-    // Validate form
     if (!name || !brand || !description) {
         alert('Please fill in all required fields');
         return;
@@ -289,61 +285,167 @@ function cancelEdit() {
     const editForm = document.getElementById('editProductForm');
     editForm.style.display = 'none';
     
-    // Clear form
     document.getElementById('editProductName').value = '';
     document.getElementById('editProductBrand').value = '';
     document.getElementById('editProductDescription').value = '';
     document.getElementById('editProductImage').value = '';
 }
 
-// User management functions
+function loadUsers() {
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) {
+        alert('Please log in to load users.');
+        return;
+    }
+
+    fetch('../api/api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: 'LoadUsers',
+            api_key: apiKey
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            populateUserTable(data.data);
+        } else {
+            alert('Failed to load users: ' + (data.data || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error loading users:', error);
+        alert('An error occurred while loading users.');
+    });
+}
+
+function populateUserTable(users) {
+    const tableBody = document.querySelector('#users table tbody');
+    if (!tableBody) return;
+
+    tableBody.innerHTML = '';
+
+    users.forEach(user => {
+        const row = document.createElement('tr');
+        const fullName = `${user.FirstName} ${user.LastName}`;
+        const userType = user.UserType || 'Standard User';
+        const isAdmin = userType === 'Admin';
+        row.innerHTML = `
+            <td>${fullName}</td>
+            <td>${user.Email}</td>
+            <td>${userType}</td>
+            <td>
+                ${isAdmin ? '' : '<button class="success" onclick="toggleAdminStatus(\'' + user.Email + '\', \'' + userType + '\')">Make Admin</button>'}
+                <button class="remove" onclick="removeUser(\'' + user.Email + '\')">Remove</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+function toggleAdminStatus(email, currentType) {
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) {
+        alert('Please log in to modify user status.');
+        return;
+    }
+
+    const isMakingAdmin = currentType !== 'Admin';
+    const confirmMessage = isMakingAdmin
+        ? 'Are you sure you want to make this user an admin?'
+        : 'Are you sure you want to remove admin privileges?';
+
+    if (confirm(confirmMessage)) {
+        fetch('../api/api.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type: 'editUser',
+                api_key: apiKey,
+                edit_email: email,
+                updates: {
+                    UserType: isMakingAdmin ? 'Admin' : 'Standard User'
+                }
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert(isMakingAdmin ? 'User promoted to admin successfully!' : 'Admin privileges removed successfully!');
+                loadUsers();
+            } else {
+                alert('Failed to update user status: ' + (data.data || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error updating user status:', error);
+            alert('An error occurred while updating user status.');
+        });
+    }
+}
+
+function removeUser(email) {
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) {
+        alert('Please log in to remove a user.');
+        return;
+    }
+
+    if (confirm('Are you sure you want to remove this user? This action cannot be undone.')) {
+        fetch('../api/api.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type: 'removeUser',
+                api_key: apiKey,
+                remove_email: email
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('User removed successfully!');
+                loadUsers();
+            } else {
+                alert('Failed to remove user: ' + (data.data || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error removing user:', error);
+            alert('An error occurred while removing the user.');
+        });
+    }
+}
+
 document.addEventListener('click', function(e) {
-    if (e.target.textContent === 'Make Admin') {
-        if (confirm('Are you sure you want to make this user an admin?')) {
-            e.target.textContent = 'Remove Admin';
-            e.target.classList.remove('success');
-            e.target.classList.add('remove');
-            // Update user type in the same row
-            const row = e.target.closest('tr');
-            const userTypeCell = row.querySelector('td:nth-child(3)');
-            userTypeCell.textContent = 'Admin';
-        }
-    } else if (e.target.textContent === 'Remove Admin') {
-        if (confirm('Are you sure you want to remove admin privileges?')) {
-            e.target.textContent = 'Make Admin';
-            e.target.classList.remove('remove');
-            e.target.classList.add('success');
-            // Update user type in the same row
-            const row = e.target.closest('tr');
-            const userTypeCell = row.querySelector('td:nth-child(3)');
-            userTypeCell.textContent = 'Standard User';
-        }
+    const isProductsTab = document.getElementById('products')?.classList.contains('active');
+    const isUsersTab = document.getElementById('users')?.classList.contains('active');
+    
+    if (e.target.textContent === 'Make Admin' && isUsersTab) {
+        const email = e.target.closest('tr').querySelector('td:nth-child(2)').textContent;
+        toggleAdminStatus(email, 'Standard User');
     } else if (e.target.textContent === 'Remove' && e.target.classList.contains('remove')) {
-        const isProductsTab = document.getElementById('products').classList.contains('active');
-        const isUsersTab = document.getElementById('users').classList.contains('active');
-        
-        let confirmMessage = '';
-        let successMessage = '';
-        
         if (isProductsTab) {
-            confirmMessage = 'Are you sure you want to remove this product? This action cannot be undone.';
-            successMessage = 'Product removed successfully';
+            const confirmMessage = 'Are you sure you want to remove this product? This action cannot be undone.';
+            if (confirm(confirmMessage)) {
+                const row = e.target.closest('tr');
+                row.remove();
+                alert('Product removed successfully');
+            }
         } else if (isUsersTab) {
-            confirmMessage = 'Are you sure you want to remove this user? This action cannot be undone.';
-            successMessage = 'User removed successfully';
-        }
-        // Show confirmation dialog with appropriate message
-        if (confirm(confirmMessage)) {
-            // Remove the entire table row from the DOM
-            const row = e.target.closest('tr');
-            row.remove();
-            // Show success message
-            alert(successMessage);
+            const email = e.target.closest('tr').querySelector('td:nth-child(2)').textContent;
+            removeUser(email);
         }
     }
 });
 
-// Profile form submission
 document.addEventListener('submit', function(e) {
     if (e.target.closest('.tab-pane[id="profile"]')) {
         e.preventDefault();
@@ -351,7 +453,6 @@ document.addEventListener('submit', function(e) {
         const password = e.target.querySelector('input[type="password"]').value;
         const confirmPassword = e.target.querySelectorAll('input[type="password"]')[1].value;
         
-        // Password validation
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         
         if (password && !passwordRegex.test(password)) {
@@ -368,7 +469,6 @@ document.addEventListener('submit', function(e) {
     }
 });
 
-// Sample product review data for the update functionality
 const userReviewData = {
     iphone14: {
         name: 'iPhone 14 Pro Max',
@@ -399,7 +499,6 @@ const userReviewData = {
 
 let currentEditingProduct = null;
 
-// Function to show the update review form
 function showUpdateReview(productId) {
     const updateForm = document.getElementById('updateReviewForm');
     const productData = userReviewData[productId];
@@ -407,47 +506,39 @@ function showUpdateReview(productId) {
     if (productData && updateForm) {
         currentEditingProduct = productId;
         
-        // Populate the form with existing data
         document.getElementById('reviewProductName').value = productData.name;
         document.getElementById('reviewRating').value = productData.rating;
         document.getElementById('reviewText').value = productData.review;
         
-        // Show the form
         updateForm.style.display = 'block';
         updateForm.scrollIntoView({ behavior: 'smooth' });
     }
 }
 
-// Function to save the updated review
 function saveReview() {
     if (!currentEditingProduct) return;
     
     const rating = document.getElementById('reviewRating').value;
     const reviewText = document.getElementById('reviewText').value.trim();
     
-    // Validate form
     if (!reviewText) {
         alert('Please enter a review text');
         return;
     }
     
-    // Update the product data
     userReviewData[currentEditingProduct].rating = parseInt(rating);
     userReviewData[currentEditingProduct].review = reviewText;
     
-    // Update the display in the products list
     updateProductDisplay(currentEditingProduct, parseInt(rating));
     
     alert('Review updated successfully!');
     cancelUpdateReview();
 }
 
-// Function to cancel the review update
 function cancelUpdateReview() {
     const updateForm = document.getElementById('updateReviewForm');
     updateForm.style.display = 'none';
     
-    // Clear form
     document.getElementById('reviewProductName').value = '';
     document.getElementById('reviewRating').value = '1';
     document.getElementById('reviewText').value = '';
@@ -455,7 +546,6 @@ function cancelUpdateReview() {
     currentEditingProduct = null;
 }
 
-// Function to update the product display with new rating
 function updateProductDisplay(productId, newRating) {
     const productItems = document.querySelectorAll('.product-item');
     const productData = userReviewData[productId];
@@ -466,14 +556,12 @@ function updateProductDisplay(productId, newRating) {
             const starsSpan = item.querySelector('.stars');
             const ratingValue = item.querySelector('.rating-value');
             
-            // Update stars display
             let starsHtml = '';
             for (let i = 1; i <= 5; i++) {
                 starsHtml += i <= newRating ? '★' : '☆';
             }
             starsSpan.textContent = starsHtml;
             
-            // Update rating text
             const ratingText = newRating === 1 ? '1 Star' : `${newRating} Stars`;
             ratingValue.textContent = ratingText;
         }
