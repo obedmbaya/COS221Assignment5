@@ -4,6 +4,7 @@
     $page_title = "CompareIt | Home";
     include_once 'header.php';
 ?>
+    <script src="index.js"></script>
     <div class="container">
         <!-- Filter Section -->
         <div class="filter-section">

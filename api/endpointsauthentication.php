@@ -37,7 +37,7 @@ function handleLogin($data) {
     }
 
 
-    apiResponse("success", ["apikey" => $user['ApiKey'], "userType" => $user['UserType']]);
+    apiResponse("success", ["apikey" => $user['ApiKey'], "userType" => $user['UserType'],"email"=>$user['email']]);
     
 }
 
