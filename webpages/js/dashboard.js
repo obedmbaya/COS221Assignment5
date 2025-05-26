@@ -367,3 +367,115 @@ document.addEventListener('submit', function(e) {
         alert('Profile updated successfully!');
     }
 });
+
+// Sample product review data for the update functionality
+const userReviewData = {
+    iphone14: {
+        name: 'iPhone 14 Pro Max',
+        rating: 4,
+        review: 'Great phone with excellent camera quality. Battery life could be better.'
+    },
+    samsung23: {
+        name: 'Samsung Galaxy S23 Ultra',
+        rating: 3,
+        review: 'Good phone but has some software issues. Camera is impressive though.'
+    },
+    macbook: {
+        name: 'MacBook Pro M2',
+        rating: 5,
+        review: 'Absolutely fantastic laptop! Perfect for development work and the M2 chip is incredibly fast.'
+    },
+    sony: {
+        name: 'Sony WH-1000XM5',
+        rating: 1,
+        review: 'Disappointing product. Sound quality is not as advertised and build quality feels cheap.'
+    },
+    ipad: {
+        name: 'iPad Pro 12.9',
+        rating: 4,
+        review: 'Excellent tablet for creative work. The display is stunning and Apple Pencil works perfectly.'
+    }
+};
+
+let currentEditingProduct = null;
+
+// Function to show the update review form
+function showUpdateReview(productId) {
+    const updateForm = document.getElementById('updateReviewForm');
+    const productData = userReviewData[productId];
+    
+    if (productData && updateForm) {
+        currentEditingProduct = productId;
+        
+        // Populate the form with existing data
+        document.getElementById('reviewProductName').value = productData.name;
+        document.getElementById('reviewRating').value = productData.rating;
+        document.getElementById('reviewText').value = productData.review;
+        
+        // Show the form
+        updateForm.style.display = 'block';
+        updateForm.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// Function to save the updated review
+function saveReview() {
+    if (!currentEditingProduct) return;
+    
+    const rating = document.getElementById('reviewRating').value;
+    const reviewText = document.getElementById('reviewText').value.trim();
+    
+    // Validate form
+    if (!reviewText) {
+        alert('Please enter a review text');
+        return;
+    }
+    
+    // Update the product data
+    userReviewData[currentEditingProduct].rating = parseInt(rating);
+    userReviewData[currentEditingProduct].review = reviewText;
+    
+    // Update the display in the products list
+    updateProductDisplay(currentEditingProduct, parseInt(rating));
+    
+    alert('Review updated successfully!');
+    cancelUpdateReview();
+}
+
+// Function to cancel the review update
+function cancelUpdateReview() {
+    const updateForm = document.getElementById('updateReviewForm');
+    updateForm.style.display = 'none';
+    
+    // Clear form
+    document.getElementById('reviewProductName').value = '';
+    document.getElementById('reviewRating').value = '1';
+    document.getElementById('reviewText').value = '';
+    
+    currentEditingProduct = null;
+}
+
+// Function to update the product display with new rating
+function updateProductDisplay(productId, newRating) {
+    const productItems = document.querySelectorAll('.product-item');
+    const productData = userReviewData[productId];
+    
+    productItems.forEach(item => {
+        const productName = item.querySelector('.product-name').textContent;
+        if (productName === productData.name) {
+            const starsSpan = item.querySelector('.stars');
+            const ratingValue = item.querySelector('.rating-value');
+            
+            // Update stars display
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                starsHtml += i <= newRating ? '★' : '☆';
+            }
+            starsSpan.textContent = starsHtml;
+            
+            // Update rating text
+            const ratingText = newRating === 1 ? '1 Star' : `${newRating} Stars`;
+            ratingValue.textContent = ratingText;
+        }
+    });
+}

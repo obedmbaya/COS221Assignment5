@@ -23,79 +23,120 @@
                     <p class="user-email">puffy@gmail.com</p><!-- user email -->
                 </div>
             </div>
-            <button class="logout-btn">Logout</button> <!-- logout button -->
+            <button class="logout-btn" onclick="window.location.href='logout.php'">Logout</button> <!-- logout button -->
         </div>
 
         <!-- Tab Navigation -->
         <div class="tab-navigation">
-            <button class="tab-btn active" data-tab="products">Top Products</button>
+            <button class="tab-btn active" data-tab="overview">Overview</button>
             <button class="tab-btn" data-tab="profile">Edit Info</button>
         </div>
 
         <!-- Tab Content -->
         <div class="tab-content">
-            <!-- Top Products Tab -->
-            <div class="tab-pane active" id="products">
-                <!-- Top Rated Products Section -->
+            <!-- Overview Tab -->
+            <div class="tab-pane active" id="overview">
+                <!-- Statistics Boxes -->
+                <div class="stats-section">
+                    <div class="stat-box">
+                        <h3>Reviews Made</h3> <!-- Displaying total number of reviews made by user -->
+                        <div class="stat-number">47</div>
+                    </div>
+                    <div class="stat-box">
+                        <h3>Average Rating</h3> <!-- Displaying user's average rating given -->
+                        <div class="stat-number">4.2</div>
+                    </div>
+                </div>
+
+                <!-- Reviewed Products Section -->
                 <div class="section-box">
-                    <h3>Top Rated Products</h3>
+                    <h3>Reviewed Products</h3>
                     <div class="products-list">
                         <div class="product-item">
                             <span class="product-name">iPhone 14 Pro Max</span> <!-- product name -->
                             <div class="product-rating">
-                                <span class="stars">★★★★★</span>
-                                <span class="rating-value">4.8</span> <!-- product rating -->
+                                <span class="stars">★★★★☆</span>
+                                <span class="rating-value">4 Stars</span> <!-- user's rating for this product -->
                             </div>
-                            <button class="view-btn" onclick="window.location.href='view.php'">View</button> <!-- view button -->
+                            <div class="product-actions">
+                                <button class="view-btn" onclick="window.location.href='view.php'">View</button> <!-- view button -->
+                                <button class="update-btn" onclick="showUpdateReview('iphone14')">Update</button> <!-- update button -->
+                            </div>
                         </div>
                         <div class="product-item">
                             <span class="product-name">Samsung Galaxy S23 Ultra</span>
                             <div class="product-rating">
-                                <span class="stars">★★★★★</span>
-                                <span class="rating-value">4.7</span>
+                                <span class="stars">★★★☆☆</span>
+                                <span class="rating-value">3 Stars</span>
                             </div>
-                            <button class="view-btn" onclick="window.location.href='view.php'">View</button>
+                            <div class="product-actions">
+                                <button class="view-btn" onclick="window.location.href='view.php'">View</button>
+                                <button class="update-btn" onclick="showUpdateReview('samsung23')">Update</button>
+                            </div>
                         </div>
                         <div class="product-item">
                             <span class="product-name">MacBook Pro M2</span>
                             <div class="product-rating">
                                 <span class="stars">★★★★★</span>
-                                <span class="rating-value">4.9</span>
+                                <span class="rating-value">5 Stars</span>
                             </div>
-                            <button class="view-btn" onclick="window.location.href='view.php'">View</button>
+                            <div class="product-actions">
+                                <button class="view-btn" onclick="window.location.href='view.php'">View</button>
+                                <button class="update-btn" onclick="showUpdateReview('macbook')">Update</button>
+                            </div>
                         </div>
                         <div class="product-item">
                             <span class="product-name">Sony WH-1000XM5</span>
                             <div class="product-rating">
-                                <span class="stars">★★★★☆</span>
-                                <span class="rating-value">4.6</span>
+                                <span class="stars">★☆☆☆☆</span>
+                                <span class="rating-value">1 Star</span>
                             </div>
-                            <button class="view-btn" onclick="window.location.href='view.php'">View</button>
+                            <div class="product-actions">
+                                <button class="view-btn" onclick="window.location.href='view.php'">View</button>
+                                <button class="update-btn" onclick="showUpdateReview('sony')">Update</button>
+                            </div>
                         </div>
                         <div class="product-item">
                             <span class="product-name">iPad Pro 12.9</span>
                             <div class="product-rating">
-                                <span class="stars">★★★★★</span>
-                                <span class="rating-value">4.8</span>
+                                <span class="stars">★★★★☆</span>
+                                <span class="rating-value">4 Stars</span>
                             </div>
-                            <button class="view-btn" onclick="window.location.href='view.php'">View</button>
+                            <div class="product-actions">
+                                <button class="view-btn" onclick="window.location.href='view.php'">View</button>
+                                <button class="update-btn" onclick="showUpdateReview('ipad')">Update</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Product Specific Ratings -->
-                <div class="section-box">
-                    <h3>Product Ratings Analysis</h3>
-                    <select id="customerProductSelect" class="product-select">
-                        <option value="iphone14">iPhone 14 Pro Max</option>
-                        <option value="samsung23">Samsung Galaxy S23 Ultra</option>
-                        <option value="macbook">MacBook Pro M2</option>
-                        <option value="sony">Sony WH-1000XM5</option>
-                        <option value="ipad">iPad Pro 12.9</option>
-                        <option value="airpods">AirPods Pro</option>
-                        <option value="nintendo">Nintendo Switch OLED</option>
-                    </select>
-                    <canvas id="customerProductRatingsChart" width="400" height="200"></canvas>
+                <!-- Update Review Form -->
+                <div class="section-box" id="updateReviewForm" style="display: none;">
+                    <h3>Update Review</h3>
+                    <form>
+                        <div class="form-group">
+                            <label>Product:</label>
+                            <input type="text" id="reviewProductName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Rating:</label>
+                            <select id="reviewRating" class="rating-select">
+                                <option value="1">1 Star</option>
+                                <option value="2">2 Stars</option>
+                                <option value="3">3 Stars</option>
+                                <option value="4">4 Stars</option>
+                                <option value="5">5 Stars</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Review:</label>
+                            <textarea id="reviewText" rows="4" placeholder="Enter your review here..."></textarea>
+                        </div>
+                        <div class="actions">
+                            <button type="button" class="success" onclick="saveReview()">Save</button>
+                            <button type="button" class="remove" onclick="cancelUpdateReview()">Cancel</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
