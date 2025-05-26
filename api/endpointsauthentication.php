@@ -157,8 +157,18 @@ function handleEditUser($data) {
       
   }
 
-  if ($user) {
-    apiResponse("failed", "User is already a Retailer", 404);
+
+  $queryRetail = "SELECT * FROM Retailer WHERE Email = ?;";
+  $stmt_retail = $database->prepare($queryRetail);
+  $stmt_retail->bind_param("s", $email);
+  $stmt_retail->execute();
+  $resultRetail = $stmt_retail->get_result();
+  $userRetail = $resultRetail->fetch_assoc();
+  $stmt_retail->close();
+  if ($userRetail) {
+        echo "heyyy";
+      apiResponse("failed", "User is already a Retailer", 404);
+      
   }
 
 
