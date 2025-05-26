@@ -390,3 +390,50 @@ function apiChecker($currapi, $database) {
 
     return $currapi;
 }
+
+function handleGetUsers($data) {
+
+    /*
+        input 
+        {
+            "type" : "LoadUsers",
+            "api_key" : api_key
+        }
+
+        output success
+        {
+            "status" : "success",
+            "data" : [{}, {}, {}, ....]
+        }
+    */ 
+    $database = Database::instance()->getConnection();
+    if (empty($data['api_key'])) {
+
+        apiResponse("failed", "API key must be provided to load users.", 400);
+    }
+
+    $ApiKey = $data['api_key'];
+
+    $queryAPI = "SELECT 1 FROM User WHERE ApiKey = ? AND UserType = 'Admin' LIMIT 1;";
+    $stmt_API = $database->prepare($queryAPI);
+    $stmt_API->bind_param("s", $ApiKey);
+    $stmt_API->execute();
+    $result_API = $stmt_API->get_result();
+    $adminUser = $result_API->fetch_assoc();
+
+    $stmt_API->close();
+
+    if (!$adminUser) {
+        
+        apiResponse("failed", "Unauthorized, User must be a Admin to process this request.", 401);
+    }
+
+    $query = "SELECT * FROM User";
+    $stmtQuery = $database->prepare($query);
+    $stmtQuery->execute();
+    $resultUser = $stmtQuery->get_result();
+    $Users = $resultUser->fetch_all(MYSQLI_ASSOC);
+
+    apiResponse("success", $Users);
+
+}

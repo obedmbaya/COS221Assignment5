@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             populateDB($data);
             break;
         case "getAllProducts":
-           // getAllProducts();
+            getAllProducts();
             break;
         case "search":
             search($data);
@@ -79,6 +79,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case "deleteProductPrice":
             deleteProductPrice($data);
             break;
+        case "LoadUsers":
+            handleGetUsers($data);
+            break;
+
         default:
             sendResponse("failed", "Unknown or missing type", 400);
     }
