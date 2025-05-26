@@ -141,11 +141,11 @@ function addProduct($data) {
 function editProduct($data) {
     $conn = Database::instance()->getConnection();
 
-    if (empty($data["apiKey"])) {
+    if (empty($data["ApiKey"])) {
         sendResponse("error", "Missing API key", 403);
         return;
     }
-    if (!isAdmin($data["apiKey"])) {
+    if (!isAdmin($data["ApiKey"])) {
         sendResponse("error", "Unauthorized: Only admins can edit products", 403);
         return;
     }
