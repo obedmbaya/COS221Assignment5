@@ -166,7 +166,6 @@ function handleEditUser($data) {
   $userRetail = $resultRetail->fetch_assoc();
   $stmt_retail->close();
   if ($userRetail) {
-        echo "heyyy";
       apiResponse("failed", "User is already a Retailer", 404);
       
   }
