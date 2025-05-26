@@ -2,9 +2,10 @@
 require_once "config.php";
 
 function handleLogin($data) {
+    $database = Database::instance()->getConnection();
     if (empty($data['email']) || empty($data['password'])) {
         
-        sendResponse("failed", "All fields must be filled in before logging in.", 400);
+        apiResponse("failed", "All fields must be filled in before logging in.", 400);
     }
 
     $email = $data["email"];
@@ -13,7 +14,7 @@ function handleLogin($data) {
 
     if (!preg_match($regexEmail, $email)) {
 
-        sendResponse("failed", "Please enter a valid email address (e.g. user@example.com).", 400);
+        apiResponse("failed", "Please enter a valid email address (e.g. user@example.com).", 400);
     }
 
     $query = "SELECT * FROM User WHERE email = ?;";
@@ -27,24 +28,24 @@ function handleLogin($data) {
 
     if (!$user) {
         
-        sendResponse("failed", "User does not exist.", 404);
+        apiResponse("failed", "User does not exist.", 404);
     }
 
     $inputHash = hash("sha256", $user["Salt"] . $password);
     if ($user['Password'] !== $inputHash) {
-        sendResponse("failed", "Invalid credentials.", 401);
+        apiResponse("failed", "Invalid credentials.", 401);
     }
 
 
-    sendResponse("success", ["apikey" => $user['ApiKey']]);
+    apiResponse("success", ["apikey" => $user['ApiKey']]);
     
 } 
 
 function handleRemoveUser($data) { 
-
+    $database = Database::instance()->getConnection();
     if (empty($data['api_key']) || empty($data['remove_email'])) {
 
-        sendResponse("failed", "API key and email must be provided to remove a user.", 400);
+        apiResponse("failed", "API key and email must be provided to remove a user.", 400);
     }
 
     $email = $data['remove_email'];
@@ -53,7 +54,7 @@ function handleRemoveUser($data) {
     // Validate email format
     $regexEmail = "/^[^\s@]+@[^\s@]+\.[^\s@]+$/i";
     if (!preg_match($regexEmail, $email)) {
-        sendResponse("failed", "Please enter a valid email address to remove.", 400);
+        apiResponse("failed", "Please enter a valid email address to remove.", 400);
     }
 
     $queryAPI = "SELECT Email FROM User WHERE ApiKey = ? AND UserType = 'Admin';";
@@ -67,13 +68,13 @@ function handleRemoveUser($data) {
 
     if (!$adminUser) {
         
-        sendResponse("failed", "Unauthorized, User must be a Admin to process this request.", 401);
+        apiResponse("failed", "Unauthorized, User must be a Admin to process this request.", 401);
     }
 
     // Check if admin is trying to remove themselves
     if ($adminUser['Email'] === $email) {
         
-        sendResponse("failed", "Unauthorized Request, Admin account cannot remove itself.", 401);
+        apiResponse("failed", "Unauthorized Request, Admin account cannot remove itself.", 401);
     }
     
 
@@ -87,7 +88,7 @@ function handleRemoveUser($data) {
 
     if ($result->num_rows === 0) {
         
-        sendResponse("failed", "User does not exist.", 404);
+        apiResponse("failed", "User does not exist.", 404);
     }
 
 
@@ -99,25 +100,25 @@ function handleRemoveUser($data) {
     if ($stmtDelete->execute()) {
 
         $stmtDelete->close();
-        sendResponse("success", "User has been removed.");
+        apiResponse("success", "User has been removed.");
 
     }
 
     else {
 
        $stmtDelete->close();
-      sendResponse("failed", "Failed to delete.", 500);
+      apiResponse("failed", "Failed to delete.", 500);
     }
 
 
 }
 
 function handleEditUser($data) { 
-
+    $database = Database::instance()->getConnection();
   
   if (empty($data['api_key']) || empty($data['edit_email'])) {
 
-      sendResponse("failed", "API key and email must be provided to edit a user.", 400);
+      apiResponse("failed", "API key and email must be provided to edit a user.", 400);
   }
 
   $email = $data['edit_email'];
@@ -125,7 +126,7 @@ function handleEditUser($data) {
 
   $regexEmail = "/^[^\s@]+@[^\s@]+\.[^\s@]+$/i";
   if (!preg_match($regexEmail, $email)) {
-      sendResponse("failed", "Please enter a valid email address.", 400);
+      apiResponse("failed", "Please enter a valid email address.", 400);
   }
 
   $queryAPI = "SELECT * FROM User WHERE ApiKey = ? AND UserType = 'Admin';";
@@ -139,7 +140,7 @@ function handleEditUser($data) {
 
   if (!$userAPI) {
 
-      sendResponse("failed", "Unauthorized, User must be an Admin to process this request", 401);
+      apiResponse("failed", "Unauthorized, User must be an Admin to process this request", 401);
   }
 
 
@@ -152,7 +153,7 @@ function handleEditUser($data) {
   $stmt_email->close();
   if (!$user) {
 
-      sendResponse("failed", "User does not exist", 404);
+      apiResponse("failed", "User does not exist", 404);
       
   }
 
@@ -164,7 +165,7 @@ function handleEditUser($data) {
   $updates = array_intersect_key($data["updates"], array_flip($allowedFields));
 
   if (empty($updates)) {
-      sendResponse("error", "No valid fields to update", 400);
+      apiResponse("error", "No valid fields to update", 400);
   }
 
   $updateQuery = "UPDATE User SET UserType = 'Retailer' WHERE Email = ?;";
@@ -201,12 +202,12 @@ function handleEditUser($data) {
 
   if ($stmtRetailer->execute()) {
       $stmtRetailer->close();
-      sendResponse("success", "Retailer Added Succesfully");
+      apiResponse("success", "Retailer Added Succesfully");
    } 
 
   else {
       $stmtRetailer->close();
-      sendResponse("failed", "Failed to add Retailer", 500);
+      apiResponse("failed", "Failed to add Retailer", 500);
     }
 
 
@@ -214,7 +215,7 @@ function handleEditUser($data) {
 }
 
 function handleSignup($data) {
-    
+    $database = Database::instance()->getConnection();
     $firstName = $data["name"];
     $surname = $data["surname"];
     $email = $data["email"];
@@ -229,7 +230,7 @@ function handleSignup($data) {
 
     if (empty($firstName) || empty($surname) || empty($email) || empty($password)) {
 
-        sendResponse("failed", "All fields must be filled in before signing up.", 400); 
+        apiResponse("failed", "All fields must be filled in before signing up.", 400); 
     }
 
 
@@ -271,7 +272,7 @@ function handleSignup($data) {
 
     if (!empty($errors)) {
 
-        sendResponse("failed", $errors, 400);
+        apiResponse("failed", $errors, 400);
     }
 
     // Check if the user's email is in the database already
@@ -286,7 +287,7 @@ function handleSignup($data) {
     
     if ($email_exists) {
 
-        sendResponse("failed", "Unsuccessful, " . $email . " is already taken.", 400);
+        apiResponse("failed", "Unsuccessful, " . $email . " is already taken.", 400);
     }
 
     // No errors, proceed to registering the user
@@ -294,25 +295,26 @@ function handleSignup($data) {
     $stmt = $database->prepare($query);
     if (!$stmt) {
         $stmt->close();
-        sendResponse("failed", "Database error: " . $database->error, 500);
+        apiResponse("failed", "Database error: " . $database->error, 500);
     }
     
     $salt = bin2hex(random_bytes(16));
     $hash = hash("sha256", $salt . $password);
-    $api_key = checkAPI(getRandomString(32), $database);
+    $api_key = apiChecker(randomizeString(32), $database);
     
     $stmt->bind_param("ssssss", $firstName, $surname, $email, $hash, $salt, $api_key);
     $stmt->execute();
     $stmt->close();
 
 
-    sendResponse("success", ["apikey" => $api_key]);
+    apiResponse("success", ["apikey" => $api_key]);
 
 } 
 
 function handleLogOut($data) {
+    $database = Database::instance()->getConnection();
     if (empty($data["api_key"])) {
-        sendResponse("failed", "API key must be provided before logging out.", 400);
+        apiResponse("failed", "API key must be provided before logging out.", 400);
     }
 
     $api_key = $data["api_key"];
@@ -329,16 +331,16 @@ function handleLogOut($data) {
 
     if ($api_key_exists) {
         // API key is valid, send success response
-        sendResponse("success", "User logged out successfully.");
+        apiResponse("success", "User logged out successfully.");
     } else {
 
-        sendResponse("failed", "Invalid API key.", 401);
+        apiResponse("failed", "Invalid API key.", 401);
     }
 } 
 
 
 
-function sendResponse($status, $data, $code = 200)
+function apiResponse($status, $data, $code = 200)
 {
     http_response_code($code);
     echo json_encode([
@@ -348,7 +350,7 @@ function sendResponse($status, $data, $code = 200)
     exit();
 }
 
-function getRandomString($length) {
+function randomizeString($length) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $randomString = '';
     for ($i = 0; $i < $length; $i++) {
@@ -357,7 +359,8 @@ function getRandomString($length) {
     return $randomString;
 }
 
-function checkAPI($currapi, $database) {
+function apiChecker($currapi, $database) {
+    $database = Database::instance()->getConnection();
     $query_api = "SELECT 1 FROM User WHERE ApiKey = ? LIMIT 1;";
     $stmt_api = $database->prepare($query_api);
     $stmt_api->bind_param("s", $currapi);
@@ -369,7 +372,7 @@ function checkAPI($currapi, $database) {
     $stmt_api->close();
     
     if ($exists) {
-        return checkAPI(getRandomString(32), $database);
+        return apiChecker(randomizeString(32), $database);
     }
 
     return $currapi;
