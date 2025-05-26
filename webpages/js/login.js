@@ -22,8 +22,17 @@ document.addEventListener("DOMContentLoaded", function () {
             if (response.status === "success") {
               localStorage.setItem("apiKey", response.data.apikey);
               localStorage.setItem("userType", response.data.userType);
+              
               alert("Login successful!");
+              if(response.data.userType=="Admin"){
+                  window.location.href = "adminDashboard.php";
+              }
+              else if(response.data.userType=="Retailer"){
+                window.location.href = "retailerDashboard.php";
+              }
+              else{
               window.location.href = "index.php";
+              }
             } else {
               alert("Login failed: " + JSON.stringify(response));
             }
