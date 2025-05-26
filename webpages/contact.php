@@ -17,7 +17,7 @@
                 <h2>Contact Us</h2>
             </div>
             
-            <form>
+            <form id="contact-form">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="phone">Phone Number</label>
@@ -40,10 +40,13 @@
                     ></textarea>
                 </div>
                 
-                <button type="button" class="success">Send Message</button>
+                <button type="submit" class="success">Send Message</button>
             </form>
         </div>
     </div>
+
+    <script src="js/contact.js"></script>
+
     <?php
         require_once 'footer.php';
     ?>
