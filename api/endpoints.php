@@ -533,7 +533,7 @@ function getRandomString($length) {
 }
 
 function checkAPI($currapi, $database) {
-    $query_api = "SELECT api_key FROM users WHERE api_key = ?;";
+    $query_api = "SELECT ApiKey FROM User WHERE ApiKey = ?;";
     $stmt_api = $database->prepare($query_api);
     $stmt_api->bind_param("s", $currapi);
     $stmt_api->execute();
