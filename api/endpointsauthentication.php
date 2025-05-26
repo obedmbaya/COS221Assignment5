@@ -157,6 +157,10 @@ function handleEditUser($data) {
       
   }
 
+  if ($user) {
+    apiResponse("failed", "User is already a Retailer", 404);
+  }
+
 
   $allowedFields = [
     "RetailerName", "SiteReference"
