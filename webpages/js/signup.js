@@ -104,7 +104,7 @@
           surname: document.getElementById("surname").value,
           email: document.getElementById("email").value,
           password: document.getElementById("password").value,
-          user_type: document.getElementById("user_type").value,
+          user_type: selectedAccountType,
           account_type: selectedAccountType,
           business_name:selectedAccountType === 'vendor' ? document.getElementById("business_name").value : null
         };

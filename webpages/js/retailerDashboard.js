@@ -43,6 +43,10 @@
     }
 });
 
+// load products into dashboard
+function loadProducts(){
+
+}
 // Product management functions
 function editProduct(productId) {
     const editForm = document.getElementById('editProductForm');
@@ -100,6 +104,8 @@ function saveProduct() {
         alert('Please fill in all required fields');
         return;
     }
+
+    //write code to save product here
     
     alert('Product saved successfully!');
     cancelEdit();

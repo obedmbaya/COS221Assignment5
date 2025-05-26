@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "loginapi.php", true);
+    xhr.open("POST", "/api/api.php", true);
     xhr.setRequestHeader("Content-Type", "application/json");
 
     xhr.onreadystatechange = function () {
@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var response = JSON.parse(xhr.responseText);
             if (response.status === "success") {
               localStorage.setItem("apiKey", response.data.apikey);
+              localStorage.setItem("userType", response.data.userType);
               alert("Login successful!");
               window.location.href = "index.php";
             } else {

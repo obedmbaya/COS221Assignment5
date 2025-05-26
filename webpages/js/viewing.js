@@ -16,7 +16,7 @@ function getCurrentProductId() {
 }
 
 function fetchProductData(productId) {
-    fetch('api.php', {
+    fetch('../api/api.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -41,7 +41,7 @@ function fetchProductData(productId) {
 }
 
 function fetchComparisonData(productId) {
-    fetch('api.php', {
+    fetch('../api/api.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

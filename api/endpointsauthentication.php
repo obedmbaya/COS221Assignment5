@@ -37,9 +37,9 @@ function handleLogin($data) {
     }
 
 
-    apiResponse("success", ["apikey" => $user['ApiKey']]);
+    apiResponse("success", ["apikey" => $user['ApiKey'], "userType" => $user['UserType']]);
     
-} 
+}
 
 function handleRemoveUser($data) { 
     $database = Database::instance()->getConnection();
