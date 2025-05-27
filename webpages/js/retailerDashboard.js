@@ -58,12 +58,13 @@
                 }
             }
         });
+        //Populates the chart with rating total reviews
         getRatings().then(ratingsData => {
             if (ratingsData) {
-                retailerChart.data.datasets[0].data = ratingsData;
+                retailerChart.data.datasets[0].data = ratingsData.ratingArr;
                 retailerChart.update();
             }
-            const numRatings = ratingsData.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+            const numRatings = ratingsData.ratingArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
             const elements = document.getElementsByClassName('stat-box');
             if (elements.length >= 3) {
                 const thirdItem = elements[2];
@@ -76,6 +77,22 @@
             } else {
                 console.log("There are fewer than 3 elements with 'my-class'.");
             }
+            if (ratingsData) {
+                retailerChart.data.datasets[0].data = ratingsData.ratingArr;
+                retailerChart.update();
+            }
+            if (elements.length >= 4) {
+                const thirdItem = elements[3];
+                const statNumberDiv = thirdItem.querySelector('.stat-number');
+                if (statNumberDiv) {
+                    statNumberDiv.textContent = ratingsData.average;
+                } else {
+                    console.log("No 'stat-number' div found inside the 3rd item.");
+                }
+            } else {
+                console.log("There are fewer than 3 elements with 'my-class'.");
+            }           
+
         }).catch(error => {
             console.error('Error initializing chart with ratings:', error);
         });
@@ -85,6 +102,7 @@
     }
 });
 
+//Gets the number of occurences of each rating
 function getRatings(){
     const apiKey = localStorage.getItem('apiKey');
     if (!apiKey) {
@@ -119,24 +137,64 @@ function getRatings(){
 }
 
 function populateRatingsArr(data){
-    let ratingArr = [0, 0, 0, 0, 0]
+    let n = 0;
+    let total = 0;
+    let ratings = [0, 0, 0, 0, 0];
     data.forEach(element => {
         const index = element.Rating - 1;
         const num = element.number; 
-        ratingArr[index] = num;
+        ratings[index] = num;
+        n += num;
+        total += index;
     });
-    return ratingArr;
+    let avg = total/n;
+    let output = {
+        ratingArr : ratingArr,
+        average : avg
+    }
+    return output;
 }
 
+//Loads products and stats
 function loadOverview(){
 
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) {
+        alert('Please log in to load users.');
+        return; //Promise.reject('No API key');
+    }
 
+    fetch('../api/api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: 'GetRetailerProducts',
+            ApiKey: apiKey
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            return populateOverview(data.data);
+        } else {
+            alert('Failed to load products: ' + (data.data || 'Unknown error'));
+            return [0, 0, 0, 0, 0];
+        }
+    })
+    .catch(error => {
+        console.error('Error loading products:', error);
+        alert('An error occurred while loading products.');
+        return [0, 0, 0, 0, 0];
+    });
 
 }
 
-// load products into dashboard
-function loadProducts(){
+function populateOverview(data){
+
     
+
 }
 
 // Product management functions

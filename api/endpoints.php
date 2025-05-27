@@ -588,6 +588,7 @@ function insertReview($data){
     //Added some validation here to ensure that only users that exist can add reviews to products that exist and a check that the rating is between 0 and 5
 
     //UserID check
+    $output = true;
     $stmt = $conn->prepare("SELECT 1
                     FROM  User
                     WHERE UserID = ?");
@@ -1060,11 +1061,11 @@ function handleGetRetailerProducts($data){
         exit;
     }
 
-    $stmt = $conn->prepare("SELECT p.ProductName, p.Description, p.Brand, c.CategoryName, pp.Price, AVG(Rating) as Rating
+    $stmt = $conn->prepare("SELECT p.ProductName, p.Description, p.Brand, c.CategoryName, pp.Price -- , AVG(Rating) as Rating
                     FROM Retailer re
                     JOIN ProductPrice pp ON pp.RetailerID = re.RetailerID
                     JOIN Product p ON pp.ProductID = p.ProductID
-                    JOIN Review r ON r.ProductID = p.ProductID
+                    -- JOIN Review r ON r.ProductID = p.ProductID
                     JOIN Category c ON c.CategoryID = p.CategoryID
                     WHERE pp.RetailerID = ?
                     GROUP BY p.ProductID");

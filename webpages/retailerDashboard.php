@@ -50,7 +50,7 @@
                     </div>
                     <div class="stat-box">
                         <h3>Total Reviews</h3>
-                        <div class="stat-number">1,245</div>
+                        <div class="stat-number">-</div>
                     </div>
                     <div class="stat-box">
                         <h3>Avg Rating</h3>
