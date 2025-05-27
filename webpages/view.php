@@ -9,10 +9,10 @@
             <div class="product-main-box">
                 <div class="product-image-section">
                     <div class="product-main-image" style="background-image: url('https://www.hponline.co.za/cdn/shop/files/laptops-7k8a0ea-40178403147989_800x.png?v=1686754731')">
-                        <div class="carousel-controls">
+                        <!-- <div class="carousel-controls">
                             <button class="carousel-control" onclick="prevImage()">&lt;</button>
                             <button class="carousel-control" onclick="nextImage()">&gt;</button>
-                        </div>
+                        </div> -->
                     </div>
                     <!-- <div class="image-thumbnails">
                         <div class="image-thumbnail active" style="background-image: url('https://www.hponline.co.za/cdn/shop/files/laptops-7k8a0ea-40178403147989_800x.png?v=1686754731')" onclick="selectImage(0)"></div>
