@@ -585,7 +585,65 @@ function insertReview($data){
         return;
     }
 
+    //Added some validation here to ensure that only users that exist can add reviews to products that exist and a check that the rating is between 0 and 5
+
+    //UserID check
+    $stmt = $conn->prepare("SELECT 1
+                    FROM  User
+                    WHERE UserID = ?");
+    if (!$stmt){
+        die("Failed to prepare UserID validation query");
+    }
+
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result(); 
+
+    if ($result->num_rows == 0){
+        $output = false;
+    }
+
+    $stmt->close();
+
+    //ProductID check
+    $stmt = $conn->prepare("SELECT 1
+                    FROM  Product
+                    WHERE ProductID = ?");
+    if (!$stmt){
+        die("Failed to prepare ProductID validation query");
+    }
+
+    $stmt->bind_param("i", $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result(); 
+
+    if ($result->num_rows == 0){
+        $output = false;
+    }
+
+    $stmt->close();
+
+    if ($rating > 5 || $rating < 0){
+        $output = false;
+    }
+
+    if (!$output){
+        header("HTTP/1.1 401 Unauthorized");
+        header("Content-type: application/json");
+        echo json_encode([
+            "status" => "failed",
+            "data" => "Invalid ProductID, UserID or Rating was provided."
+        ]);
+        exit;
+    }
+
+
     $stmt = $conn->prepare("INSERT INTO Review (ProductID, UserID, Rating, Comment, ReviewDate) VALUES (?, ?, ?, ?, NOW())");
+    
+    if (!$stmt){
+        die("Insert Review Prepare failed");
+    }
+    
     $stmt->bind_param("iiis", $product_id, $user_id, $rating, $comment);
     $result = $stmt->execute();
 
