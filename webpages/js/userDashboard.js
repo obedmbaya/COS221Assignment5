@@ -1,385 +1,152 @@
-document.addEventListener('DOMContentLoaded', function() {
-    loadUserReviewStats(); // Load user review stats
+document.addEventListener("DOMContentLoaded", function () {
 
-    // Tab navigation
-    const navLinks = document.querySelectorAll('.nav-tabs a');
-    const sections = document.querySelectorAll('.tab-content > div');
-    
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href').substring(1);
-            
-            navLinks.forEach(l => l.classList.remove('active'));
-            sections.forEach(s => s.classList.remove('active'));
-            
-            this.classList.add('active');
-            document.getElementById(targetId).classList.add('active');
-        });
-    });
-
-    // Logout handler
-    const logoutLink = document.querySelector('.logout');
-    if (logoutLink) {
-        logoutLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            localStorage.removeItem('apiKey');
-            window.location.href = 'login.php'; // Adjust redirect as needed
-        });
-    }
-});
-
-function loadUserReviewStats() {
-    const apiKey = localStorage.getItem('apiKey');
+    const apiKey = localStorage.getItem("apiKey");
     if (!apiKey) {
-        alert('Please log in to load review statistics.');
+        alert("You must be logged in to view your dashboard.");
+        window.location.href = "login.php";
         return;
     }
 
-    // Fetch products to map ProductIDs to names
-    fetch('../api/api.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            type: 'getAllProducts'
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text();
-    })
-    .then(text => {
-        try {
-            return JSON.parse(text);
-        } catch (e) {
-            console.error('Invalid JSON (products):', text);
-            throw new Error('Server returned invalid JSON');
-        }
-    })
-    .then(productData => {
-        if (productData.status !== 'success') {
-            alert('Failed to load products: ' + (productData.data || 'Unknown error'));
-            return;
-        }
-
-        const productMap = {};
-        productData.products.forEach(product => {
-            productMap[product.ProductID] = product.ProductName;
-        });
-
-        // Fetch user reviews
-        fetch('../api/api.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                type: 'getUserReviews',
-                ApiKey: apiKey
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then(text => {
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('Invalid JSON (reviews):', text);
-                throw new Error('Server returned invalid JSON');
-            }
-        })
-        .then(data => {
-            if (data.status === 'success') {
-                const reviews = Array.isArray(data.data) ? data.data : [];
-                updateReviewStats(reviews, productMap);
+    const payload = {
+        type: "getUserDashboard",
+        ApiKey: apiKey
+    };
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "../api/api.php", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                try {
+                    const data = JSON.parse(xhr.responseText);
+                    if (data.status === "success") {
+                        const user = data.data.user;
+                        const stats = data.data.stats;
+                        // update user info
+                        document.querySelector(".user-name").textContent = user.FirstName + " " + user.LastName;
+                        document.querySelector(".user-email").textContent = user.Email;
+                        // update stats
+                        document.querySelectorAll(".stat-number")[0].textContent = stats.reviewsCount;
+                        document.querySelectorAll(".stat-number")[1].textContent = stats.avgRating;
+                        // update reviewed products
+                        const productsList = document.querySelector(".products-list");
+                        productsList.innerHTML = "";
+                        stats.reviews.forEach(r => {
+                            const item = document.createElement("div");
+                            item.className = "product-item";
+                            item.innerHTML = `
+                                <span class="product-name">${r.ProductName}</span>
+                                <div class="product-rating">
+                                    <span class="stars">${"★".repeat(r.Rating)}${"☆".repeat(5 - r.Rating)}</span>
+                                    <span class="rating-value">${r.Rating} Star${r.Rating > 1 ? 's' : ''}</span>
+                                </div>
+                                <div class="product-actions">
+                                    <button class="view-btn" onclick="window.location.href='view.php?product=${r.ProductID}'">View</button>
+                                    <button class="update-btn" onclick="showUpdateReview('${r.ProductID}')">Update</button>
+                                </div>
+                            `;
+                            productsList.appendChild(item);
+                        });
+                    } else {
+                        alert("Failed to load dashboard: " + data.data);
+                    }
+                } catch (e) {
+                    alert("Invalid response from server.");
+                    console.error(e);
+                }
             } else {
-                alert('Failed to load reviews: ' + (data.data || 'Unknown error'));
+                alert("Request failed. Status: " + xhr.status);
             }
-        })
-        .catch(error => {
-            console.error('Error loading reviews:', error);
-            alert('An error occurred while loading reviews. Please try again.');
-        });
-    })
-    .catch(error => {
-        console.error('Error loading products:', error);
-        alert('An error occurred while loading products. Please try again.');
-    });
-}
-
-function updateReviewStats(reviews, productMap) {
-    const reviewsMadeElement = document.querySelector('.stats .stat-card:first-child h3');
-    const averageRatingElement = document.querySelector('.stats .stat-card:nth-child(2) h3 .avg_rating');
-    
-    if (!reviewsMadeElement || !averageRatingElement) {
-        console.error('Review stats elements not found');
-        return;
-    }
-
-    // Calculate number of reviews
-    const reviewCount = reviews.length;
-    reviewsMadeElement.textContent = reviewCount;
-
-    // Calculate average rating
-    const totalRating = reviews.reduce((sum, review) => sum + parseInt(review.Rating), 0);
-    const averageRating = reviewCount > 0 ? (totalRating / reviewCount).toFixed(1) : 0;
-    averageRatingElement.textContent = averageRating;
-
-    // Update reviewed products
-    updateReviewedProducts(reviews, productMap);
-}
-
-function updateReviewedProducts(reviews, productMap) {
-    const productList = document.querySelector('.product-list');
-    if (!productList) return;
-
-    productList.innerHTML = ''; // Clear existing products
-
-    reviews.forEach(review => {
-        const productName = productMap[review.ProductID] || 'Unknown Product';
-        const rating = parseInt(review.Rating);
-        const starsHtml = '★'.repeat(rating) + '☆'.repeat(5 - rating);
-        const ratingText = rating === 1 ? '1 Star' : `${rating} Stars`;
-
-        const productDiv = document.createElement('div');
-        productDiv.className = 'product';
-        productDiv.innerHTML = `
-            <div class="product-details">
-                <h3 class="product-name">${productName}</h3>
-                <p><span class="stars">${starsHtml}</span> <strong class="rating-value">${ratingText}</strong></p>
-            </div>
-            <div class="actions">
-                <a href="#" class="view-content">View</a>
-                <a href="#" class="update-content" onclick="showUpdateReview('${review.ReviewID}', '${review.ProductID}')">Update</a>
-            </div>
-        `;
-        productList.appendChild(productDiv);
-    });
-}
-
-document.addEventListener('submit', function(e) {
-    if (e.target.closest('#edit-info')) {
-        e.preventDefault();
-        
-        const email = e.target.querySelector('input[name="email"]').value;
-        const password = e.target.querySelector('input[name="password"]').value;
-        const confirmPassword = e.target.querySelector('input[name="confirm-password"]').value;
-        
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        
-        if (password && !passwordRegex.test(password)) {
-            alert('Password must be at least 8 characters long and contain numbers, special symbols, uppercase and lowercase letters.');
-            return;
         }
-        
-        if (password !== confirmPassword) {
-            alert('Passwords do not match.');
-            return;
-        }
+    };
+    xhr.send(JSON.stringify(payload));
 
-        const apiKey = localStorage.getItem('apiKey');
-        if (!apiKey) {
-            alert('Please log in to update profile.');
-            return;
-        }
+    // Edit Info Tab logic
+    const editProfileForm = document.querySelector('#profile form');
+    if (editProfileForm) {
 
-        fetch('../api/api.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                type: 'editInfo',
-                api_key: apiKey,
-                email: email,
-                password: password
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then(text => {
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('Invalid JSON (profile):', text);
-                throw new Error('Server returned invalid JSON');
-            }
-        })
-        .then(data => {
-            if (data.status === 'success') {
-                alert('Profile updated successfully!');
-            } else {
-                alert('Failed to update profile: ' + (data.data || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            console.error('Error updating profile:', error);
-            alert('An error occurred while updating profile.');
-        });
-    }
-});
-
-let userReviewData = {};
-
-function showUpdateReview(reviewId, productId) {
-    const updateForm = document.getElementById('updateReviewForm');
-    const apiKey = localStorage.getItem('apiKey');
-    
-    if (!apiKey) {
-        alert('Please log in to update reviews.');
-        return;
-    }
-
-    // Fetch the specific review
-    fetch('../api/api.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            type: 'getReview',
-            ReviewID: reviewId
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text();
-    })
-    .then(text => {
-        try {
-            return JSON.parse(text);
-        } catch (e) {
-            console.error('Invalid JSON (review):', text);
-            throw new Error('Server returned invalid JSON');
-        }
-    })
-    .then(data => {
-        if (data.status === 'success' && data.data.length > 0) {
-            const review = data.data[0];
-            userReviewData[reviewId] = {
-                reviewId: reviewId,
-                productId: productId,
-                name: document.querySelector(`.product:has([onclick*="${reviewId}"]) .product-name`).textContent,
-                rating: review.Rating,
-                review: review.Comment || ''
+        const apiKey2 = localStorage.getItem("apiKey");
+        if (apiKey2) {
+            var payload2 = { 
+                type: "getUserDashboard", 
+                ApiKey: apiKey2 
             };
-
-            document.getElementById('reviewProductName').value = userReviewData[reviewId].name;
-            document.getElementById('reviewRating').value = review.Rating;
-            document.getElementById('reviewText').value = review.Comment || '';
-
-            updateForm.style.display = 'block';
-            updateForm.scrollIntoView({ behavior: 'smooth' });
-        } else {
-            alert('Failed to load review: ' + (data.data || 'Unknown error'));
+            
+            var xhrGet = new XMLHttpRequest();
+            xhrGet.open("POST", "../api/api.php", true);
+            xhrGet.setRequestHeader("Content-Type", "application/json");
+            xhrGet.onreadystatechange = function () {
+                if (xhrGet.readyState === 4 && xhrGet.status === 200) {
+                    try {
+                        var data2 = JSON.parse(xhrGet.responseText);
+                        if (data2.status === "success") {
+                            editProfileForm.querySelector('input[type="email"]').value = data2.data.user.Email;
+                            localStorage.setItem("email", data2.data.user.Email);
+                        }
+                    } catch (e) {}
+                }
+            };
+            xhrGet.send(JSON.stringify(payload2));
         }
-    })
-    .catch(error => {
-        console.error('Error loading review:', error);
-        alert('An error occurred while loading the review.');
-    });
-}
-
-function saveReview() {
-    const reviewId = Object.keys(userReviewData).find(id => userReviewData[id].reviewId);
-    const productId = userReviewData[reviewId]?.productId;
-    const rating = document.getElementById('reviewRating').value;
-    const reviewText = document.getElementById('reviewText').value.trim();
-    const apiKey = localStorage.getItem('apiKey');
-
-    if (!reviewId || !productId || !apiKey) {
-        alert('Invalid review or not logged in.');
-        return;
+        editProfileForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var newEmail = editProfileForm.querySelector('input[type="email"]').value;
+            var newPassword = editProfileForm.querySelectorAll('input[type="password"]')[0].value;
+            var confirmPassword = editProfileForm.querySelectorAll('input[type="password"]')[1].value;
+            if (newPassword && newPassword !== confirmPassword) {
+                alert("Passwords do not match.");
+                return;
+            }
+            var updatePayload = {
+                type: "updateUserProfile",
+                ApiKey: apiKey2,
+                email: newEmail
+            };
+            if (newPassword) {
+                updatePayload.password = newPassword;
+            }
+            var xhrUpdate = new XMLHttpRequest();
+            xhrUpdate.open("POST", "../api/api.php", true);
+            xhrUpdate.setRequestHeader("Content-Type", "application/json");
+            xhrUpdate.onreadystatechange = function () {
+                if (xhrUpdate.readyState === 4) {
+                    if (xhrUpdate.status === 200) {
+                        try {
+                            var resp = JSON.parse(xhrUpdate.responseText);
+                            
+                            if (resp.status === "success") {
+                                alert("Profile updated successfully.");
+                                // Update the displayed email in the dashboard
+                                document.querySelector(".user-email").textContent = newEmail;
+                                // Clear password fields
+                                editProfileForm.querySelectorAll('input[type="password"]').forEach(input => input.value = "");
+                            } else {
+                                alert("Update failed: " + resp.data);
+                            }
+                        } catch (e) {
+                            alert("Invalid response from server.");
+                        }
+                    } else {
+                        alert("Request failed. Status: " + xhrUpdate.status);
+                    }
+                }
+            };
+            xhrUpdate.send(JSON.stringify(updatePayload));
+        });
     }
 
-    if (!reviewText) {
-        alert('Please enter a review text');
-        return;
-    }
-
-    fetch('../api/api.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            type: 'updateReview',
-            api_key: apiKey,
-            ReviewID: reviewId,
-            Rating: parseInt(rating),
-            Comment: reviewText
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text();
-    })
-    .then(text => {
-        try {
-            return JSON.parse(text);
-        } catch (e) {
-            console.error('Invalid JSON (update review):', text);
-            throw new Error('Server returned invalid JSON');
-        }
-    })
-    .then(data => {
-        if (data.status === 'success') {
-            updateProductDisplay(reviewId, parseInt(rating));
-            alert('Review updated successfully!');
-            cancelUpdateReview();
-            loadUserReviewStats(); // Refresh stats
-        } else {
-            alert('Failed to update review: ' + (data.data || 'Unknown error'));
-        }
-    })
-    .catch(error => {
-        console.error('Error updating review:', error);
-        alert('An error occurred while updating the review.');
+    // Tab navigation logic for switching between Overview and Edit Info
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active from all buttons and panes
+            tabButtons.forEach(b => b.classList.remove('active'));
+            tabPanes.forEach(p => p.classList.remove('active'));
+            // Add active to clicked button and corresponding pane
+            this.classList.add('active');
+            const tab = this.getAttribute('data-tab');
+            document.getElementById(tab).classList.add('active');
+        });
     });
-}
-
-function cancelUpdateReview() {
-    const updateForm = document.getElementById('updateReviewForm');
-    updateForm.style.display = 'none';
-
-    document.getElementById('reviewProductName').value = '';
-    document.getElementById('reviewRating').value = '1';
-    document.getElementById('reviewText').value = '';
-
-    userReviewData = {};
-}
-
-function updateProductDisplay(reviewId, newRating) {
-    const productItems = document.querySelectorAll('.product');
-    const reviewData = userReviewData[reviewId];
-
-    productItems.forEach(item => {
-        const productName = item.querySelector('.product-name').textContent;
-        if (productName === reviewData.name) {
-            const starsSpan = item.querySelector('.stars');
-            const ratingValue = item.querySelector('.rating-value');
-
-            let starsHtml = '★'.repeat(newRating) + '☆'.repeat(5 - newRating);
-            starsSpan.textContent = starsHtml;
-
-            const ratingText = newRating === 1 ? '1 Star' : `${newRating} Stars`;
-            ratingValue.textContent = ratingText;
-        }
-    });
-}
+});
