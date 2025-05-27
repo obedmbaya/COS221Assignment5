@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const accountTypeRadios = document.querySelectorAll('input[name="account_type"]');
       const retailerFields = document.querySelectorAll('.retailer-fields');
       const businessNameInput = document.getElementById('business_name');
-      const registrationNumberInput = document.getElementById('registration_number');
+      const siteReferenceInput = document.getElementById('site_reference');
       const verificationDocument = document.getElementById('verification_document');
 
 
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
           });
         
           businessNameInput.required = true;
-          registrationNumberInput.required = true;
+          siteReferenceInput.required = true;
           verificationDocument.required = true;
         }else{
          retailerFields.forEach(field=>{
@@ -41,11 +41,11 @@ document.addEventListener("DOMContentLoaded", function () {
           });
         
           businessNameInput.required = false;
-          registrationNumberInput.required = false;
+          siteReferenceInput.required = false;
           verificationDocument.required = false;
 
           businessNameInput.value='';
-          registrationNumberInput.value='';
+          siteReferenceInput.value='';
           verificationDocument.value='';
 
 
@@ -96,31 +96,38 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("signup-form").addEventListener("submit", function (event) {
         event.preventDefault();
         // Get full name and split into first and last name
-        const fullName = document.getElementById("fullname").value.trim();
-        let name = "";
-        let surname = "";
-        if (fullName.includes(" ")) {
-          name = fullName.substring(0, fullName.lastIndexOf(" ")).trim();
-          surname = fullName.substring(fullName.lastIndexOf(" ") + 1).trim();
-        } else {
-          name = fullName;
-          surname = "";
-        }
+        const firstName = document.getElementById("firstname").value;
+        const lastName = document.getElementById("lastname").value;
+        
         var selectedAccountType = document.querySelector('input[name="account_type"]:checked').value;
+        var payload = {};
         if (selectedAccountType=="customer"){
           selectedAccountType="Standard";
+          payload = {
+            type: "Signup",
+            name: firstName,
+            surname: lastName,
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value,
+            user_type: selectedAccountType
+          };
 
-        }else{
-          selectedAccountType="Retailer";
         }
-        var payload = {
-          type: "Signup",
-          name: name,
-          surname: surname,
-          email: document.getElementById("email").value,
-          password: document.getElementById("password").value,
-          user_type: selectedAccountType
-        };
+        
+        else{
+          selectedAccountType="Retailer";
+          payload = {
+            type: "Signup",
+            name: firstName,
+            surname: lastName,
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value,
+            user_type: selectedAccountType,
+            RetailerName: document.getElementById("business_name").value,
+            SiteReference: document.getElementById("site_reference").value
+          };
+        }
+
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "../api/api.php", true);
         xhr.setRequestHeader("Content-Type", "application/json");

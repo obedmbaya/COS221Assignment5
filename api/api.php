@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     switch ($type) {
         case "Signup":
-            registerUser($data);
+            handleSignup($data);
             break;
         case "Login":
             handleLogin($data); 
