@@ -284,14 +284,14 @@ function compare($data){
 
     $conn = Database::instance()->getConnection();
     
-    //validateApikey($data);
+    // validateApikey($data);
     
     if (!isset($data["ProductID"])){
         header("HTTP/1.1 400 Bad Request");
         header("Content-type: application/json");
         echo json_encode([
             "status" => "failed",
-            "data" => "Invalid API Key or no API Key was provided."
+            "data" => "No ProductID provided."
         ]);
         exit;
     }
