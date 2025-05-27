@@ -466,8 +466,8 @@ function saveContacts($data) {
         return;
     }
 
-    $firstname = $user["Firstame"];
-    $surname = $user["Surname"];
+    $firstname = $user["FirstName"];
+    $surname = $user["LastName"];
 
     $insert = $db->prepare("INSERT INTO contacts (Firstname, Surname, email, phone, message) VALUES (?, ?, ?, ?, ?)");
     $insert->bind_param("sssss", $firstname, $surname, $email, $phone, $message);
@@ -625,8 +625,9 @@ function checkAPI($currapi, $database) {
 function getReview($data){
     $conn = Database::instance()->getConnection();
     $product_id = $data["ProductID"];
-
     if (!$product_id){
+ 
+
         sendResponse("error", "ProductID is required", 400);
         return;
     }
@@ -634,8 +635,9 @@ function getReview($data){
     $stmt = $conn->prepare("SELECT * FROM Review WHERE ProductID = ?");
     $stmt->bind_param("i", $product_id);
     $stmt->execute();
+    
     $result = $stmt->get_result();
-
+    $result;
     $reviews = [];
 
     while($row = $result->fetch_assoc()){
@@ -659,6 +661,8 @@ function getReview($data){
 
         $reviews[] = $row;
     }
+
+    sendResponse("Success", $reviews);
 }
 
 function getUserReviews($data){
