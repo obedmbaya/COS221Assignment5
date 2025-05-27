@@ -16,13 +16,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     switch ($type) {
         case "Signup":
-            registerUser($data);
+            handleSignup($data);
             break;
         case "Login":
             handleLogin($data); 
-            break;
-        case "Register":
-            handleSignup($data);
             break;
 
         case "Logout":
@@ -52,8 +49,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case "deleteProduct":
             deleteProduct($data);
             break;
+        case "ViewProduct":
+            handleViewProduct($data);
+            break;
         case "compare":
             compare($data);
+            break;
+        case "GetTopRated":
+            handleTopRated($data);
             break;
         case "saveContacts":
             saveContacts($data);
@@ -84,6 +87,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             break;
         case "editInfo":
             handleEditInfo($data);
+            break;
+        case "GetRetailerById":
+            handleGetRetailerById($data);
             break;
         
         case "getUserReviews":

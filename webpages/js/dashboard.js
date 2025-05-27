@@ -1,4 +1,18 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+    var username = document.querySelector(".user-name");
+    var useremail = document.querySelector(".user-email");
+
+    if (username) {
+        username.textContent = localStorage.getItem("name") + " " +  localStorage.getItem("surname") || "";
+    }
+
+    if (useremail) {
+        useremail.textContent = localStorage.getItem("email") || "";
+    }
+
+
+
     initializeTabs(); // Initialize tab switching functionality
     initializeCharts(); // Sets up Chart.js charts
     loadUserReviewStats(); // Load user review stats for Reviews Made and Average Rating
@@ -17,6 +31,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('users')) {
         loadUsers();
     }
+
+    document.querySelector(".logout-btn").addEventListener("click", function () {
+        localStorage.clear();
+        alert("You have been logged out successfully.");
+        window.location.href = "index.php";
+    });
+
+
 });
 
 function initializeTabs() {
@@ -791,3 +813,4 @@ function updateProductDisplay(reviewId, newRating) {
         }
     });
 }
+

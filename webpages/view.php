@@ -1,6 +1,6 @@
 <?php
     $additional_css = '<link rel="stylesheet" href="css/styles.css">';
-    // $additional_js = '<script src="Link to js file goes here"></script>'; <!-- "js/header.js" for example  -->
+     $additional_js = '<script src="js/viewing.js"></script>';
     $page_title = "Profile";
     include_once 'header.php';
 ?>

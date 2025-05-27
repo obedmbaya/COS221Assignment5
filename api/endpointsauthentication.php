@@ -37,7 +37,25 @@ function handleLogin($data) {
     }
 
 
-    apiResponse("success", ["apikey" => $user['ApiKey'], "userType" => $user['UserType']]);
+    if ($user['UserType'] === "Standard" || $user['UserType'] === "Admin") 
+    {
+        apiResponse("success", ["apikey" => $user['ApiKey'], "userType" => $user['UserType'], "email" => $user["Email"], "name" => $user["FirstName"], "surname" => $user["LastName"]]);
+    }
+
+    else {
+
+        $query = "SELECT * FROM Retailer WHERE email = ?;";
+        $stmt_retail = $database->prepare($query);
+        $stmt_retail->bind_param("s", $email);
+        $stmt_retail->execute();
+        $result = $stmt_retail->get_result();
+        $retailer = $result->fetch_assoc();
+
+        $stmt_retail->close();
+        
+        apiResponse("success", ["apikey" => $user['ApiKey'], "userType" => $user['UserType'], "email" => $user["Email"], "RetailerName" => $retailer["RetailerName"]]);
+    }
+    
     
 }
 
@@ -229,10 +247,13 @@ function handleEditUser($data) {
 
 function handleSignup($data) {
     $database = Database::instance()->getConnection();
-    $firstName = $data["name"];
-    $surname = $data["surname"];
-    $email = $data["email"];
-    $password = $data["password"];
+    $firstName = isset($data["name"]) ? $data['name'] : null;
+    $surname = isset($data["surname"]) ? $data['surname'] : null;
+    $email = isset($data["email"]) ? $data['email'] : null;
+    $password = isset($data["password"]) ? $data['password'] : null;
+    $userType = isset($data['user_type']) ? $data['user_type'] : null;
+    $RetailerName = isset($data["RetailerName"]) ? $data["RetailerName"] : null;
+    $SiteReference = isset($data["SiteReference"]) ? $data["SiteReference"] : null;
 
     $regexName = "/^[a-zA-Z]+$/";
     $regexSymbol = "/[^a-zA-Z0-9]+/";
@@ -241,7 +262,7 @@ function handleSignup($data) {
     $regexlow = "/[a-z]+/";
     $regexEmail = "/^[^\s@]+@[^\s@]+\.[^\s@]+$/i";
 
-    if (empty($firstName) || empty($surname) || empty($email) || empty($password)) {
+    if (empty($firstName) || empty($surname) || empty($email) || empty($password) || empty($userType)) {
 
         apiResponse("failed", "All fields must be filled in before signing up.", 400); 
     }
@@ -304,23 +325,59 @@ function handleSignup($data) {
     }
 
     // No errors, proceed to registering the user
-    $query = "INSERT INTO User(`FirstName`, `LastName`, `Email`, `Password`, `Salt`, `ApiKey`, `UserType`) VALUES (?, ?, ?, ?, ?, ?, 'Standard');";
-    $stmt = $database->prepare($query);
-    if (!$stmt) {
-        $stmt->close();
-        apiResponse("failed", "Database error: " . $database->error, 500);
-    }
-    
+
+
     $salt = bin2hex(random_bytes(16));
     $hash = hash("sha256", $salt . $password);
     $api_key = apiChecker(randomizeString(32), $database);
-    
-    $stmt->bind_param("ssssss", $firstName, $surname, $email, $hash, $salt, $api_key);
-    $stmt->execute();
-    $stmt->close();
 
+    if ($userType === "Standard") {
+        $query = "INSERT INTO User(`FirstName`, `LastName`, `Email`, `Password`, `Salt`, `ApiKey`, `UserType`) VALUES (?, ?, ?, ?, ?, ?, 'Standard');";
+        $stmt = $database->prepare($query);
+        if (!$stmt) {
+            apiResponse("failed", "Database error: " . $database->error, 500);
+        }
+        
+        $stmt->bind_param("ssssss", $firstName, $surname, $email, $hash, $salt, $api_key);
+        $stmt->execute();
+        $stmt->close();
+    }
+    else if($userType === "Retailer") {
+        if (empty($RetailerName) || empty($SiteReference)) {
+            apiResponse("failed", "Retailer name and site reference are required for Retailer users.", 400);
+        }
+
+   
+        $query = "INSERT INTO User(`FirstName`, `LastName`, `Email`, `Password`, `Salt`, `ApiKey`, `UserType`) VALUES (?, ?, ?, ?, ?, ?, 'Retailer');";
+        $stmt = $database->prepare($query);
+        if (!$stmt) {
+            apiResponse("failed", "Database error: " . $database->error, 500);
+        }
+        
+        $stmt->bind_param("ssssss", $firstName, $surname, $email, $hash, $salt, $api_key);
+        $stmt->execute();
+        $stmt->close();
+
+        // Insert retailer
+        $queryRetailer = "INSERT INTO Retailer (`RetailerName`, `SiteReference`, `Email`) VALUES (?, ?, ?);";
+        $stmtRetailer = $database->prepare($queryRetailer);
+        if (!$stmtRetailer) {
+            apiResponse("failed", "Database error: " . $database->error, 500);
+        }
+        
+        $stmtRetailer->bind_param("sss", $RetailerName, $SiteReference, $email);
+        if (!$stmtRetailer->execute()) {
+            $stmtRetailer->close();
+            apiResponse("failed", "Failed to add Retailer", 500);
+        }
+        $stmtRetailer->close();
+    }
+    else {
+        apiResponse("failed", "Invalid user type.", 400);
+    }
 
     apiResponse("success", ["apikey" => $api_key]);
+
 
 } 
 

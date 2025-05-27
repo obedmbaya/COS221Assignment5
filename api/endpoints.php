@@ -284,14 +284,14 @@ function compare($data){
 
     $conn = Database::instance()->getConnection();
     
-    //validateApikey($data);
+    // validateApikey($data);
     
     if (!isset($data["ProductID"])){
         header("HTTP/1.1 400 Bad Request");
         header("Content-type: application/json");
         echo json_encode([
             "status" => "failed",
-            "data" => "Invalid API Key or no API Key was provided."
+            "data" => "No ProductID provided."
         ]);
         exit;
     }
@@ -333,18 +333,18 @@ function validateApikey($data){
     } else {
 
         $conn = Database::instance()->getConnection();
-        $apikey = $data["apikey"];
+        $apikey = $data["ApiKey"];
 
         $stmt = $conn->prepare("SELECT 1
-                        FROM  ApiKey
-                        WHERE KeyValue = ?");
+                        FROM  User
+                        WHERE ApiKey = ?");
         if (!$stmt){
             die("Failed to prepare apikey validation query");
         }
 
         $stmt->bind_param("s", $apikey);
         $stmt->execute();
-        $result = $stmt->get_result();
+        $result = $stmt->get_result(); 
 
         if ($result->num_rows == 0){
             $output = false;
@@ -554,7 +554,7 @@ function getReview($data){
     $product_id = $data["ProductID"];
 
     if (!$product_id){
-        $this->sendResponse("error", "ProductID is required", 400);
+        sendResponse("error", "ProductID is required", 400);
         return;
     }
 
@@ -570,7 +570,7 @@ function getReview($data){
     }
 
     $stmt->close();
-    $this->sendResponse("success", $reviews, 200);
+    sendResponse("success", $reviews, 200);
 }
 
 function getUserReviews($data){
@@ -612,19 +612,77 @@ function insertReview($data){
     $comment = $data["Comment"] ?? null;
 
     if ($product_id == null || $user_id == null || $rating == null){
-        $this->sendResponse("error", "ProductID, UserID and Rating are required", 400);
+        sendResponse("error", "ProductID, UserID and Rating are required", 400);
         return;
     }
 
+    //Added some validation here to ensure that only users that exist can add reviews to products that exist and a check that the rating is between 0 and 5
+
+    //UserID check
+    $stmt = $conn->prepare("SELECT 1
+                    FROM  User
+                    WHERE UserID = ?");
+    if (!$stmt){
+        die("Failed to prepare UserID validation query");
+    }
+
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result(); 
+
+    if ($result->num_rows == 0){
+        $output = false;
+    }
+
+    $stmt->close();
+
+    //ProductID check
+    $stmt = $conn->prepare("SELECT 1
+                    FROM  Product
+                    WHERE ProductID = ?");
+    if (!$stmt){
+        die("Failed to prepare ProductID validation query");
+    }
+
+    $stmt->bind_param("i", $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result(); 
+
+    if ($result->num_rows == 0){
+        $output = false;
+    }
+
+    $stmt->close();
+
+    if ($rating > 5 || $rating < 0){
+        $output = false;
+    }
+
+    if (!$output){
+        header("HTTP/1.1 401 Unauthorized");
+        header("Content-type: application/json");
+        echo json_encode([
+            "status" => "failed",
+            "data" => "Invalid ProductID, UserID or Rating was provided."
+        ]);
+        exit;
+    }
+
+
     $stmt = $conn->prepare("INSERT INTO Review (ProductID, UserID, Rating, Comment, ReviewDate) VALUES (?, ?, ?, ?, NOW())");
+    
+    if (!$stmt){
+        die("Insert Review Prepare failed");
+    }
+    
     $stmt->bind_param("iiis", $product_id, $user_id, $rating, $comment);
     $result = $stmt->execute();
 
     if ($result){
-        $this->sendResponse("success", "Review added successfully", 201);
+        sendResponse("success", "Review added successfully", 201);
     }
     else{
-        $this->sendResponse("error", "Failed to add review", 500);
+        sendResponse("error", "Failed to add review", 500);
     }
 
     $stmt->close();
@@ -637,7 +695,7 @@ function updateReview($data){
     $comment = $data["Comment"] ?? null;
 
     if (!$review_id || ! $rating){
-        $this->sendResponse("error", "ReviewID and Rating are required", 400);
+        sendResponse("error", "ReviewID and Rating are required", 400);
         return;
     }
 
@@ -646,10 +704,10 @@ function updateReview($data){
     $result = $stmt->execute();
 
     if ($result){
-        $this->sendResponse("success", "Review updated successfully", 200);
+        sendResponse("success", "Review updated successfully", 200);
     }
     else{
-        $this->sendResponse("error", "Failed to update review", 500);
+        sendResponse("error", "Failed to update review", 500);
     }
 
     $stmt->close();
@@ -661,7 +719,7 @@ function deleteReview($data){
     $review_id = $data["ReviewID"];
 
     if (!$review_id){
-        $this->sendResponse("error", "ReviewID is required", 400);
+        sendResponse("error", "ReviewID is required", 400);
         return;
     }
 
@@ -670,9 +728,9 @@ function deleteReview($data){
     $result = $stmt->execute();
 
     if ($result){
-        $this->sendResponse("success", "Review deleted successfully", 200);
+        sendResponse("success", "Review deleted successfully", 200);
     } else {
-        $this->sendResponse("error", "Failed to delete review", 500);
+        sendResponse("error", "Failed to delete review", 500);
     }
 
     $stmt->close();
@@ -830,8 +888,35 @@ function deleteProductPrice($data){
     }
 }
 
+function handleViewProduct($data){
+    if (!isset($data["ProductID"])){
+        sendResponse("failed", "No ProductID provided.", 400);
+    }
+
+    $productID = $data["ProductID"];
+
+    $conn = Database::instance()->getConnection();
+    
+    $stmt = $conn->prepare("SELECT *
+                            FROM Product p
+                            JOIN ProductPrice pp on p.ProductID = pp.ProductID
+                            WHERE p.ProductID = ?");
+    if (!$stmt){
+        sendResponse("failed", "ViewProduct prepare failed.", 500);
+    }
+    $stmt->bind_param("i", $productID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $productDetails = $result->fetch_assoc();
+    $stmt->close();
+
+    sendResponse("success", $productDetails, 200);
+
+}
+
 // --- RESPONSE UTILITY ---
 function sendResponse($status, $data, $httpCode = 200) {
+    header("Content-type: application/json");
     http_response_code($httpCode);
     echo json_encode([
         "status" => $status,
@@ -843,9 +928,11 @@ function sendResponse($status, $data, $httpCode = 200) {
 function handleTopRated($data){
 
     $conn = Database::instance()->getConnection();
-    $stmt = $conn->prepare("SELECT r.ProductID, p.ProductName, p.Description, p.Brand, p.IMG_Reference, p.Price, p.Retailer, AVG(r.Rating) AS Rating
+    $stmt = $conn->prepare("SELECT r.ProductID, p.ProductName, p.Description, p.Brand, p.IMG_Reference, pp.Price, re.RetailerName, AVG(r.Rating) AS Rating
                     FROM Review r
                     JOIN Product p ON r.ProductID = p.ProductID
+                    JOIN ProductPrice pp ON r.ProductID = pp.ProductID
+                    JOIN Retailer re ON re.RetailerID = pp.RetailerID
                     GROUP BY r.ProductID
                     ORDER BY Rating DESC
                     LIMIT 5");
@@ -869,7 +956,7 @@ function handleTopRated($data){
 }
 
 //Imma also put getRetailerById in here even tho it's not a stats endpoint
-function handleGetRetailerById(){
+function handleGetRetailerById($data){
 
     validateApikey($data);
 
@@ -887,12 +974,12 @@ function handleGetRetailerById(){
     $stmt = $conn->prepare("SELECT u.UserID, u.FirstName, u.LastName, u.Email, r.RetailerID, r.RetailerName, r.SiteReference, r.Email
                             FROM Retailer as r
                             JOIN User as u ON r.Email = u.Email
-                            WHERE u.UserID = ? AND u.UserType = 'Retailer");
+                            WHERE u.UserID = ? AND u.UserType = 'Retailer'");
     if (!$stmt){
         die("Failed to prepare query: " . $conn->error);
     }
 
-    $stmt->bind_param(s, $data["userID"]);
+    $stmt->bind_param("s", $data["userID"]);
     $stmt->execute();
     $result = $stmt->get_result();
     $retailer = $result->fetch_assoc();
@@ -1047,48 +1134,5 @@ function handleEditInfo($data) {
 
     apiResponse("success", ["apikey" => $ApiKey]);
 }
-// function validateApikey($data){
-
-//     $output = true;
-
-//     if (!isset($data["apikey"])){
-
-//         $output = false;
-
-//     } else {
-
-//         $conn = Database::instance()->getConnection();
-//         $apikey = $data["apikey"];
-
-//         $stmt = $conn->prepare("SELECT 1
-//                         FROM  ApiKey
-//                         WHERE KeyValue = ?");
-//         if (!$stmt){
-//             die("Failed to prepare apikey validation query");
-//         }
-
-//         $stmt->bind_param("s", $apikey);
-//         $stmt->execute();
-//         $result = $stmt->get_result();
-
-//         if ($result->num_rows == 0){
-//             $output = false; 
-//         }
-
-//         $stmt->close();
-
-//     }
-
-//     if (!$output){
-//         header("HTTP/1.1 401 Unauthorized");
-//         header("Content-type: application/json");
-//         echo json_encode([
-//             "status" => "failed",
-//             "data" => "Invalid API Key or no API Key was provided."
-//         ]);
-//         exit;
-//     }
-
-// }
 
 ?>

@@ -72,8 +72,14 @@ include 'header.php';
 
 
                 <div class="form-group">
-                    <label for="fullname">Full Name</label>
-                    <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+                    <label for="firstname">First Name</label>
+                    <input type="text" id="firstname" name="firstname" placeholder="Enter your first name" required>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="lastname">Last Name</label>
+                    <input type="text" id="lastname" name="lastname" placeholder="Enter your last name" required>
 
                 </div>
 
@@ -86,8 +92,8 @@ include 'header.php';
                 </div>
 
                 <div class="form-group retailer-fields" id="registration-number-field">
-                    <label for="registration_number">Business Registration Number</label>
-                    <input type="text" id="registration_number" name="registration_number" placeholder="Enter your business registration number">
+                    <label for="site_reference">Site Reference</label>
+                    <input type="text" id="site_reference" name="site_reference" placeholder="Enter your business website url">
 
                 </div>
 
