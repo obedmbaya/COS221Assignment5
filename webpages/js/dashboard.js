@@ -472,6 +472,9 @@ document.addEventListener('submit', function(e) {
     if (e.target.closest('.tab-pane[id="profile"]')) {
         e.preventDefault();
         
+        const emailUpdate = document.getElementById("email-update").value;
+
+
         const password = e.target.querySelector('input[type="password"]').value;
         const confirmPassword = e.target.querySelectorAll('input[type="password"]')[1].value;
         
@@ -486,8 +489,47 @@ document.addEventListener('submit', function(e) {
             alert('Passwords do not match.');
             return;
         }
+
         
-        alert('Profile updated successfully!');
+        var payload = {
+            type: "editInfo",
+            email: emailUpdate,
+            password: confirmPassword,
+            api_key : localStorage.getItem("apiKey")
+        };
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "../api/api.php", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+            try {
+                var response = JSON.parse(xhr.responseText);
+                if (response.status === "success") {
+                    alert('Profile updated successfully!');
+                    document.getElementById("email-update").value="retailer@example.com"
+                    e.target.querySelector('input[type="password"]').value = "";
+                    e.target.querySelectorAll('input[type="password"]')[1].value = "";
+                    localStorage.setItem("email", response.data.email);
+                    document.querySelector(".user-email").textContent = localStorage.getItem("email");
+                } 
+                else {
+                alert("Login failed: " + JSON.stringify(response));
+                }
+            } catch (e) {
+                alert("Invalid response from server.");
+            }
+            } else {
+            alert("Update Failed. Status: " + xhr.status);
+            }
+        }
+        };
+
+        xhr.send(JSON.stringify(payload));
+        
+        
     }
 });
 

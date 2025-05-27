@@ -1101,7 +1101,7 @@ function handleEditInfo($data) {
     $stmt->close();
 
 
-    apiResponse("success", ["apikey" => $ApiKey]);
+    apiResponse("success", ["apikey" => $ApiKey, "email" => $email]);
 }
 
 ?>

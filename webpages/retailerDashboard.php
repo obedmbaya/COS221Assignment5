@@ -250,16 +250,16 @@
                     <h3>Edit Profile Information</h3>
                     <form>
                         <div class="form-group">
-                            <label>Email Address:</label>
-                            <input type="email" value="retailer@example.com" placeholder="Enter new email">
+                            <label for="email-update">Email Address:</label>
+                            <input id="email-update" type="email" value="retailer@example.com" placeholder="Enter new email">
                         </div>
                         <div class="form-group">
-                            <label>New Password:</label>
-                            <input type="password" placeholder="Enter new password">
+                            <label for="password-update">New Password:</label>
+                            <input id="password-update" type="password" placeholder="Enter new password">
                         </div>
                         <div class="form-group">
-                            <label>Confirm Password:</label>
-                            <input type="password" placeholder="Confirm new password">
+                            <label for="password-confirm" >Confirm Password:</label>
+                            <input id="password-confirm" type="password" placeholder="Confirm new password">
                         </div>
                         <p class="password-hint">Password must be at least 8 characters long and contain numbers, special symbols, uppercase and lowercase letters.</p>
                         <button type="submit" class="success">Update Profile</button>
