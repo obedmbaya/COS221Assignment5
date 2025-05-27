@@ -1061,14 +1061,21 @@ function handleGetRetailerProducts($data){
         exit;
     }
 
-    $stmt = $conn->prepare("SELECT p.ProductName, p.Description, p.Brand, c.CategoryName, pp.Price -- , AVG(Rating) as Rating
-                    FROM Retailer re
-                    JOIN ProductPrice pp ON pp.RetailerID = re.RetailerID
-                    JOIN Product p ON pp.ProductID = p.ProductID
-                    -- JOIN Review r ON r.ProductID = p.ProductID
-                    JOIN Category c ON c.CategoryID = p.CategoryID
-                    WHERE pp.RetailerID = ?
-                    GROUP BY p.ProductID");
+    $stmt = $conn->prepare("SELECT 
+                                p.ProductName, 
+                                p.Description, 
+                                p.Brand, 
+                                c.CategoryName, 
+                                pp.Price,
+                                COALESCE(AVG(r.Rating), 0) as Rating
+                            FROM Retailer re
+                            JOIN ProductPrice pp ON pp.RetailerID = re.RetailerID
+                            JOIN Product p ON pp.ProductID = p.ProductID
+                            JOIN Category c ON c.CategoryID = p.CategoryID
+                            LEFT JOIN Review r ON r.ProductID = p.ProductID
+                            WHERE pp.RetailerID = ?
+                            GROUP BY p.ProductID
+                            ORDER BY Rating DESC");
 
     $stmt->bind_param("i", $retailerID);
     $stmt->execute();

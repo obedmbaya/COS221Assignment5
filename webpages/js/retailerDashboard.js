@@ -206,24 +206,18 @@ function populateOverview(data){
     const prodList = document.getElementsByClassName('products-list');
     prodList[0].innerHTML = "";
 
+    let i = 0;
     data.forEach(element => {
-        prodList[0].appendChild(createProductItem(element.ProductName, 5));
+        if (i<5){
+            prodList[0].appendChild(createProductItem(element.ProductName, element.Rating));
+            i++;
+        }
     });
-
-    /*
-    <div class="product-item">
-                            <span class="product-name">Premium Headphones</span>
-                            <div class="product-rating">
-                                <span class="stars">★★★★★</span>
-                                <span class="rating-value">4.8</span>
-                            </div>
-                            <button class="view-btn" onclick="window.location.href='view.php'">View</button>
-                        </div>
-                         */
 
 }
 
 function createProductItem(productName, rating) {
+    console.log(rating);
     const productItem = document.createElement('div');
     productItem.className = 'product-item';
 
@@ -244,7 +238,7 @@ function createProductItem(productName, rating) {
 
     const ratingSpan = document.createElement('span');
     ratingSpan.className = 'rating-value';
-    ratingSpan.textContent = rating.toFixed(1);
+    ratingSpan.textContent = rating;
 
     const viewButton = document.createElement('button');
     viewButton.className = 'view-btn';
