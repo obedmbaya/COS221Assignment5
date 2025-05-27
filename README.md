@@ -1,14 +1,12 @@
 # COS221Assignment5
 
-<!-- Header Inlcude -->
-On top of each php file to include the header please use the following format in order to correctly call the css and js file for that specific php/html file <3 - Zaman
-<!--  -->
-<?php
-    <!--  -->
-    $additional_css = '<link rel="stylesheet" href="Link to css file goes here">'; <!-- "css/header.css" for example -->
-    $additional_js = '<script src="Link to js file goes here"></script>'; <!-- "js/header.js" for example  -->
-    $page_title = "Profile";
-    include_once 'header.php';
-?>
-<!--  -->
-<!-- Header Include -->
+Name of project: CompareIt
+Description:
+CompareIt is a price comparison tool that allows users to compare the prices of products from different retailers. It also allows 
+
+How to run the project:
+
+1. Open the XAMPP Control Panel Application on your machine and start the Apache and MySQL modules.
+2. Copy the project folder to your C:\xampp\htdocs\ directory
+3. Open your browser and type http://localhost/cos221assignment5/webpages/launch.php
+

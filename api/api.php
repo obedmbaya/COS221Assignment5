@@ -55,6 +55,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case "compare":
             compare($data);
             break;
+        case "GetTopRated":
+            handleTopRated($data);
+            break;
         case "saveContacts":
             saveContacts($data);
             break;

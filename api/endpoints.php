@@ -554,7 +554,7 @@ function getReview($data){
     $product_id = $data["ProductID"];
 
     if (!$product_id){
-        $this->sendResponse("error", "ProductID is required", 400);
+        sendResponse("error", "ProductID is required", 400);
         return;
     }
 
@@ -570,7 +570,7 @@ function getReview($data){
     }
 
     $stmt->close();
-    $this->sendResponse("Success", $reviews, 200);
+    sendResponse("Success", $reviews, 200);
 }
 
 function insertReview($data){
@@ -581,7 +581,7 @@ function insertReview($data){
     $comment = $data["Comment"] ?? null;
 
     if ($product_id == null || $user_id == null || $rating == null){
-        $this->sendResponse("error", "ProductID, UserID and Rating are required", 400);
+        sendResponse("error", "ProductID, UserID and Rating are required", 400);
         return;
     }
 
@@ -590,10 +590,10 @@ function insertReview($data){
     $result = $stmt->execute();
 
     if ($result){
-        $this->sendResponse("success", "Review added successfully", 201);
+        sendResponse("success", "Review added successfully", 201);
     }
     else{
-        $this->sendResponse("error", "Failed to add review", 500);
+        sendResponse("error", "Failed to add review", 500);
     }
 
     $stmt->close();
@@ -606,7 +606,7 @@ function updateReview($data){
     $comment = $data["Comment"] ?? null;
 
     if (!$review_id || ! $rating){
-        $this->sendResponse("error", "ReviewID and Rating are required", 400);
+        sendResponse("error", "ReviewID and Rating are required", 400);
         return;
     }
 
@@ -615,10 +615,10 @@ function updateReview($data){
     $result = $stmt->execute();
 
     if ($result){
-        $this->sendResponse("success", "Review updated successfully", 200);
+        sendResponse("success", "Review updated successfully", 200);
     }
     else{
-        $this->sendResponse("error", "Failed to update review", 500);
+        sendResponse("error", "Failed to update review", 500);
     }
 
     $stmt->close();
@@ -630,7 +630,7 @@ function deleteReview($data){
     $review_id = $data["ReviewID"];
 
     if (!$review_id){
-        $this->sendResponse("error", "ReviewID is required", 400);
+        sendResponse("error", "ReviewID is required", 400);
         return;
     }
 
@@ -639,9 +639,9 @@ function deleteReview($data){
     $result = $stmt->execute();
 
     if ($result){
-        $this->sendResponse("success", "Review deleted successfully", 200);
+        sendResponse("success", "Review deleted successfully", 200);
     } else {
-        $this->sendResponse("error", "Failed to delete review", 500);
+        sendResponse("error", "Failed to delete review", 500);
     }
 
     $stmt->close();
@@ -812,9 +812,11 @@ function sendResponse($status, $data, $httpCode = 200) {
 function handleTopRated($data){
 
     $conn = Database::instance()->getConnection();
-    $stmt = $conn->prepare("SELECT r.ProductID, p.ProductName, p.Description, p.Brand, p.IMG_Reference, p.Price, p.Retailer, AVG(r.Rating) AS Rating
+    $stmt = $conn->prepare("SELECT r.ProductID, p.ProductName, p.Description, p.Brand, p.IMG_Reference, pp.Price, re.RetailerName, AVG(r.Rating) AS Rating
                     FROM Review r
                     JOIN Product p ON r.ProductID = p.ProductID
+                    JOIN ProductPrice pp ON r.ProductID = pp.ProductID
+                    JOIN Retailer re ON re.RetailerID = pp.RetailerID
                     GROUP BY r.ProductID
                     ORDER BY Rating DESC
                     LIMIT 5");
