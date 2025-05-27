@@ -156,18 +156,41 @@ async function loadProducts() {
         const data = await response.json();
 
         if (data.status === 'success' && data.data) {
-            let products = data.data;
-            // Client-side price filtering
+            // Group products by ProductID to avoid duplicates
+            const groupedProducts = {};
+            data.data.forEach(item => {
+                if (!groupedProducts[item.ProductID]) {
+                    groupedProducts[item.ProductID] = {
+                        ProductID: item.ProductID,
+                        ProductName: item.ProductName,
+                        Description: item.Description,
+                        Brand: item.Brand,
+                        IMG_Reference: item.IMG_Reference,
+                        offers: []
+                    };
+                }
+                groupedProducts[item.ProductID].offers.push({
+                    RetailerName: item.RetailerName,
+                    Price: parseFloat(item.Price)
+                });
+            });
+
+            // Apply client-side price filtering
+            let products = Object.values(groupedProducts);
             if (price) {
                 products = products.filter(product => {
-                    const priceValue = parseFloat(product.Price);
-                    if (price === 'under-1000') return priceValue < 1000;
-                    if (price === '1000-2500') return priceValue >= 1000 && priceValue <= 2500;
-                    if (price === '2500-10000') return priceValue >= 2500 && priceValue <= 10000;
-                    if (price === 'over-10000') return priceValue > 10000;
-                    return true;
+                    // Check if any offer for the product falls within the price range
+                    return product.offers.some(offer => {
+                        const priceValue = offer.Price;
+                        if (price === 'under-1000') return priceValue < 1000;
+                        if (price === '1000-2500') return priceValue >= 1000 && priceValue <= 2500;
+                        if (price === '2500-10000') return priceValue >= 2500 && priceValue <= 10000;
+                        if (price === 'over-10000') return priceValue > 10000;
+                        return true;
+                    });
                 });
             }
+
             displayProducts(products);
         } else {
             displayProducts([]);
@@ -198,6 +221,17 @@ function createProductCard(product) {
     productCard.className = 'product-card';
     productCard.setAttribute('data-product-id', product.ProductID);
 
+    // Initialize offers HTML
+    let offersHtml = '<div class="loading-offers">Loading offers...</div>';
+    if (product.offers && product.offers.length > 0) {
+        offersHtml = product.offers.map(offer => `
+            <div class="store-offer">
+                <span class="store-name">${offer.RetailerName}</span>
+                <span class="product-price">R${offer.Price.toLocaleString('en-ZA', { minimumFractionDigits: 0 })}</span>
+            </div>
+        `).join('');
+    }
+
     productCard.innerHTML = `
         <a href="view.php?id=${product.ProductID}">
             <div class="product-image" style="background-image: url('${product.IMG_Reference}')"></div>
@@ -207,7 +241,7 @@ function createProductCard(product) {
             <div class="product-name">${product.ProductName}</div>
             <h4 class="offers-heading">Current offers</h4>
             <div class="store-offers-container" id="offers-${product.ProductID}">
-                <div class="loading-offers">Loading offers...</div>
+                ${offersHtml}
             </div>
             <div class="product-actions">
                 <div class="heart-icon">♡</div>
@@ -216,7 +250,10 @@ function createProductCard(product) {
         </div>
     `;
 
-    loadProductOffers(product.ProductID);
+    // Only load offers if they weren't included in the initial data (e.g., for getAllProducts)
+    if (!product.offers || product.offers.length === 0) {
+        loadProductOffers(product.ProductID);
+    }
 
     return productCard;
 }
