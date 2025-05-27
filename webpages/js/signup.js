@@ -98,6 +98,17 @@ document.addEventListener("DOMContentLoaded", function () {
         // Get full name and split into first and last name
         const firstName = document.getElementById("firstname").value;
         const lastName = document.getElementById("lastname").value;
+
+        
+        
+
+        const confirmpassword = document.getElementById("confirm-password").value;
+        const passworduser = document.getElementById("password").value;
+
+        if (passworduser !== confirmpassword) {
+          alert("Passwords do not match. Please try again.");
+          return;
+        }
         
         var selectedAccountType = document.querySelector('input[name="account_type"]:checked').value;
         var payload = {};

@@ -21,9 +21,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case "Login":
             handleLogin($data); 
             break;
-        case "Register":
-            handleSignup($data);
-            break;
 
         case "Logout":
             handleLogOut($data);
