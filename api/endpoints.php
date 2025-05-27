@@ -1236,6 +1236,23 @@ function getAllProducts() {
     ]);
     exit;
 }
+function getAllBrands() {
+    $conn = Database::instance()->getConnection();
+    $query = "SELECT DISTINCT Brand FROM Product ORDER BY Brand";
+    $result = $conn->query($query);
+
+    if (!$result) {
+        sendResponse("error", "Failed to fetch brands: " . $conn->error, 500);
+        return;
+    }
+
+    $brands = [];
+    while ($row = $result->fetch_assoc()) {
+        $brands[] = $row['Brand'];
+    }
+
+    sendResponse("success", $brands, 200);
+}
 function handleEditInfo($data) {
     /*
         input
