@@ -1377,4 +1377,77 @@ function handleEditInfo($data) {
     apiResponse("success", ["apikey" => $ApiKey, "email" => $email]);
 }
 
+
+function handleCountUsers($data) {
+    $conn = Database::instance()->getConnection();
+
+
+    // Count the number of users
+    $stmt = $conn->prepare("SELECT COUNT(*) as user_count FROM User");
+    if (!$stmt) {
+        sendResponse("error", "Failed to prepare count query: " . $conn->error, 500);
+        return;
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $stmt->close();
+
+    sendResponse("success", ["user_count" => (int)$row['user_count']]);
+}
+
+function handleCountRetailers($data) {
+    $conn = Database::instance()->getConnection();
+
+    // Count the number of retailers
+    $stmt = $conn->prepare("SELECT COUNT(*) as retailer_count FROM Retailer");
+    if (!$stmt) {
+        sendResponse("error", "Failed to prepare count query: " . $conn->error, 500);
+        return;
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $stmt->close();
+
+    sendResponse("success", ["retailer_count" => (int)$row['retailer_count']]);
+}
+
+function handleCountProducts($data) {
+    $conn = Database::instance()->getConnection();
+
+    // Count the number of products
+    $stmt = $conn->prepare("SELECT COUNT(*) as product_count FROM Product");
+    if (!$stmt) {
+        sendResponse("error", "Failed to prepare count query: " . $conn->error, 500);
+        return;
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $stmt->close();
+
+    sendResponse("success", ["product_count" => (int)$row['product_count']]);
+}
+
+function handleCountReviews($data) {
+    $conn = Database::instance()->getConnection();
+
+    // Count the number of reviews
+    $stmt = $conn->prepare("SELECT COUNT(*) as review_count FROM Review");
+    if (!$stmt) {
+        sendResponse("error", "Failed to prepare count query: " . $conn->error, 500);
+        return;
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $stmt->close();
+
+    sendResponse("success", ["review_count" => (int)$row['review_count']]);
+}
 ?>

@@ -113,6 +113,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case "getAllCategories":
             getAllCategories();
             break;
+        case "handleCountUsers":
+            handleCountUsers($data);
+            break;
+
+        case "handleCountRetailers":
+            handleCountRetailers($data);
+            break;
+        case "handleCountProducts":
+            handleCountProducts($data);
+            break;
+
+        case "handleCountReviews":
+            handleCountReviews($data);
+            break;
         default:
             sendResponse("failed", "Unknown or missing type", 400);
     }

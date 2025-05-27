@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-
+    handleCountUsers();
+    handleCountProducts()
+    handleCountReviews()
+    handleCountRetailers();
     var username = document.querySelector(".user-name");
     var useremail = document.querySelector(".user-email");
 
@@ -764,4 +767,169 @@ function updateProductDisplay(productId, newRating) {
             ratingValue.textContent = ratingText;
         }
     });
+}
+
+function handleCountUsers() {
+    const apiKey = localStorage.getItem('apiKey');
+    console.log('API Key:', apiKey); // Debugging line to check API key
+    if (!apiKey) {
+        alert('Please log in to count users.');
+        return;
+    }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '../api/api.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                try {
+                    const data = JSON.parse(xhr.responseText);
+                    if (data.status === 'success') {
+                        console.log('User count:', data.data.user_count); // Debugging line to check user count
+                        document.getElementById('usercounts').textContent = data.data.user_count || '0';
+                    } else {
+                        alert('Failed to count users: ' + (data.data || 'Unknown error'));
+                    }
+                } catch (e) {
+                    console.error('Invalid JSON response:', e);
+                    alert('Failed to parse server response.');
+                }
+            } else {
+                console.error('Server error:', xhr.statusText);
+                alert('An error occurred while counting users.');
+            }
+        }
+    };
+
+    const requestBody = JSON.stringify({
+        type: 'handleCountUsers',
+        api_key: apiKey
+    });
+
+    xhr.send(requestBody);
+}
+
+function handleCountRetailers() {
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) {
+        alert('Please log in to count retailers.');
+        return;
+    }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '../api/api.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                try {
+                    const data = JSON.parse(xhr.responseText);
+                    if (data.status === 'success') {
+                        console.log('Retailer count:', data.data.retailer_count); // Debugging line to check retailer count
+                        document.getElementById('retailercounts').textContent = data.data.retailer_count || '0';
+                    } else {
+                        alert('Failed to count retailers: ' + (data.data || 'Unknown error'));
+                    }
+                } catch (e) {
+                    console.error('Invalid JSON response:', e);
+                    alert('Failed to parse server response.');
+                }
+            } else {
+                console.error('Server error:', xhr.statusText);
+                alert('An error occurred while counting retailers.');
+            }
+        }
+    };
+
+    const requestBody = JSON.stringify({
+        type: 'handleCountRetailers',
+        api_key: apiKey
+    });
+
+    xhr.send(requestBody);
+}
+
+function handleCountProducts() {
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) {
+        alert('Please log in to count products.');
+        return;
+    }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '../api/api.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                try {
+                    const data = JSON.parse(xhr.responseText);
+                    if (data.status === 'success') {
+                        console.log('Product count:', data.data.product_count); // Debugging line to check product count
+                        document.getElementById('productcounts').textContent = data.data.product_count || '0';
+                    } else {
+                        alert('Failed to count products: ' + (data.data || 'Unknown error'));
+                    }
+                } catch (e) {
+                    console.error('Invalid JSON response:', e);
+                    alert('Failed to parse server response.');
+                }
+            } else {
+                console.error('Server error:', xhr.statusText);
+                alert('An error occurred while counting products.');
+            }
+        }
+    };
+
+    const requestBody = JSON.stringify({
+        type: 'handleCountProducts',
+        api_key: apiKey
+    });
+
+    xhr.send(requestBody);
+}
+
+function handleCountReviews() {
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) {
+        alert('Please log in to count reviews.');
+        return;
+    }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '../api/api.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                try {
+                    const data = JSON.parse(xhr.responseText);
+                    if (data.status === 'success') {
+                        console.log('Review count:', data.data.review_count); // Debugging line to check review count
+                        document.getElementById('reviewcounts').textContent = data.data.review_count || '0';
+                    } else {
+                        alert('Failed to count reviews: ' + (data.data || 'Unknown error'));
+                    }
+                } catch (e) {
+                    console.error('Invalid JSON response:', e);
+                    alert('Failed to parse server response.');
+                }
+            } else {
+                console.error('Server error:', xhr.statusText);
+                alert('An error occurred while counting reviews.');
+            }
+        }
+    };
+
+    const requestBody = JSON.stringify({
+        type: 'handleCountReviews',
+        api_key: apiKey
+    });
+
+    xhr.send(requestBody);
 }

@@ -43,19 +43,19 @@
                 <div class="stats-section">
                     <div class="stat-box">
                         <h3>Users</h3> <!-- Displaying total number of users -->
-                        <div class="stat-number">1,247</div>
+                        <div class="stat-number" id="usercounts"></div>
                     </div>
                     <div class="stat-box">
                         <h3>Retailers</h3> <!-- Displaying total number of retailers -->
-                        <div class="stat-number">89</div>
+                        <div class="stat-number" id="retailercounts"></div>
                     </div>
                     <div class="stat-box">
                         <h3>Products</h3> <!-- Displaying total number of products -->
-                        <div class="stat-number">3,456</div>
+                        <div class="stat-number" id="productcounts"></div>
                     </div>
                     <div class="stat-box">
                         <h3>Reviews</h3> <!-- Displaying total number of reviews -->
-                        <div class="stat-number">12,890</div>
+                        <div class="stat-number" id="reviewcounts"></div>
                     </div>
                 </div>
 
