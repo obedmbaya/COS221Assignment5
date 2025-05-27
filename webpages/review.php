@@ -131,11 +131,11 @@
                 <h2 class="section-title">Write a Review</h2>
                 <div class="rate-this-product">Rate this product:</div>
                 <div class="rating-stars">
-                    <span class="rating-star" onclick="setRating(1)">★</span>
-                    <span class="rating-star" onclick="setRating(2)">★</span>
-                    <span class="rating-star" onclick="setRating(3)">★</span>
-                    <span class="rating-star" onclick="setRating(4)">★</span>
-                    <span class="rating-star" onclick="setRating(5)">★</span>
+                    <span class="rating-star">★</span>
+                    <span class="rating-star">★</span>
+                    <span class="rating-star">★</span>
+                    <span class="rating-star">★</span>
+                    <span class="rating-star">★</span>
                 </div>
                 <textarea class="review-textarea" placeholder="Write your review here..."></textarea>
                 <button class="post-review-btn">POST</button>
