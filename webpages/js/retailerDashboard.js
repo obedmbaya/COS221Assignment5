@@ -12,11 +12,11 @@
         retailemail.textContent = localStorage.getItem("email") || "";
     }
 
-    document.querySelector(".logout-btn").addEventListener("click", function () {
-        localStorage.clear();
-        alert("You have been logged out successfully.");
-        window.location.href = "index.php";
-    });
+    // document.querySelector(".logout-btn").addEventListener("click", function () {
+    //     localStorage.clear();
+    //     alert("You have been logged out successfully.");
+    //     window.location.href = "index.php";
+    // });
 
     // Retailer ratings chart
     const retailerCtx = document.getElementById('retailerRatingsChart');
