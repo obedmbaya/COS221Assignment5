@@ -1007,7 +1007,7 @@ function handleGetRetailerRatingsByApikey($data){
         exit;
     }
 
-    $stmt = $conn->prepare("SELECT r.Rating, COUNT(r.Rating)
+    $stmt = $conn->prepare("SELECT r.Rating, COUNT(r.Rating) AS number
                     FROM Retailer re
                     JOIN ProductPrice pp ON pp.RetailerID = re.RetailerID
                     JOIN Product p ON pp.ProductID = p.ProductID
