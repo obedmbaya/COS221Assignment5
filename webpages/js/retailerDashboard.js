@@ -217,7 +217,6 @@ function populateOverview(data){
 }
 
 function createProductItem(productName, rating) {
-    console.log(rating);
     const productItem = document.createElement('div');
     productItem.className = 'product-item';
 
