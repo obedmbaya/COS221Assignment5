@@ -20,12 +20,14 @@ document.addEventListener("DOMContentLoaded", function () {
           try {
             var response = JSON.parse(xhr.responseText);
             if (response.status === "success") {
+              
               if (response.data.userType=="Admin" || response.data.userType=="Standard") {
                 localStorage.setItem("apiKey", response.data.apikey);
                 localStorage.setItem("userType", response.data.userType);
                 localStorage.setItem("email", response.data.email);
                 localStorage.setItem("name", response.data.name);
                 localStorage.setItem("surname", response.data.surname);
+                localStorage.setItem("UserID", response.data.UserID);
               }
 
 
@@ -34,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 localStorage.setItem("userType", response.data.userType);
                 localStorage.setItem("email", response.data.email);
                 localStorage.setItem("RetailerName", response.data.RetailerName);
+                localStorage.setItem("UserID", response.data.UserID);
               }
               
               alert("Login successful!");

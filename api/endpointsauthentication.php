@@ -39,7 +39,7 @@ function handleLogin($data) {
 
     if ($user['UserType'] === "Standard" || $user['UserType'] === "Admin") 
     {
-        apiResponse("success", ["apikey" => $user['ApiKey'], "userType" => $user['UserType'], "email" => $user["Email"], "name" => $user["FirstName"], "surname" => $user["LastName"]]);
+        apiResponse("success", ["apikey" => $user['ApiKey'], "userType" => $user['UserType'], "email" => $user["Email"], "name" => $user["FirstName"], "surname" => $user["LastName"], "UserID" => $user["UserID"]]);
     }
 
     else {
@@ -53,7 +53,7 @@ function handleLogin($data) {
 
         $stmt_retail->close();
         
-        apiResponse("success", ["apikey" => $user['ApiKey'], "userType" => $user['UserType'], "email" => $user["Email"], "RetailerName" => $retailer["RetailerName"]]);
+        apiResponse("success", ["apikey" => $user['ApiKey'], "userType" => $user['UserType'], "email" => $user["Email"], "RetailerName" => $retailer["RetailerName"], "UserID" => $user["UserID"]]);
     }
     
     
