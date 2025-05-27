@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', function() {
         useremail.textContent = localStorage.getItem("email") || "";
     }
 
-    initializeTabs(); // Initialize tab switching functionality
-    initializeCharts(); // Sets up Chart.js charts
+    initializeTabs();
+    initializeCharts(); 
     
     const productSelect = document.getElementById('productSelect');
     const customerProductSelect = document.getElementById('customerProductSelect');
@@ -325,10 +325,9 @@ function removeProduct(productId) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                type: 'deleteProduct',
+                type: 'deleteProductAdmin',
                 ApiKey: apiKey,
                 ProductID: productId,
-                RetailerEmail: retailerEmail
             })
         })
         .then(response => response.json())
@@ -337,7 +336,8 @@ function removeProduct(productId) {
                 alert('Product removed successfully!');
                 loadProducts();
             } else {
-                alert('Failed to remove product: ' + (data.data || 'Unknown error'));
+                 alert('Failed to remove product '+productId +":"+ (data.data || 'Unknown error'));
+                 
             }
         })
         .catch(error => {
@@ -416,14 +416,13 @@ function saveProduct() {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            type: 'editProduct',
+            type: 'editProductAdmin',
             apiKey: apiKey,
             ProductID: productId,
             ProductName: name,
             Description: description,
             Brand: brand,
             IMG_Reference: image,
-            RetailerEmail: retailerEmail
         })
     })
     .then(response => response.json())

@@ -46,8 +46,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case "editProduct":
             editProduct($data);
             break;
+         case "editProductAdmin":
+            editProductAdmin($data);
+            break;
         case "deleteProduct":
             deleteProduct($data);
+            break;
+        case "deleteProductAdmin":
+            deleteProductAdmin($data);
             break;
         case "ViewProduct":
             handleViewProduct($data);
@@ -96,6 +102,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             break;
         case "GetRetailerById":
             handleGetRetailerById($data);
+            break;
+        
+        case "getUserReviews":
+            getUserReviews($data);
             break;
 
         default:
