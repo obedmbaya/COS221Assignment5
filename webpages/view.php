@@ -14,14 +14,14 @@
                             <button class="carousel-control" onclick="nextImage()">&gt;</button>
                         </div>
                     </div>
-                    <div class="image-thumbnails">
+                    <!-- <div class="image-thumbnails">
                         <div class="image-thumbnail active" style="background-image: url('https://www.hponline.co.za/cdn/shop/files/laptops-7k8a0ea-40178403147989_800x.png?v=1686754731')" onclick="selectImage(0)"></div>
                         <div class="image-thumbnail" style="background-image: url('https://www.hponline.co.za/cdn/shop/files/laptops-7k8a0ea-40178403344597_800x.jpg?v=1686754737')" onclick="selectImage(1)"></div>
                         <div class="image-thumbnail" style="background-image: url('https://www.hponline.co.za/cdn/shop/files/laptops-7k8a0ea-40178403475669_800x.jpg?v=1686754742')" onclick="selectImage(2)"></div>
                         <div class="image-thumbnail" style="background-image: url('https://www.hponline.co.za/cdn/shop/files/laptops-7k8a0ea-40178403573973_800x.jpg?v=1686754929')" onclick="selectImage(3)"></div>
                         <div class="image-thumbnail" style="background-image: url('https://www.hponline.co.za/cdn/shop/files/laptops-7k8a0ea-40178403803349_800x.jpg?v=1686754926')" onclick="selectImage(4)"></div>
                         <div class="image-thumbnail" style="background-image: url('https://www.hponline.co.za/cdn/shop/files/laptops-7k8a0ea-40178403999957_800x.jpg?v=1686755091')" onclick="selectImage(5)"></div>
-                    </div> 
+                    </div>  -->
                 </div>
                 
                 <!-- Main product info section -->
