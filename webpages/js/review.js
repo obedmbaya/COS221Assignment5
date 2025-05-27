@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var postButton = document.querySelector('.post-review-btn');
     var textArea = document.querySelector('.review-textarea');
     var reviewBox = document.querySelector(".reviews-box");
-    var productID = localStorage.getItem("ProductID") || 1; 
+    var productID = getCurrentProductId(); 
     if (!productID) {
         console.error("ProductID not found in localStorage or session.");
         return;
@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error("UserID not found in localStorage or session.");
         return;
     }
+    //console.log(`testing userf id ${userID}`);
+    //console.log(`testing prod id ${productID}`);
 
     // Star rating selection
     for (var i = 0; i < starEls.length; i++) {
@@ -27,19 +29,26 @@ document.addEventListener('DOMContentLoaded', function () {
                         starEls[j].classList.remove('selected');
                     }
                 }
+
+                //console.log(`curr rating isss ${selectedRating}`);
             });
         })(i);
     }
-
+function getCurrentProductId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id') || sessionStorage.getItem('currentProductId');
+    return productId;
+}
     // Fetch and display reviews from the database
     function loadReviews() {
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "../../api.php", true);
+        xhr.open("POST", "../api/api.php", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 var response = JSON.parse(xhr.responseText);
-                if (response.status === "success") {
+                
+                if (response.status === "Success") {
 
                     var items = reviewBox.querySelectorAll('.review-item');
                     items.forEach(function(item) { item.remove(); });
@@ -71,9 +80,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 }
             }
+            
         };
+
         xhr.send(JSON.stringify({
-            action: "getReview",
+            type: "getReview",
             ProductID: productID
         }));
     }
@@ -81,30 +92,48 @@ document.addEventListener('DOMContentLoaded', function () {
     // Post review button
     postButton.addEventListener("click", function(){
         var reviewText = textArea.value.trim();
+        console.log(`comment is ${reviewText}`);
+        console.log(`testing userf id ${userID}`);
+        console.log(`testing prod id ${productID}`);
+        console.log(`curr rating isss ${selectedRating}`);
+        
         if (selectedRating === 0 || reviewText === "") {
             window.alert("Please select a rating and enter your review.");
             return;
         }
 
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "../../api.php", true);
+        xhr.open("POST", "/PA_221_FRONTEND-LINKING/api/api.php", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    loadReviews();
-                    textArea.value = "";
-                    selectedRating = 0;
-                    for (var i = 0; i < starEls.length; i++) {
-                        starEls[i].classList.remove('selected');
+                try {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.status === 'success') {
+                            loadReviews();
+                            textArea.value = "";
+                            selectedRating = 0;
+                            for (var i = 0; i < starEls.length; i++) {
+                                starEls[i].classList.remove('selected');
+                            }
+                        }
+
+                        else {
+                        alert("Failed to submit review.");
                     }
-                } else {
-                    alert("Failed to submit review.");
                 }
-            }
+                }
+                catch(e) {
+                    alert("failed");
+                }
+                    
+                } 
+            
         };
+        
         xhr.send(JSON.stringify({
-            action: "insertReview",
+            type: "insertReview",
             ProductID: productID,
             UserID: userID,
             Rating: selectedRating,
