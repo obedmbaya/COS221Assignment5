@@ -1450,4 +1450,88 @@ function handleCountReviews($data) {
 
     sendResponse("success", ["review_count" => (int)$row['review_count']]);
 }
+
+function getUserDashboard($data) {
+    $conn = Database::instance()->getConnection();
+    $apiKey = $data['ApiKey'] ?? null;
+    if (!$apiKey) {
+        sendResponse('error', 'Missing ApiKey', 400);
+        return;
+    }
+    $stmt = $conn->prepare('SELECT UserID, FirstName, LastName, Email FROM User WHERE ApiKey = ?');
+    $stmt->bind_param('s', $apiKey);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $stmt->close();
+    if (!$user) {
+        sendResponse('error', 'Invalid ApiKey', 401);
+        return;
+    }
+    $userId = $user['UserID'];
+    $stmt = $conn->prepare('SELECT r.*, p.ProductName FROM Review r JOIN Product p ON r.ProductID = p.ProductID WHERE r.UserID = ?');
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $reviews = [];
+    $totalRating = 0;
+    while ($row = $result->fetch_assoc()) {
+        $reviews[] = $row;
+        $totalRating += (int)$row['Rating'];
+    }
+    $stmt->close();
+    $reviewsCount = count($reviews);
+    $avgRating = $reviewsCount > 0 ? round($totalRating / $reviewsCount, 1) : 0;
+    $stats = [
+        'reviewsCount' => $reviewsCount,
+        'avgRating' => $avgRating,
+        'reviews' => $reviews
+    ];
+    sendResponse('success', ['user' => $user, 'stats' => $stats], 200);
+}
+
+function updateUserProfile($data) {
+    $conn = Database::instance()->getConnection();
+
+    $apiKey = $data['ApiKey'] ?? null;
+    $email = $data['email'] ?? null;
+    $password = $data['password'] ?? null;
+
+    if (!$apiKey || !$email) {
+        sendResponse("error", "Missing ApiKey or email", 400);
+        return;
+    }
+
+    $stmt = $conn->prepare("SELECT UserID FROM User WHERE ApiKey = ?");
+    $stmt->bind_param("s", $apiKey);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!$user) {
+        sendResponse("error", "Invalid ApiKey", 401);
+        return;
+    }
+
+    $userId = $user['UserID'];
+
+    if ($password) {
+        $hashed = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $conn->prepare("UPDATE User SET Email = ?, Password = ? WHERE UserID = ?");
+        $stmt->bind_param("ssi", $email, $hashed, $userId);
+    } else {
+        $stmt = $conn->prepare("UPDATE User SET Email = ? WHERE UserID = ?");
+        $stmt->bind_param("si", $email, $userId);
+    }
+
+    if ($stmt->execute()) {
+        sendResponse("success", "Profile updated successfully", 200);
+    } else {
+        sendResponse("error", "Failed to update profile", 500);
+    }
+
+    $stmt->close();
+}
+
 ?>

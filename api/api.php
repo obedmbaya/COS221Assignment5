@@ -127,6 +127,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case "handleCountReviews":
             handleCountReviews($data);
             break;
+        case "getUserDashboard":
+            getUserDashboard($data);
+            break;
+        
         default:
             sendResponse("failed", "Unknown or missing type", 400);
     }
