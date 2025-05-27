@@ -66,8 +66,8 @@
             }
             const numRatings = ratingsData.ratingArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
             const elements = document.getElementsByClassName('stat-box');
-            if (elements.length >= 3) {
-                const thirdItem = elements[2];
+            if (elements.length >= 2) {
+                const thirdItem = elements[1];
                 const statNumberDiv = thirdItem.querySelector('.stat-number');
                 if (statNumberDiv) {
                     statNumberDiv.textContent = numRatings;
@@ -75,24 +75,19 @@
                     console.log("No 'stat-number' div found inside the 3rd item.");
                 }
             } else {
-                console.log("There are fewer than 3 elements with 'my-class'.");
+                console.log("There are < 2 elements with 'my-class'.");
             }
-            if (ratingsData) {
-                retailerChart.data.datasets[0].data = ratingsData.ratingArr;
-                retailerChart.update();
-            }
-            if (elements.length >= 4) {
-                const thirdItem = elements[3];
+            if (elements.length >= 3) {
+                const thirdItem = elements[2];
                 const statNumberDiv = thirdItem.querySelector('.stat-number');
                 if (statNumberDiv) {
-                    statNumberDiv.textContent = ratingsData.average;
+                    statNumberDiv.textContent = ratingsData.average.toFixed(1);
                 } else {
                     console.log("No 'stat-number' div found inside the 3rd item.");
                 }
             } else {
-                console.log("There are fewer than 3 elements with 'my-class'.");
-            }           
-
+                console.log("There are < 3 elements with 'my-class'.");
+            }
         }).catch(error => {
             console.error('Error initializing chart with ratings:', error);
         });
@@ -145,11 +140,11 @@ function populateRatingsArr(data){
         const num = element.number; 
         ratings[index] = num;
         n += num;
-        total += index;
+        total += num * (index + 1);
     });
     let avg = total/n;
     let output = {
-        ratingArr : ratingArr,
+        ratingArr : ratings,
         average : avg
     }
     return output;
@@ -193,8 +188,76 @@ function loadOverview(){
 
 function populateOverview(data){
 
-    
+    let numProducts = data.length
 
+    const elements = document.getElementsByClassName('stat-box');
+    if (elements.length >= 1) {
+        const thirdItem = elements[0];
+        const statNumberDiv = thirdItem.querySelector('.stat-number');
+        if (statNumberDiv) {
+            statNumberDiv.textContent = numProducts;
+        } else {
+            console.log("No 'stat-number' div found inside the 3rd item.");
+        }
+    } else {
+        console.log("There are < 1 element with 'my-class'.");
+    }
+
+    const prodList = document.getElementsByClassName('products-list');
+    prodList[0].innerHTML = "";
+
+    data.forEach(element => {
+        prodList[0].appendChild(createProductItem(element.ProductName, 5));
+    });
+
+    /*
+    <div class="product-item">
+                            <span class="product-name">Premium Headphones</span>
+                            <div class="product-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-value">4.8</span>
+                            </div>
+                            <button class="view-btn" onclick="window.location.href='view.php'">View</button>
+                        </div>
+                         */
+
+}
+
+function createProductItem(productName, rating) {
+    const productItem = document.createElement('div');
+    productItem.className = 'product-item';
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'product-name';
+    nameSpan.textContent = productName;
+
+    const ratingDiv = document.createElement('div');
+    ratingDiv.className = 'product-rating';
+
+    const starCount = 5;
+    const filledStars = Math.round(rating);
+    const stars = '★'.repeat(filledStars) + '☆'.repeat(starCount - filledStars);
+    
+    const starsSpan = document.createElement('span');
+    starsSpan.className = 'stars';
+    starsSpan.textContent = stars;
+
+    const ratingSpan = document.createElement('span');
+    ratingSpan.className = 'rating-value';
+    ratingSpan.textContent = rating.toFixed(1);
+
+    const viewButton = document.createElement('button');
+    viewButton.className = 'view-btn';
+    viewButton.textContent = 'View';
+    viewButton.onclick = () => window.location.href = 'view.php';
+
+    ratingDiv.appendChild(starsSpan);
+    ratingDiv.appendChild(ratingSpan);
+    productItem.appendChild(nameSpan);
+    productItem.appendChild(ratingDiv);
+    productItem.appendChild(viewButton);
+
+    return productItem;
 }
 
 // Product management functions

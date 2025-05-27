@@ -624,7 +624,7 @@ function insertReview($data){
 
     $stmt->close();
 
-    if ($rating > 5 || $rating < 0){
+    if ($rating > 5 || $rating <= 0){
         $output = false;
     }
 
