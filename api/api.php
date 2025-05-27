@@ -86,6 +86,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             handleEditInfo($data);
             break;
 
+        case "getUserReviews":
+            getUserReviews($data);
+            break;
+
         default:
             sendResponse("failed", "Unknown or missing type", 400);
     }

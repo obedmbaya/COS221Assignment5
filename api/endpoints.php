@@ -570,7 +570,38 @@ function getReview($data){
     }
 
     $stmt->close();
-    $this->sendResponse("Success", $reviews, 200);
+    $this->sendResponse("success", $reviews, 200);
+}
+
+function getUserReviews($data){
+    $conn = Database::instance()->getConnection();
+
+    $stmt= $conn->prepare("SELECT UserID FROM User WHERE ApiKey = ?");
+    $stmt->bind_param("s", $data["ApiKey"]);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $stmt->close();
+    if (!$user) {
+        sendResponse("error", "Invalid API Key", 401);
+        return;
+    }
+    $user_id = $user["UserID"];
+    $stmt= $conn->prepare("SELECT * FROM Review WHERE UserID = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $reviews = [];
+    while($row = $result->fetch_assoc()){
+        $reviews[] = $row;
+    }
+    $stmt->close();
+    if (empty($reviews)) {
+        sendResponse("success", "No reviews found for this user", 200);
+    } else {
+        sendResponse("success",["data" => $reviews], 200);
+    }
+
 }
 
 function insertReview($data){
