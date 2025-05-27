@@ -40,7 +40,7 @@
                 <!-- Links for logged-in users -->
                 <div id="user-links" style="display: none;">
                     <a href="wishlist.php" title="Wishlist">Wishlist</a>
-                    <a href="userDashboard.php" title="Dashboard">Dashboard</a> <!-- needs a script to check user type and go to appropriate dashboard -->
+                    <a href="userDashboard.php" title="Dashboard" id="dashboardlink">Dashboard</a> <!-- needs a script to check user type and go to appropriate dashboard -->
                     <a href="#" id="logout-button" title="Logout">Logout</a>
                 </div>
             </div>

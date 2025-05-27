@@ -14,6 +14,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    var UserType = localStorage.getItem("userType");
+    var link = document.querySelector("#dashboardlink");
+
+    if (UserType === "Retailer") {
+        link.setAttribute("href", "retailerDashboard.php");
+    } else if (UserType === "Standard") {
+        link.setAttribute("href", "userDashboard.php");
+    } else {
+        link.setAttribute("href", "adminDashboard.php");
+    }
+
     // function handleLogout() {
     //     var logoutBtn = document.getElementById("logout-btn");
     //     if (logoutBtn) {

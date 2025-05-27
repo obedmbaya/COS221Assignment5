@@ -139,6 +139,8 @@ document.addEventListener("DOMContentLoaded", function () {
           };
         }
 
+
+
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "../api/api.php", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -146,11 +148,33 @@ document.addEventListener("DOMContentLoaded", function () {
           if (xhr.readyState === 4) {
             if (xhr.status === 200) {
               try {
+
+              alert("Login successful!");
+
+
                 var response = JSON.parse(xhr.responseText);
                 if (response.status === "success") {
-                  localStorage.setItem("apiKey", response.data.apikey);
-                  alert("Registration successful!");
-                  window.location.href = "index.php";
+                  if (selectedAccountType === "Retailer") {
+                    localStorage.setItem("apiKey", response.data.apikey);
+                    localStorage.setItem("userType", selectedAccountType);
+                    localStorage.setItem("email", document.getElementById("email").value);
+                    localStorage.setItem("RetailerName", document.getElementById("business_name").value);
+
+                    alert("Registration successful!");
+                    window.location.href = "index.php";
+                  }
+
+                  else if (selectedAccountType === "Standard") {
+                      localStorage.setItem("apiKey", response.data.apikey);
+                      localStorage.setItem("userType", selectedAccountType);
+                      localStorage.setItem("email", document.getElementById("email").value);
+                      localStorage.setItem("name", firstName);
+                      localStorage.setItem("surname", lastName);
+
+                      alert("Registration successful!");
+                    window.location.href = "index.php";
+                  }
+                  
                 } else {
                   alert("Registration failed: " + JSON.stringify(response.data));
                 }
