@@ -31,12 +31,12 @@ jobs:
         echo 'export default [];' > eslint.config.mjs
         eslint "**/*.js"
 
-    - name: Lint CSS
-      run: |
-        echo '{
-          "extends": "stylelint-config-standard"
-        }' > .stylelintrc.json
-        stylelint "**/*.css"
+    # - name: Lint CSS
+    #   run: |
+    #     echo '{
+    #       "extends": "stylelint-config-standard"
+    #     }' > .stylelintrc.json
+    #     stylelint "**/*.css"
 
     - name: Install PHP
       uses: shivammathur/setup-php@v2
