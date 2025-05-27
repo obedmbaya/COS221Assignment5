@@ -37,11 +37,11 @@
         private function __construct() {
 
 
-            $host = $_ENV['DB_HOST'];
-            $port = $_ENV['DB_PORT'];
-            $db   = $_ENV['DB_DATABASE'];
-            $user = $_ENV['DB_USERNAME'];
-            $pass = $_ENV['DB_PASSWORD'];
+            // $host = $_ENV['DB_HOST'];
+            // $port = $_ENV['DB_PORT'];
+            // $db   = $_ENV['DB_DATABASE'];
+            // $user = $_ENV['DB_USERNAME'];
+            // $pass = $_ENV['DB_PASSWORD'];
             
             
             
