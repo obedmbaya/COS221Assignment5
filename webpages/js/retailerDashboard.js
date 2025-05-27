@@ -70,8 +70,7 @@
 });
 
 function getRatings(){
-    // const apiKey = localStorage.getItem('apiKey');
-    const apiKey = "T8WrTkZXhJuk1g37NGh4OdT7S14suiVl";
+    const apiKey = localStorage.getItem('apiKey');
     if (!apiKey) {
         alert('Please log in to load users.');
         return Promise.reject('No API key');
@@ -127,7 +126,7 @@ function editProduct(productId) {
             category: 'Electronics',
             description: 'High-quality over-ear headphones with noise cancellation',
             price: '1299',
-            department: 'Audio',
+            // department: 'Audio',
             image: 'https://example.com/headphones.jpg'
         },
         'R002': {
@@ -135,7 +134,7 @@ function editProduct(productId) {
             category: 'Electronics',
             description: 'True wireless earbuds with 24hr battery life',
             price: '899',
-            department: 'Audio',
+            // department: 'Audio',
             image: 'https://example.com/earbuds.jpg'
         },
         'R003': {
@@ -143,7 +142,7 @@ function editProduct(productId) {
             category: 'Electronics',
             description: 'Portable waterproof speaker with 20hr playtime',
             price: '1599',
-            department: 'Audio',
+            // department: 'Audio',
             image: 'https://example.com/speaker.jpg'
         }
     };
