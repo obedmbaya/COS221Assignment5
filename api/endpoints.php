@@ -91,7 +91,6 @@ function addProduct($data) {
         sendResponse("error", "Unauthorized: Only admins can add products", 403);
         return;
     }
-
     if (
         empty($data["ProductName"]) ||
         empty($data["Description"]) ||
@@ -110,10 +109,14 @@ function addProduct($data) {
         return;
     }
 
-    $query = "INSERT INTO Product (ProductName, Description, Brand, IMG_Reference) VALUES (?, ?, ?, ?)";
+    $query = "INSERT INTO Product (`ProductName`, `Description`, `Brand`, `IMG_Reference`, `CategoryID`) VALUES (?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("ssss", $data["ProductName"], $data["Description"], $data["Brand"], $data["IMG_Reference"]);
-    $result = $stmt->execute();
+    if (!$stmt) {
+        sendResponse("error", "Prepare statement failed: " . $conn->error, 500);
+        return;
+    }
+    $categoryID = $data["CategoryID"] ?? null;
+    $stmt->bind_param("ssssi", $data["ProductName"], $data["Description"], $data["Brand"], $data["IMG_Reference"], $categoryID);$result = $stmt->execute();
     $stmt->close();
 
     // getting ProductID by querying for the most recent matching product
@@ -127,12 +130,11 @@ function addProduct($data) {
 
     if ($row && $result) {
         $productId = $row['ProductID'];
-        $stmt3 = $conn->prepare("INSERT INTO ProductPrice (ProductID, RetailerID, Price, URL) VALUES (?, ?, ?, ?)");
-        $url = $data["URL"] ?? null;
-        $stmt3->bind_param("iids", $productId, $retailerId, $data["Price"], $url);
+        $stmt3 = $conn->prepare("INSERT INTO ProductPrice (`ProductID`, `RetailerID`, `Price`) VALUES (?, ?, ?)");
+        $stmt3->bind_param("iid", $productId, $retailerId, $data["Price"]);
         $stmt3->execute();
         $stmt3->close();
-        sendResponse("success", "Product successfully added", 201);
+        sendResponse("success", "Product successfully added");
     } else {
         sendResponse("error", "Failed to add product", 500);
     }

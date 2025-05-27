@@ -228,8 +228,8 @@
                                 <input type="number" id="productPrice" step="0.01" min="0" placeholder="0.00">
                             </div>
                             <div class="form-group">
-                                <label>Department:</label>
-                                <input type="text" id="productDepartment" placeholder="e.g. Men's Fashion, Kitchenware">
+                                <label>Brand:</label>
+                                <input type="text" id="productBrand" placeholder="e.g. Sumsang, Apple, LG">
                             </div>
                         </div>
                         <div class="form-group">

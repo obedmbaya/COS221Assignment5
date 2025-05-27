@@ -1,4 +1,4 @@
- // Initialize retailer-specific charts
+// Initialize retailer-specific charts
  document.addEventListener('DOMContentLoaded', function() {
 
     var retailname = document.querySelector(".user-name");
@@ -95,6 +95,9 @@
         loadOverview();
 
     }
+
+    // Load categories from database
+    loadCategories();
 });
 
 //Gets the number of occurences of each rating
@@ -333,18 +336,112 @@ function cancelEdit() {
 function addProduct() {
     // Get form values
     const name = document.getElementById('productName').value;
-    const category = document.getElementById('productCategory').value;
+    const categoryId = document.getElementById('productCategory').value;
     const description = document.getElementById('productDescription').value;
     const price = document.getElementById('productPrice').value;
-    const department = document.getElementById('productDepartment').value;
+    const brand = document.getElementById('productBrand').value;
     const image = document.getElementById('productImageUrl').value;
     
     // Validate form
-    if (!name || !category || !description || !price || !department) {
+    if (!name || !categoryId || !description || !price) {
         alert('Please fill in all required fields');
         return;
     }
+
+    var payload = {
+        type: 'addProduct',
+        ApiKey: localStorage.getItem('apiKey'),
+        ProductName: name,
+        CategoryID: categoryId,  // Use CategoryID instead of category name
+        Brand: brand,
+        IMG_Reference: image,
+        Description: description,
+        RetailerEmail: localStorage.getItem('email'),
+        Price: price
+    };
+    console.log("Payload for adding product:", payload);
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "../api/api.php", true);   
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                if (response.status === "success") {
+                    alert("Product added successfully!");
+                    document.getElementById('addProductForm').reset();
+                    loadOverview(); // Refresh product list
+                } else {
+                    alert("Failed to add product: " + response.data);
+                }
+            } else {
+                alert("Error adding product. Status: " + xhr.status);
+            }
+        }
+    };
+    xhr.send(JSON.stringify(payload));
+    
+
     
     alert('Product added successfully!');
     document.getElementById('addProductForm').reset();
+}
+
+// Fetch categories from database
+function loadCategories() {
+    fetch('../api/api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: 'getAllCategories'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            populateCategoryDropdowns(data.data);
+        } else {
+            console.error('Failed to load categories:', data.data || 'Unknown error');
+        }
+    })
+    .catch(error => {
+        console.error('Error loading categories:', error);
+    });
+}
+
+// Populate category dropdowns with fetched data
+function populateCategoryDropdowns(categories) {
+    // Get both category dropdowns (add product and edit product forms)
+    const addCategorySelect = document.getElementById('productCategory');
+    const editCategorySelect = document.getElementById('editProductCategory');
+    
+    // Clear existing options except the first one
+    if (addCategorySelect) {
+        addCategorySelect.innerHTML = '<option value="">Select category</option>';
+    }
+    
+    if (editCategorySelect) {
+        editCategorySelect.innerHTML = '<option value="">Select category</option>';
+    }
+    
+    // Add new options from database
+    categories.forEach(category => {
+        // Create option for add product form
+        if (addCategorySelect) {
+            const option = document.createElement('option');
+            option.value = category.CategoryID;
+            option.textContent = category.CategoryName;
+            addCategorySelect.appendChild(option);
+        }
+        
+        // Create option for edit product form
+        if (editCategorySelect) {
+            const option = document.createElement('option');
+            option.value = category.CategoryID;
+            option.textContent = category.CategoryName;
+            editCategorySelect.appendChild(option);
+        }
+    });
 }
