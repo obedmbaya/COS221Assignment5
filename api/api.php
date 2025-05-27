@@ -49,6 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case "deleteProduct":
             deleteProduct($data);
             break;
+        case "ViewProduct":
+            handleViewProduct($data);
+            break;
         case "compare":
             compare($data);
             break;

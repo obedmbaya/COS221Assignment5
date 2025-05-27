@@ -857,8 +857,35 @@ function deleteProductPrice($data){
     }
 }
 
+function handleViewProduct($data){
+    if (!isset($data["ProductID"])){
+        sendResponse("failed", "No ProductID provided.", 400);
+    }
+
+    $productID = $data["ProductID"];
+
+    $conn = Database::instance()->getConnection();
+    
+    $stmt = $conn->prepare("SELECT *
+                            FROM Product p
+                            JOIN ProductPrice pp on p.ProductID = pp.ProductID
+                            WHERE p.ProductID = ?");
+    if (!$stmt){
+        sendResponse("failed", "ViewProduct prepare failed.", 500);
+    }
+    $stmt->bind_param("i", $productID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $productDetails = $result->fetch_assoc();
+    $stmt->close();
+
+    sendResponse("success", $productDetails, 200);
+
+}
+
 // --- RESPONSE UTILITY ---
 function sendResponse($status, $data, $httpCode = 200) {
+    header("Content-type: application/json");
     http_response_code($httpCode);
     echo json_encode([
         "status" => $status,
@@ -1076,48 +1103,5 @@ function handleEditInfo($data) {
 
     apiResponse("success", ["apikey" => $ApiKey]);
 }
-// function validateApikey($data){
-
-//     $output = true;
-
-//     if (!isset($data["apikey"])){
-
-//         $output = false;
-
-//     } else {
-
-//         $conn = Database::instance()->getConnection();
-//         $apikey = $data["apikey"];
-
-//         $stmt = $conn->prepare("SELECT 1
-//                         FROM  ApiKey
-//                         WHERE KeyValue = ?");
-//         if (!$stmt){
-//             die("Failed to prepare apikey validation query");
-//         }
-
-//         $stmt->bind_param("s", $apikey);
-//         $stmt->execute();
-//         $result = $stmt->get_result();
-
-//         if ($result->num_rows == 0){
-//             $output = false; 
-//         }
-
-//         $stmt->close();
-
-//     }
-
-//     if (!$output){
-//         header("HTTP/1.1 401 Unauthorized");
-//         header("Content-type: application/json");
-//         echo json_encode([
-//             "status" => "failed",
-//             "data" => "Invalid API Key or no API Key was provided."
-//         ]);
-//         exit;
-//     }
-
-// }
 
 ?>
