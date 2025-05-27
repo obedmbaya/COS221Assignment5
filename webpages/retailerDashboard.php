@@ -19,8 +19,8 @@
             <div class="user-profile">
                 <img src="img/user.png" alt="User" class="user-icon">
                 <div class="user-details">
-                    <h3 class="user-name">Retailer Name</h3>
-                    <p class="user-email">retailer@example.com</p>
+                    <h3 class="user-name"></h3>
+                    <p class="user-email"></p>
                 </div>
             </div>
             <button class="logout-btn" onclick="window.location.href='logout.php'">Logout</button>
@@ -273,7 +273,7 @@
         require_once 'footer.php';
     ?>
 
-    <script src="js/dashboard.js"></script>
+    <!-- <script src="js/dashboard.js"></script> -->
     <script src="js/retailerDashboard.js"></script>
 </body>
 </html>

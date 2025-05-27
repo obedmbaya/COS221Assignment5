@@ -20,8 +20,21 @@ document.addEventListener("DOMContentLoaded", function () {
           try {
             var response = JSON.parse(xhr.responseText);
             if (response.status === "success") {
-              localStorage.setItem("apiKey", response.data.apikey);
-              localStorage.setItem("userType", response.data.userType);
+              if (response.data.userType=="Admin" || response.data.userType=="Standard") {
+                localStorage.setItem("apiKey", response.data.apikey);
+                localStorage.setItem("userType", response.data.userType);
+                localStorage.setItem("email", response.data.email);
+                localStorage.setItem("name", response.data.name);
+                localStorage.setItem("surname", response.data.surname);
+              }
+
+
+              else {
+                localStorage.setItem("apiKey", response.data.apikey);
+                localStorage.setItem("userType", response.data.userType);
+                localStorage.setItem("email", response.data.email);
+                localStorage.setItem("RetailerName", response.data.RetailerName);
+              }
               
               alert("Login successful!");
               if(response.data.userType=="Admin"){

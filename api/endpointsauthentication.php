@@ -37,7 +37,25 @@ function handleLogin($data) {
     }
 
 
-    apiResponse("success", ["apikey" => $user['ApiKey'], "userType" => $user['UserType']]);
+    if ($user['UserType'] === "Standard" || $user['UserType'] === "Admin") 
+    {
+        apiResponse("success", ["apikey" => $user['ApiKey'], "userType" => $user['UserType'], "email" => $user["Email"], "name" => $user["FirstName"], "surname" => $user["LastName"]]);
+    }
+
+    else {
+
+        $query = "SELECT * FROM Retailer WHERE email = ?;";
+        $stmt_retail = $database->prepare($query);
+        $stmt_retail->bind_param("s", $email);
+        $stmt_retail->execute();
+        $result = $stmt_retail->get_result();
+        $retailer = $result->fetch_assoc();
+
+        $stmt_retail->close();
+        
+        apiResponse("success", ["apikey" => $user['ApiKey'], "userType" => $user['UserType'], "email" => $user["Email"], "RetailerName" => $retailer["RetailerName"]]);
+    }
+    
     
 }
 

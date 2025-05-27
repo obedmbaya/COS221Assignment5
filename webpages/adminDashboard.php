@@ -19,11 +19,12 @@
             <div class="user-profile">
                 <img src="img/user.png" alt="User" class="user-icon">
                 <div class="user-details">
-                    <h3 class="user-name">Don Alphamale</h3> <!-- Displaying Admin Name -->
-                    <p class="user-email">don.alpha@gmail.com</p> <!-- Displaying Admin Email -->
+                    <h3 class="user-name"></h3> <!-- Displaying Admin Name -->
+                    <p class="user-email"></p> <!-- Displaying Admin Email -->
                 </div>
             </div>
-            <button class="logout-btn" onclick="window.location.href='logout.php'">Logout</button> <!-- Logout Button -->
+            <!-- <button class="logout-btn" onclick="window.location.href='logout.php'">Logout</button> Logout Button -->
+            <button class="logout-btn">Logout</button>
         </div>
 
         <!-- Tab Navigation -->
