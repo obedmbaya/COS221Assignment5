@@ -107,7 +107,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case "getUserReviews":
             getUserReviews($data);
             break;
-
+        case "getAllBrands":
+            getAllBrands();
+            break;
+        case "getAllCategories":
+            getAllCategories();
+            break;
         default:
             sendResponse("failed", "Unknown or missing type", 400);
     }
