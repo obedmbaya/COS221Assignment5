@@ -12,22 +12,22 @@
         retailemail.textContent = localStorage.getItem("email") || "";
     }
 
-    document.querySelector(".logout-btn").addEventListener("click", function () {
-        localStorage.clear();
-        alert("You have been logged out successfully.");
-        window.location.href = "index.php";
-    });
+    // document.querySelector(".logout-btn").addEventListener("click", function () {
+    //     localStorage.clear();
+    //     alert("You have been logged out successfully.");
+    //     window.location.href = "index.php";
+    // });
 
     // Retailer ratings chart
     const retailerCtx = document.getElementById('retailerRatingsChart');
     if (retailerCtx) {
-        new Chart(retailerCtx, {
+        let retailerChart = new Chart(retailerCtx, {
             type: 'bar',
             data: {
                 labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
                 datasets: [{
                     label: 'Number of Reviews',
-                    data: [15, 12, 45, 234, 567],
+                    data: [0,0,0,0,0],
                     backgroundColor: '#4c4faf',
                     borderColor: '#3f3e8e',
                     borderWidth: 1
@@ -58,13 +58,66 @@
                 }
             }
         });
+        getRatings().then(ratingsData => {
+            if (ratingsData) {
+                retailerChart.data.datasets[0].data = ratingsData;
+                retailerChart.update();
+            }
+        }).catch(error => {
+            console.error('Error initializing chart with ratings:', error);
+        });
     }
 });
 
+function getRatings(){
+    // const apiKey = localStorage.getItem('apiKey');
+    const apiKey = "T8WrTkZXhJuk1g37NGh4OdT7S14suiVl";
+    if (!apiKey) {
+        alert('Please log in to load users.');
+        return Promise.reject('No API key');
+    }
+
+    return fetch('../api/api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: 'GetRetailerRatings',
+            ApiKey: apiKey
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            return populateRatingsArr(data.data);
+        } else {
+            alert('Failed to load reviews: ' + (data.data || 'Unknown error'));
+            return [0, 0, 0, 0, 0];
+        }
+    })
+    .catch(error => {
+        console.error('Error loading reviews:', error);
+        alert('An error occurred while loading reviews.');
+        return [0, 0, 0, 0, 0];
+    });
+}
+
+function populateRatingsArr(data){
+    let ratingArr = [0, 0, 0, 0, 0]
+    data.forEach(element => {
+        const index = element.Rating - 1;
+        const num = element.number; 
+        ratingArr[index] = num;
+    });
+    return ratingArr;
+}
+
 // load products into dashboard
 function loadProducts(){
-
+    
 }
+
 // Product management functions
 function editProduct(productId) {
     const editForm = document.getElementById('editProductForm');

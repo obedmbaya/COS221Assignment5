@@ -612,6 +612,9 @@ document.addEventListener('submit', function(e) {
         
         const name = e.target.querySelector('input[type="text"]').value;
         const email = e.target.querySelector('input[type="email"]').value;
+        const emailUpdate = document.getElementById("email-update").value;
+
+
         const password = e.target.querySelector('input[type="password"]').value;
         const confirmPassword = e.target.querySelectorAll('input[type="password"]')[1].value;
         
@@ -660,6 +663,77 @@ document.addEventListener('submit', function(e) {
         });
     }
 });
+
+        
+        var payload = {
+            type: "editInfo",
+            email: emailUpdate,
+            password: confirmPassword,
+            api_key : localStorage.getItem("apiKey")
+        };
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "../api/api.php", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+            try {
+                var response = JSON.parse(xhr.responseText);
+                if (response.status === "success") {
+                    alert('Profile updated successfully!');
+                    document.getElementById("email-update").value="retailer@example.com"
+                    e.target.querySelector('input[type="password"]').value = "";
+                    e.target.querySelectorAll('input[type="password"]')[1].value = "";
+                    localStorage.setItem("email", response.data.email);
+                    document.querySelector(".user-email").textContent = localStorage.getItem("email");
+                } 
+                else {
+                alert("Login failed: " + JSON.stringify(response));
+                }
+            } catch (e) {
+                alert("Invalid response from server.");
+            }
+            } else {
+            alert("Update Failed. Status: " + xhr.status);
+            }
+        }
+        };
+
+        xhr.send(JSON.stringify(payload));
+        
+        
+    }
+});
+
+const userReviewData = {
+    iphone14: {
+        name: 'iPhone 14 Pro Max',
+        rating: 4,
+        review: 'Great phone with excellent camera quality. Battery life could be better.'
+    },
+    samsung23: {
+        name: 'Samsung Galaxy S23 Ultra',
+        rating: 3,
+        review: 'Good phone but has some software issues. Camera is impressive though.'
+    },
+    macbook: {
+        name: 'MacBook Pro M2',
+        rating: 5,
+        review: 'Absolutely fantastic laptop! Perfect for development work and the M2 chip is incredibly fast.'
+    },
+    sony: {
+        name: 'Sony WH-1000XM5',
+        rating: 1,
+        review: 'Disappointing product. Sound quality is not as advertised and build quality feels cheap.'
+    },
+    ipad: {
+        name: 'iPad Pro 12.9',
+        rating: 4,
+        review: 'Excellent tablet for creative work. The display is stunning and Apple Pencil works perfectly.'
+    }
+};
 
 let userReviewData = {};
 

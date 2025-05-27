@@ -1004,7 +1004,7 @@ function handleGetRetailerById($data){
 
 }
 
-function handleGetRetailerRatingsByApikey(){
+function handleGetRetailerRatingsByApikey($data){
     $conn = Database::instance()->getConnection();
 
     validateApikey($data);
@@ -1038,20 +1038,21 @@ function handleGetRetailerRatingsByApikey(){
         exit;
     }
 
-    $stmt = $conn->prepare("SELECT COUNT(Rating)
+    $stmt = $conn->prepare("SELECT r.Rating, COUNT(r.Rating) AS number
                     FROM Retailer re
                     JOIN ProductPrice pp ON pp.RetailerID = re.RetailerID
                     JOIN Product p ON pp.ProductID = p.ProductID
-                    WHERE RetailerID = ?
-                    ");
+                    JOIN Review r ON r.ProductID = p.ProductID
+                    WHERE pp.RetailerID = ?
+                    GROUP BY r.Rating");
 
     $stmt->bind_param("i", $retailerID);
     $stmt->execute();
-    $result = $stmt->get_results();
+    $result = $stmt->get_result();
     $output = $result->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
 
-    
+    sendResponse("success", $output, 200);
 
 }
 
@@ -1184,7 +1185,7 @@ function handleEditInfo($data) {
     $stmt->close();
 
 
-    apiResponse("success", ["apikey" => $ApiKey]);
+    apiResponse("success", ["apikey" => $ApiKey, "email" => $email]);
 }
 
 ?>
