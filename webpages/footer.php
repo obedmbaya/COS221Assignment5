@@ -26,8 +26,6 @@
                     <h4 class="footer-heading">Quick Links</h4>
                     <ul class="footer-links">
                         <li><a href="index.php">Home</a></li>
-                        <li><a href="deals.php">Deals</a></li>
-                        <li><a href="wishlist.php">Wishlist</a></li>
                         <li><a href="login.php">Login</a></li>
                     </ul>
                 </div>
@@ -36,11 +34,11 @@
                 <div class="footer-column">
                     <h4 class="footer-heading">CompareIT</h4>
                     <ul class="footer-links">
-                        <li><a href="about-us.php">About Us</a></li>
                         <li><a href="contact.php">Contact</a></li>
-                        <li><a href="faq.php">FAQ</a></li>
-                        <li><a href="privacy-policy.php">Privacy Policy</a></li>
-                        <li><a href="terms-of-service.php">Terms of Service</a></li>
+                        <li><a>About Us</a></li>
+                        <li><a>FAQ</a></li>
+                        <li><a>Privacy Policy</a></li>
+                        <li><a>Terms of Service</a></li>
                     </ul>
                 </div>
                 
@@ -72,8 +70,8 @@
             <div class="newsletter-container">
                 <p class="copyright-text">© 2025 CompareIT. All Rights Reserved.</p>
                 <div class="copyright-links">
-                    <a href="privacy-policy.html">Privacy Policy</a>
-                    <a href="terms-of-service.html">Terms of Service</a>
+                    <a">Privacy Policy</a>
+                    <a>Terms of Service</a>
                 </div>
             </div>
         </div>
