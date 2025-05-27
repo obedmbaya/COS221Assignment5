@@ -77,7 +77,7 @@ function isAdmin($apiKey) {
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     $stmt->close();
-    return ($row && strtolower($row['UserType']) === 'retailer');
+    return ($row && (strtolower($row['UserType']) === 'retailer'|| strtolower($row['UserType'])==='admin'));
 }
 
 function addProduct($data) {

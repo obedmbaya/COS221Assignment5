@@ -337,7 +337,8 @@ function removeProduct(productId) {
                 alert('Product removed successfully!');
                 loadProducts();
             } else {
-                alert('Failed to remove product: ' + (data.data || 'Unknown error'));
+                 alert('Failed to remove product '+productId +":"+ (data.data || 'Unknown error'));
+                 
             }
         })
         .catch(error => {
