@@ -1,4 +1,3 @@
- let retailerChart = null;
  // Initialize retailer-specific charts
  document.addEventListener('DOMContentLoaded', function() {
 
@@ -20,12 +19,9 @@
     // });
 
     // Retailer ratings chart
-    const ratingsData = getRatings();
-    console.log(ratingsData);
-
     const retailerCtx = document.getElementById('retailerRatingsChart');
     if (retailerCtx) {
-        retailerChart = new Chart(retailerCtx, {
+        let retailerChart = new Chart(retailerCtx, {
             type: 'bar',
             data: {
                 labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
@@ -62,6 +58,14 @@
                 }
             }
         });
+        getRatings().then(ratingsData => {
+            if (ratingsData) {
+                retailerChart.data.datasets[0].data = ratingsData;
+                retailerChart.update();
+            }
+        }).catch(error => {
+            console.error('Error initializing chart with ratings:', error);
+        });
     }
 });
 
@@ -70,10 +74,10 @@ function getRatings(){
     const apiKey = "T8WrTkZXhJuk1g37NGh4OdT7S14suiVl";
     if (!apiKey) {
         alert('Please log in to load users.');
-        return;
+        return Promise.reject('No API key');
     }
 
-    fetch('../api/api.php', {
+    return fetch('../api/api.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -89,11 +93,13 @@ function getRatings(){
             return populateRatingsArr(data.data);
         } else {
             alert('Failed to load reviews: ' + (data.data || 'Unknown error'));
+            return [0, 0, 0, 0, 0];
         }
     })
     .catch(error => {
         console.error('Error loading reviews:', error);
         alert('An error occurred while loading reviews.');
+        return [0, 0, 0, 0, 0];
     });
 }
 
@@ -104,10 +110,6 @@ function populateRatingsArr(data){
         const num = element.number; 
         ratingArr[index] = num;
     });
-    if (retailerChart) {
-        retailerChart.data.datasets[0].data = ratingArr;
-        retailerChart.update(); 
-    }
     return ratingArr;
 }
 
