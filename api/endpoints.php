@@ -566,12 +566,26 @@ function getReview($data){
     $reviews = [];
 
     while($row = $result->fetch_assoc()){
+
+        $query = "SELECT FirstName, LastName FROM User WHERE UserID = ?";
+        $userStmt = $conn->prepare($query);
+        if (!$userStmt) {
+            sendResponse("error", "Failed to prepare user query", 500);
+            return;
+        }
+        $userStmt->bind_param("i", $row['UserID']);
+        $userStmt->execute();
+        $userResult = $userStmt->get_result();
+        $userRow = $userResult->fetch_assoc();
+        $userStmt->close();
+        if ($userRow) {
+            $row['UserName'] = $userRow['FirstName'] . " " . $userRow['LastName'];
+        } else {
+            $row['UserName'] = "Unknown User";
+        }
+
         $reviews[] = $row;
     }
-
-    $stmt->close();
-    sendResponse("success", $reviews, 200);
-}
 
 function getUserReviews($data){
     $conn = Database::instance()->getConnection();
