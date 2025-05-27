@@ -1253,6 +1253,24 @@ function getAllBrands() {
 
     sendResponse("success", $brands, 200);
 }
+
+function getAllCategories() {
+    $conn = Database::instance()->getConnection();
+    $query = "SELECT CategoryID, CategoryName FROM Category ORDER BY CategoryName";
+    $result = $conn->query($query);
+
+    if (!$result) {
+        sendResponse("error", "Failed to fetch categories: " . $conn->error, 500);
+        return;
+    }
+
+    $categories = [];
+    while ($row = $result->fetch_assoc()) {
+        $categories[] = $row;
+    }
+
+    sendResponse("success", $categories, 200);
+}
 function handleEditInfo($data) {
     /*
         input
