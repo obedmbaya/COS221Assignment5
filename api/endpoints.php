@@ -284,7 +284,7 @@ function compare($data){
 
     $conn = Database::instance()->getConnection();
     
-    validateApikey($data);
+    //validateApikey($data);
     
     if (!isset($data["ProductID"])){
         header("HTTP/1.1 400 Bad Request");
@@ -297,8 +297,8 @@ function compare($data){
     }
 
     $stmt = $conn->prepare("SELECT p.ProductName, p.Description, p.Brand, p.IMG_reference,
-                            r.RetailerName, r.RetailerReference,
-                            pp.Price, pp.URL
+                            r.RetailerName, r.SiteReference,
+                            pp.Price
                             FROM Product as p
                             JOIN ProductPrice as pp ON p.ProductID = pp.ProductID
                             JOIN Retailer as r ON pp.RetailerID = r.RetailerID

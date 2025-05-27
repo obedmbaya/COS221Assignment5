@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function loadProducts() {
     try {
-        const response = await fetch('api.php', {
+        const response = await fetch('../api/api.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -70,15 +70,15 @@ async function loadProductOffers(productId) {
     const offersContainer = document.getElementById(`offers-${productId}`);
     
     try {
-        const response = await fetch('api.php', {
+        const response = await fetch('../api/api.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                type: 'Compare',
-                apikey: 'tre456gfr5678ihgty789o',
-                ProductID: parseInt(productId)
+                type: 'compare',
+                apikey: localStorage.getItem("apiKey"),
+                ProductID: productId
             })
         });
 
