@@ -7,6 +7,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchProductData(productId);
     fetchComparisonData(productId);
+
+    // Attach event listener to the "More Reviews" button
+    const moreReviewsBtn = document.querySelector('.see-more-btn');
+    if (moreReviewsBtn) {
+        moreReviewsBtn.addEventListener('click', () => navigateToProduct(productId));
+    }
+
+    // Attach event listener to the "More Offers" button
+    const moreOffersBtn = document.querySelector('.more-offers-btn');
+    if (moreOffersBtn) {
+        moreOffersBtn.addEventListener('click', () => navigateToProduct(productId));
+    }
 });
 
 function getCurrentProductId() {
@@ -79,6 +91,9 @@ function renderProduct(product) {
     if (mainImageElement) {
         mainImageElement.style.backgroundImage = `url('${product.IMG_Reference}')`;
     }
+
+    const descriptionElement = document.querySelector('.description-content');
+    if (descriptionElement) descriptionElement.textContent = product.Description;
 }
 
 function renderRetailers(retailers) {
@@ -109,4 +124,9 @@ function renderRetailers(retailers) {
         link.appendChild(storeOption);
         storeBox.appendChild(link);
     });
+}
+
+function navigateToProduct(productId) {
+    sessionStorage.setItem('currentProductId', productId);
+    window.location.href = `review.php?id=${productId}`;
 }

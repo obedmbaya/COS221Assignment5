@@ -216,7 +216,7 @@
                     </div>
                 </div>
                 
-                <a href="review.php"><button class="see-more-btn">More Reviews</button></a>
+                <button class="see-more-btn">More Reviews</button>
             </div>
             
             <!--Write review section-->
