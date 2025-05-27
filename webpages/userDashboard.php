@@ -147,8 +147,8 @@
                     <h3>Edit Profile Information</h3>
                     <form>
                         <div class="form-group">
-                            <label>Email Address:</label>
-                            <input type="email" value="puffy@gmail.com" placeholder="Enter new email">
+                            <label for="email-update">Email Address:</label>
+                            <input id="email-update" type="email" value="puffy@gmail.com" placeholder="Enter new email">
                         </div>
                         <div class="form-group">
                             <label>New Password:</label>
