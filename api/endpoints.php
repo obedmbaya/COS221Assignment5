@@ -393,8 +393,8 @@ function saveContacts($data) {
         return;
     }
 
-    $firstname = $user["Firstame"];
-    $surname = $user["Surname"];
+    $firstname = $user["FirstName"];
+    $surname = $user["LastName"];
 
     $insert = $db->prepare("INSERT INTO contacts (Firstname, Surname, email, phone, message) VALUES (?, ?, ?, ?, ?)");
     $insert->bind_param("sssss", $firstname, $surname, $email, $phone, $message);
