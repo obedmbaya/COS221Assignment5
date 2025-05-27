@@ -917,7 +917,105 @@ function getAllProducts() {
     ]);
     exit;
 }
+function handleEditInfo($data) {
+    /*
+        input
+        {
+            "type" : "editInfo",
+            "email" : emailchange,
+            "password" : passwordchange,
+            "api_key" : userapikey
+        }
 
+        output if success
+        {
+            "status" : "success",
+            "data" : ["apikey" = > apikey]
+        }
+    */
+    $database = Database::instance()->getConnection();
+    $email = $data["email"];
+    $password = $data["password"];
+    $ApiKey = $data['api_key'];
+
+    $regexSymbol = "/[^a-zA-Z0-9]+/";
+    $regexNum = "/[0-9]+/";
+    $regexHigh = "/[A-Z]+/";
+    $regexlow = "/[a-z]+/";
+    $regexEmail = "/^[^\s@]+@[^\s@]+\.[^\s@]+$/i";
+
+    if (empty($email) || empty($password)) {
+
+        apiResponse("failed", "All fields must be filled in before signing up.", 400); 
+    }
+
+
+    $errors = array();
+    
+
+
+    if (!preg_match($regexEmail, $email)) {
+        array_push($errors, "Please enter a valid email address (e.g. user@example.com).");
+    }
+    
+    if (strlen($password) >= 8) {
+        if (!preg_match($regexHigh, $password)) {
+            array_push($errors, "Password must contain at least one uppercase letter.");
+        }
+
+        if (!preg_match($regexlow, $password)) {
+            array_push($errors, "Password must contain at least one lowercase letter.");
+        }
+
+        if (!preg_match($regexNum, $password)) {
+            array_push($errors, "Password must contain at least one digit.");
+        }
+
+        if (!preg_match($regexSymbol, $password)) {
+            array_push($errors, "Password needs at least one symbol (e.g. !@#$).");
+        }
+    } else {
+        array_push($errors, "Password must be at least 8 characters");
+    }
+
+    if (!empty($errors)) {
+
+        apiResponse("failed", $errors, 400);
+    }
+
+    // Check if the user's email is in the database already
+    $apiquery = "SELECT 1 FROM User WHERE ApiKey = ? LIMIT 1";
+    $stmt_api = $database->prepare($apiquery);
+    $stmt_api->bind_param("s", $ApiKey);
+    $stmt_api->execute();
+    
+    $result = $stmt_api->get_result();
+    $api_exists = $result->num_rows > 0;
+    $stmt_api->close();
+    
+    if (!$api_exists) {
+
+        apiResponse("failed", "Unsuccessful, user does not exist.", 400);
+    }
+
+    // No errors, proceed to registering the user
+    $query = "UPDATE User SET Email = ?, Password = ?, Salt = ? WHERE ApiKey = ?";
+    $stmt = $database->prepare($query);
+    if (!$stmt) {
+        apiResponse("failed", "Database error: " . $database->error, 500);
+    }
+
+    
+    $salt = bin2hex(random_bytes(16));
+    $hash = hash("sha256", $salt . $password);
+    
+    $stmt->bind_param("ssss", $email, $hash, $salt, $ApiKey);
+    $stmt->execute();
+    $stmt->close();
+
+
+    apiResponse("success", ["apikey" => $ApiKey]);
+}
 // function validateApikey($data){
 
 //     $output = true;

@@ -82,6 +82,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case "LoadUsers":
             handleGetUsers($data);
             break;
+        case "editInfo":
+            handleEditInfo($data);
+            break;
 
         default:
             sendResponse("failed", "Unknown or missing type", 400);
