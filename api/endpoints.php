@@ -1378,6 +1378,7 @@ function handleEditInfo($data) {
 }
 
 
+
 function handleCountUsers($data) {
     $conn = Database::instance()->getConnection();
 
@@ -1492,7 +1493,6 @@ function getUserDashboard($data) {
 
 function updateUserProfile($data) {
     $conn = Database::instance()->getConnection();
-
     $apiKey = $data['ApiKey'] ?? null;
     $email = $data['email'] ?? null;
     $password = $data['password'] ?? null;
@@ -1517,16 +1517,19 @@ function updateUserProfile($data) {
     $userId = $user['UserID'];
 
     if ($password) {
-        $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("UPDATE User SET Email = ?, Password = ? WHERE UserID = ?");
-        $stmt->bind_param("ssi", $email, $hashed, $userId);
+        // Generate salt and hash password using SHA-256 (same as login)
+        $salt = bin2hex(random_bytes(16));
+        $hash = hash("sha256", $salt . $password);
+        
+        $stmt = $conn->prepare("UPDATE User SET Email = ?, Password = ?, Salt = ? WHERE UserID = ?");
+        $stmt->bind_param("sssi", $email, $hash, $salt, $userId);
     } else {
         $stmt = $conn->prepare("UPDATE User SET Email = ? WHERE UserID = ?");
         $stmt->bind_param("si", $email, $userId);
     }
 
     if ($stmt->execute()) {
-        sendResponse("success", "Profile updated successfully", 200);
+        sendResponse("success", ["email" => $email], 200);
     } else {
         sendResponse("error", "Failed to update profile", 500);
     }

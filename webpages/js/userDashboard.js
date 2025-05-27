@@ -99,9 +99,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             var updatePayload = {
                 type: "updateUserProfile",
-                ApiKey: apiKey2,
+                ApiKey: apiKey, // Correct case - capital A and K
                 email: newEmail
             };
+
             if (newPassword) {
                 updatePayload.password = newPassword;
             }
