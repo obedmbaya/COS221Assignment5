@@ -85,6 +85,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case "editInfo":
             handleEditInfo($data);
             break;
+        case "GetRetailerById":
+            handleGetRetailerById($data);
+            break;
 
         default:
             sendResponse("failed", "Unknown or missing type", 400);

@@ -333,18 +333,18 @@ function validateApikey($data){
     } else {
 
         $conn = Database::instance()->getConnection();
-        $apikey = $data["apikey"];
+        $apikey = $data["ApiKey"];
 
         $stmt = $conn->prepare("SELECT 1
-                        FROM  ApiKey
-                        WHERE KeyValue = ?");
+                        FROM  User
+                        WHERE ApiKey = ?");
         if (!$stmt){
             die("Failed to prepare apikey validation query");
         }
 
         $stmt->bind_param("s", $apikey);
         $stmt->execute();
-        $result = $stmt->get_result();
+        $result = $stmt->get_result(); 
 
         if ($result->num_rows == 0){
             $output = false;
@@ -838,7 +838,7 @@ function handleTopRated($data){
 }
 
 //Imma also put getRetailerById in here even tho it's not a stats endpoint
-function handleGetRetailerById(){
+function handleGetRetailerById($data){
 
     validateApikey($data);
 
@@ -856,12 +856,12 @@ function handleGetRetailerById(){
     $stmt = $conn->prepare("SELECT u.UserID, u.FirstName, u.LastName, u.Email, r.RetailerID, r.RetailerName, r.SiteReference, r.Email
                             FROM Retailer as r
                             JOIN User as u ON r.Email = u.Email
-                            WHERE u.UserID = ? AND u.UserType = 'Retailer");
+                            WHERE u.UserID = ? AND u.UserType = 'Retailer'");
     if (!$stmt){
         die("Failed to prepare query: " . $conn->error);
     }
 
-    $stmt->bind_param(s, $data["userID"]);
+    $stmt->bind_param("s", $data["userID"]);
     $stmt->execute();
     $result = $stmt->get_result();
     $retailer = $result->fetch_assoc();
