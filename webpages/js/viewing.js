@@ -23,7 +23,7 @@ function fetchProductData(productId) {
         },
         body: JSON.stringify({
             type: "ViewProduct",
-            apikey: "87654re3wdfgtyu76t5r4e",
+            apikey: localStorage.getItem("apiKey"),
             ProductID: productId
         })
     })

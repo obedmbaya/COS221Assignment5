@@ -88,6 +88,28 @@ async function loadProducts() {
         const brand = document.getElementById('brand').value;
         const price = document.getElementById('price').value;
 
+        // If no filters or search terms are provided, use getAllProducts
+        if (!searchInput && !brand && !category && !price) {
+            const response = await fetch('../api/api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: 'getAllProducts'
+                })
+            });
+
+            const data = await response.json();
+            if (data.status === 'success' && data.products) {
+                displayProducts(data.products);
+            } else {
+                displayProducts([]);
+            }
+            return;
+        }
+
+        // Otherwise, use the search endpoint with filters
         const searchParams = {
             type: 'search',
             search: {},
@@ -120,8 +142,6 @@ async function loadProducts() {
             // Note: 'newest' sort is not supported by the search endpoint
         }
         if (price) {
-            // Price filtering would typically be done server-side, but since the search endpoint
-            // doesn't support it, we'll filter client-side for simplicity
             searchParams.limit = 100; // Fetch more to filter
         }
 
