@@ -273,7 +273,7 @@
         require_once 'footer.php';
     ?>
 
-    <!-- <script src="js/dashboard.js"></script> -->
+    <script src="js/dashboard.js"></script>
     <script src="js/retailerDashboard.js"></script>
 </body>
 </html>
