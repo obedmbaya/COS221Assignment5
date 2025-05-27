@@ -47,8 +47,8 @@ function fetchComparisonData(productId) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            type: "Compare",
-            apikey: "tre456gfr5678ihgty789o",
+            type: "compare",
+            apikey: localStorage.getItem("apiKey"),
             ProductID: productId
         })
     })
@@ -73,7 +73,7 @@ function renderProduct(product) {
     if (brandElement) brandElement.textContent = product.Brand;
 
     const priceElement = document.querySelector('.view-product-price');
-    if (priceElement) priceElement.textContent = `R${product.Price.toFixed(2)}`;
+    if (priceElement) priceElement.textContent = `R${product.Price}`;
 
     const mainImageElement = document.querySelector('.product-main-image');
     if (mainImageElement) {
@@ -97,7 +97,7 @@ function renderRetailers(retailers) {
 
         const storePrice = document.createElement('div');
         storePrice.className = 'store-price';
-        storePrice.textContent = `R${retailer.Price.toFixed(2)}`;
+        storePrice.textContent = `R${retailer.Price}`;
 
         const link = document.createElement('a');
         link.href = retailer.URL;
