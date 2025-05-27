@@ -27,7 +27,7 @@
                 labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
                 datasets: [{
                     label: 'Number of Reviews',
-                    data: [15, 12, 45, 234, 567],
+                    data: getRatings(),
                     backgroundColor: '#4c4faf',
                     borderColor: '#3f3e8e',
                     borderWidth: 1
@@ -61,10 +61,56 @@
     }
 });
 
-// load products into dashboard
-function loadProducts(){
+function getRatings(){
+
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) {
+        alert('Please log in to load users.');
+        return;
+    }
+
+    fetch('../api/api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: 'GetRetailerRatings',
+            ApiKey: apiKey
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            return populateChart(data.data);
+        } else {
+            alert('Failed to load users: ' + (data.data || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error loading users:', error);
+        alert('An error occurred while loading users.');
+    });
 
 }
+
+function populateChart(data){
+    let ratingArr = [0, 0, 0, 0, 0]
+    
+    data.array.forEach(element => {
+        const index = element.Rating - 1;
+        const num = element.number - 1; 
+        ratingArr[index] = number;
+    });
+
+    return ratingArr;
+}
+
+// load products into dashboard
+function loadProducts(){
+    
+}
+
 // Product management functions
 function editProduct(productId) {
     const editForm = document.getElementById('editProductForm');
