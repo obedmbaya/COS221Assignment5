@@ -103,7 +103,7 @@ function getCurrentProductId() {
         }
 
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/PA_221_FRONTEND-LINKING/api/api.php", true);
+        xhr.open("POST", "../api/api.php", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
