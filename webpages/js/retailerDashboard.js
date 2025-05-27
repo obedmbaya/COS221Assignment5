@@ -105,7 +105,7 @@ function populateRatingsArr(data){
         ratingArr[index] = num;
     });
     if (retailerChart) {
-        retailerChart.data.datasets[0].data = ratingsData;
+        retailerChart.data.datasets[0].data = ratingArr;
         retailerChart.update(); 
     }
     return ratingArr;
