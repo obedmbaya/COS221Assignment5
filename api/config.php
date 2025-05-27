@@ -42,7 +42,7 @@
             $db   = $_ENV['DB_DATABASE'];
             $user = $_ENV['DB_USERNAME'];
             $pass = $_ENV['DB_PASSWORD'];
-            
+
             
             $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
 

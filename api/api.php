@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case "editInfo":
             handleEditInfo($data);
             break;
-
+        
         case "getUserReviews":
             getUserReviews($data);
             break;

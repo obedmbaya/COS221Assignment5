@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     initializeTabs(); // Initialize tab switching functionality
     initializeCharts(); // Sets up Chart.js charts
+    loadUserReviewStats(); // Load user review stats for Reviews Made and Average Rating
     
     const productSelect = document.getElementById('productSelect');
     const customerProductSelect = document.getElementById('customerProductSelect');
@@ -424,6 +425,143 @@ function removeUser(email) {
     }
 }
 
+function loadUserReviewStats() {
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) {
+        alert('Please log in to load review statistics.');
+        return;
+    }
+
+    // Fetch all products to map ProductIDs to names
+    fetch('../api/api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: 'getAllProducts'
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text(); // Use text() to inspect response
+    })
+    .then(text => {
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            console.error('Invalid JSON:', text);
+            throw new Error('Server returned invalid JSON');
+        }
+    })
+    .then(productData => {
+        if (productData.status !== 'success') {
+            alert('Failed to load products: ' + (productData.data || 'Unknown error'));
+            return;
+        }
+
+        const productMap = {};
+        productData.products.forEach(product => {
+            productMap[product.ProductID] = product.ProductName;
+        });
+
+        // Fetch user reviews
+        fetch('../api/api.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type: 'getUserReviews',
+                ApiKey: apiKey
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(text => {
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Invalid JSON:', text);
+                throw new Error('Server returned invalid JSON');
+            }
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                // Handle both cases: reviews found or no reviews
+                const reviews = Array.isArray(data.data) ? data.data : [];
+                updateReviewStats(reviews, productMap);
+            } else {
+                alert('Failed to load reviews: ' + (data.data || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error loading reviews:', error);
+            alert('An error occurred while loading reviews. Please try again.');
+        });
+    })
+    .catch(error => {
+        console.error('Error loading products:', error);
+        alert('An error occurred while loading products. Please try again.');
+    });
+}
+
+function updateReviewStats(reviews, productMap) {
+    const reviewsMadeElement = document.querySelector('.stat-card p strong');
+    const averageRatingElement = document.querySelector('.stat-card:nth-child(2) p strong');
+    
+    if (!reviewsMadeElement || !averageRatingElement) {
+        console.error('Review stats elements not found');
+        return;
+    }
+
+    // Calculate number of reviews
+    const reviewCount = reviews.length;
+    reviewsMadeElement.textContent = reviewCount;
+
+    // Calculate average rating
+    const totalRating = reviews.reduce((sum, review) => sum + parseInt(review.Rating), 0);
+    const averageRating = reviewCount > 0 ? (totalRating / reviewCount).toFixed(1) : 0;
+    averageRatingElement.textContent = averageRating;
+
+    // Update reviewed products list dynamically
+    updateReviewedProducts(reviews, productMap);
+}
+
+function updateReviewedProducts(reviews, productMap) {
+    const productList = document.querySelector('.product-list');
+    if (!productList) return;
+
+    productList.innerHTML = ''; // Clear existing products
+
+    reviews.forEach(review => {
+        const productName = productMap[review.ProductID] || 'Unknown Product';
+        const rating = parseInt(review.Rating);
+        const starsHtml = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+        const ratingText = rating === 1 ? '1 Star' : `${rating} Stars`;
+
+        const productItem = document.createElement('div');
+        productItem.className = 'product-item';
+        productItem.innerHTML = `
+            <div class="product-details">
+                <h3 class="product-name">${productName}</h3>
+                <p><span class="stars">${starsHtml}</span> <span class="rating-value">${ratingText}</span></p>
+            </div>
+            <div class="product-actions">
+                <a href="#" class="view-btn">View</a>
+                <a href="#" class="update-btn" onclick="showUpdateReview('${review.ReviewID}', '${review.ProductID}')">Update</a>
+            </div>
+        `;
+        productList.appendChild(productItem);
+    });
+}
+
 document.addEventListener('click', function(e) {
     const isProductsTab = document.getElementById('products')?.classList.contains('active');
     const isUsersTab = document.getElementById('users')?.classList.contains('active');
@@ -450,6 +588,8 @@ document.addEventListener('submit', function(e) {
     if (e.target.closest('.tab-pane[id="profile"]')) {
         e.preventDefault();
         
+        const name = e.target.querySelector('input[type="text"]').value;
+        const email = e.target.querySelector('input[type="email"]').value;
         const password = e.target.querySelector('input[type="password"]').value;
         const confirmPassword = e.target.querySelectorAll('input[type="password"]')[1].value;
         
@@ -464,75 +604,162 @@ document.addEventListener('submit', function(e) {
             alert('Passwords do not match.');
             return;
         }
-        
-        alert('Profile updated successfully!');
+
+        const apiKey = localStorage.getItem('apiKey');
+        if (!apiKey) {
+            alert('Please log in to update profile.');
+            return;
+        }
+
+        fetch('../api/api.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type: 'editInfo',
+                api_key: apiKey,
+                name: name,
+                email: email,
+                password: password
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Profile updated successfully!');
+            } else {
+                alert('Failed to update profile: ' + (data.data || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error updating profile:', error);
+            alert('An error occurred while updating profile.');
+        });
     }
 });
 
-const userReviewData = {
-    iphone14: {
-        name: 'iPhone 14 Pro Max',
-        rating: 4,
-        review: 'Great phone with excellent camera quality. Battery life could be better.'
-    },
-    samsung23: {
-        name: 'Samsung Galaxy S23 Ultra',
-        rating: 3,
-        review: 'Good phone but has some software issues. Camera is impressive though.'
-    },
-    macbook: {
-        name: 'MacBook Pro M2',
-        rating: 5,
-        review: 'Absolutely fantastic laptop! Perfect for development work and the M2 chip is incredibly fast.'
-    },
-    sony: {
-        name: 'Sony WH-1000XM5',
-        rating: 1,
-        review: 'Disappointing product. Sound quality is not as advertised and build quality feels cheap.'
-    },
-    ipad: {
-        name: 'iPad Pro 12.9',
-        rating: 4,
-        review: 'Excellent tablet for creative work. The display is stunning and Apple Pencil works perfectly.'
-    }
-};
+let userReviewData = {};
 
-let currentEditingProduct = null;
-
-function showUpdateReview(productId) {
+function showUpdateReview(reviewId, productId) {
     const updateForm = document.getElementById('updateReviewForm');
-    const productData = userReviewData[productId];
+    const apiKey = localStorage.getItem('apiKey');
     
-    if (productData && updateForm) {
-        currentEditingProduct = productId;
-        
-        document.getElementById('reviewProductName').value = productData.name;
-        document.getElementById('reviewRating').value = productData.rating;
-        document.getElementById('reviewText').value = productData.review;
-        
-        updateForm.style.display = 'block';
-        updateForm.scrollIntoView({ behavior: 'smooth' });
+    if (!apiKey) {
+        alert('Please log in to update reviews.');
+        return;
     }
+
+    // Fetch the specific review
+    fetch('../api/api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: 'getReview',
+            ReviewID: reviewId
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(text => {
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            console.error('Invalid JSON:', text);
+            throw new Error('Server returned invalid JSON');
+        }
+    })
+    .then(data => {
+        if (data.status === 'success' && data.data.length > 0) {
+            const review = data.data[0];
+            userReviewData[reviewId] = {
+                reviewId: reviewId,
+                productId: productId,
+                name: document.querySelector(`.product-item:has([onclick*="${reviewId}"]) .product-name`).textContent,
+                rating: review.Rating,
+                review: review.Comment || ''
+            };
+
+            document.getElementById('reviewProductName').value = userReviewData[reviewId].name;
+            document.getElementById('reviewRating').value = review.Rating;
+            document.getElementById('reviewText').value = review.Comment || '';
+            
+            updateForm.style.display = 'block';
+            updateForm.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            alert('Failed to load review: ' + (data.data || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error loading review:', error);
+        alert('An error occurred while loading the review.');
+    });
 }
 
 function saveReview() {
-    if (!currentEditingProduct) return;
-    
+    const reviewId = Object.keys(userReviewData).find(id => userReviewData[id].reviewId);
+    const productId = userReviewData[reviewId]?.productId;
     const rating = document.getElementById('reviewRating').value;
     const reviewText = document.getElementById('reviewText').value.trim();
+    const apiKey = localStorage.getItem('apiKey');
+    
+    if (!reviewId || !productId || !apiKey) {
+        alert('Invalid review or not logged in.');
+        return;
+    }
     
     if (!reviewText) {
         alert('Please enter a review text');
         return;
     }
-    
-    userReviewData[currentEditingProduct].rating = parseInt(rating);
-    userReviewData[currentEditingProduct].review = reviewText;
-    
-    updateProductDisplay(currentEditingProduct, parseInt(rating));
-    
-    alert('Review updated successfully!');
-    cancelUpdateReview();
+
+    fetch('../api/api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: 'updateReview',
+            api_key: apiKey,
+            ReviewID: reviewId,
+            Rating: parseInt(rating),
+            Comment: reviewText
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(text => {
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            console.error('Invalid JSON:', text);
+            throw new Error('Server returned invalid JSON');
+        }
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            updateProductDisplay(reviewId, parseInt(rating));
+            alert('Review updated successfully!');
+            cancelUpdateReview();
+            loadUserReviewStats(); // Refresh stats
+        } else {
+            alert('Failed to update review: ' + (data.data || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error updating review:', error);
+        alert('An error occurred while updating the review.');
+    });
 }
 
 function cancelUpdateReview() {
@@ -543,23 +770,20 @@ function cancelUpdateReview() {
     document.getElementById('reviewRating').value = '1';
     document.getElementById('reviewText').value = '';
     
-    currentEditingProduct = null;
+    userReviewData = {};
 }
 
-function updateProductDisplay(productId, newRating) {
+function updateProductDisplay(reviewId, newRating) {
     const productItems = document.querySelectorAll('.product-item');
-    const productData = userReviewData[productId];
+    const reviewData = userReviewData[reviewId];
     
     productItems.forEach(item => {
         const productName = item.querySelector('.product-name').textContent;
-        if (productName === productData.name) {
+        if (productName === reviewData.name) {
             const starsSpan = item.querySelector('.stars');
             const ratingValue = item.querySelector('.rating-value');
             
-            let starsHtml = '';
-            for (let i = 1; i <= 5; i++) {
-                starsHtml += i <= newRating ? '★' : '☆';
-            }
+            let starsHtml = '★'.repeat(newRating) + '☆'.repeat(5 - newRating);
             starsSpan.textContent = starsHtml;
             
             const ratingText = newRating === 1 ? '1 Star' : `${newRating} Stars`;
