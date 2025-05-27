@@ -14,19 +14,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function handleLogout() {
-        var logoutBtn = document.getElementById("logout-btn");
-        if (logoutBtn) {
-            logoutBtn.addEventListener("click", function (event) {
-                event.preventDefault();
-                localStorage.removeItem("apiKey"); // Clear the apiKey from localStorage
-                window.location.href = "index.php"; // Redirect to index.php
-            });
-        }
-    }
+    // function handleLogout() {
+    //     var logoutBtn = document.getElementById("logout-btn");
+    //     if (logoutBtn) {
+    //         logoutBtn.addEventListener("click", function (event) {
+    //             event.preventDefault();
+    //             localStorage.clear();
+    //             window.location.href = "index.php"; // Redirect to index.php
+    //         });
+    //     }
+    // }
+
+    document.getElementById("logout-button").addEventListener("click", function () {
+        localStorage.clear();
+        alert("You have been logged out successfully.");
+        window.location.href = "index.php";
+    });
 
     checkLoginStatus();
-    handleLogout();
+    //handleLogout();
     
     // Listen for changes in localStorage to update login status
     window.addEventListener("storage", function(event) {

@@ -1,5 +1,23 @@
  // Initialize retailer-specific charts
  document.addEventListener('DOMContentLoaded', function() {
+
+    var retailname = document.querySelector(".user-name");
+    var retailemail = document.querySelector(".user-email");
+
+    if (retailname) {
+        retailname.textContent = localStorage.getItem("RetailerName") || "";
+    }
+
+    if (retailemail) {
+        retailemail.textContent = localStorage.getItem("email") || "";
+    }
+
+    document.querySelector(".logout-btn").addEventListener("click", function () {
+        localStorage.clear();
+        alert("You have been logged out successfully.");
+        window.location.href = "index.php";
+    });
+
     // Retailer ratings chart
     const retailerCtx = document.getElementById('retailerRatingsChart');
     if (retailerCtx) {
