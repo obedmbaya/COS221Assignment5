@@ -65,7 +65,7 @@ function getCurrentProductId() {
                             starsHtml += '<span class="star">★</span>';
                         }
                         reviewDiv.innerHTML = `
-                            <div class="reviewer-name">${review.UserID ? 'User #' + review.UserID : 'Anonymous'}</div>
+                            <div class="reviewer-name">${review.UserName}</div>
                             <div class="review-rating">${starsHtml}</div>
                             <div class="review-text">${review.Comment}</div>
                             <div class="review-date">${review.ReviewDate ? review.ReviewDate : ''}</div>
