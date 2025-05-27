@@ -36,7 +36,7 @@ async function initializeFilters() {
         }
 
         // Add event listeners for filters and search
-        document.getElementById('search-input').addEventListener('input', debounce(loadProducts, 500));
+        document.querySelector('.search-bar').addEventListener('input', debounce(loadProducts, 500));
         document.getElementById('sort-by').addEventListener('change', loadProducts);
         document.getElementById('category').addEventListener('change', loadProducts);
         document.getElementById('brand').addEventListener('change', loadProducts);
@@ -82,7 +82,7 @@ function debounce(func, wait) {
 
 async function loadProducts() {
     try {
-        const searchInput = document.getElementById('search-input').value;
+        const searchInput = document.querySelector('.search-bar').value;
         const sortBy = document.getElementById('sort-by').value;
         const category = document.getElementById('category').value;
         const brand = document.getElementById('brand').value;
