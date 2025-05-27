@@ -1,3 +1,4 @@
+ let retailerChart = null;
  // Initialize retailer-specific charts
  document.addEventListener('DOMContentLoaded', function() {
 
@@ -19,15 +20,18 @@
     // });
 
     // Retailer ratings chart
+    const ratingsData = getRatings();
+    console.log(ratingsData);
+
     const retailerCtx = document.getElementById('retailerRatingsChart');
     if (retailerCtx) {
-        new Chart(retailerCtx, {
+        retailerChart = new Chart(retailerCtx, {
             type: 'bar',
             data: {
                 labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
                 datasets: [{
                     label: 'Number of Reviews',
-                    data: getRatings(),
+                    data: [0,0,0,0,0],
                     backgroundColor: '#4c4faf',
                     borderColor: '#3f3e8e',
                     borderWidth: 1
@@ -62,8 +66,8 @@
 });
 
 function getRatings(){
-
-    const apiKey = localStorage.getItem('apiKey');
+    // const apiKey = localStorage.getItem('apiKey');
+    const apiKey = "T8WrTkZXhJuk1g37NGh4OdT7S14suiVl";
     if (!apiKey) {
         alert('Please log in to load users.');
         return;
@@ -82,27 +86,28 @@ function getRatings(){
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            return populateChart(data.data);
+            return populateRatingsArr(data.data);
         } else {
-            alert('Failed to load users: ' + (data.data || 'Unknown error'));
+            alert('Failed to load reviews: ' + (data.data || 'Unknown error'));
         }
     })
     .catch(error => {
-        console.error('Error loading users:', error);
-        alert('An error occurred while loading users.');
+        console.error('Error loading reviews:', error);
+        alert('An error occurred while loading reviews.');
     });
-
 }
 
-function populateChart(data){
+function populateRatingsArr(data){
     let ratingArr = [0, 0, 0, 0, 0]
-    
-    data.array.forEach(element => {
+    data.forEach(element => {
         const index = element.Rating - 1;
-        const num = element.number - 1; 
-        ratingArr[index] = number;
+        const num = element.number; 
+        ratingArr[index] = num;
     });
-
+    if (retailerChart) {
+        retailerChart.data.datasets[0].data = ratingsData;
+        retailerChart.update(); 
+    }
     return ratingArr;
 }
 
