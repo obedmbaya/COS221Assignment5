@@ -1003,6 +1003,58 @@ function handleGetRetailerById($data){
     ]);
 
 }
+
+function handleGetRetailerRatingsByApikey(){
+    $conn = Database::instance()->getConnection();
+
+    validateApikey($data);
+
+    // if (!isset($data["RetailerID"])){
+    //     sendResponse("failed", "No RetailerID provided", 400);
+    //     exit;
+    // }
+    $apikey = $data["ApiKey"];
+
+    //Get RetailerID using apikey
+    $stmt = $conn->prepare("SELECT re.RetailerID
+                    FROM User u
+                    JOIN Retailer re on u.Email =  re.Email
+                    WHERE u.ApiKey = ?");
+    if (!$stmt){
+        sendResponse("failed", "RetailerRatings prepare failed", 400);
+    }
+    $stmt->bind_param("s", $apikey);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $retailer = $result->fetch_assoc();
+    $stmt->close();
+
+    $retailerID = null; 
+
+    if ($retailer) {
+        $retailerID = $retailer['RetailerID'];
+    } else {
+        sendResponse("failed", "No retailer found for the provided API key.", 404);
+        exit;
+    }
+
+    $stmt = $conn->prepare("SELECT COUNT(Rating)
+                    FROM Retailer re
+                    JOIN ProductPrice pp ON pp.RetailerID = re.RetailerID
+                    JOIN Product p ON pp.ProductID = p.ProductID
+                    WHERE RetailerID = ?
+                    ");
+
+    $stmt->bind_param("i", $retailerID);
+    $stmt->execute();
+    $result = $stmt->get_results();
+    $output = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    
+
+}
+
 function getAllProducts() {
     $conn = Database::instance()->getConnection();
 
