@@ -63,9 +63,25 @@
                 retailerChart.data.datasets[0].data = ratingsData;
                 retailerChart.update();
             }
+            const numRatings = ratingsData.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+            const elements = document.getElementsByClassName('stat-box');
+            if (elements.length >= 3) {
+                const thirdItem = elements[2];
+                const statNumberDiv = thirdItem.querySelector('.stat-number');
+                if (statNumberDiv) {
+                    statNumberDiv.textContent = numRatings;
+                } else {
+                    console.log("No 'stat-number' div found inside the 3rd item.");
+                }
+            } else {
+                console.log("There are fewer than 3 elements with 'my-class'.");
+            }
         }).catch(error => {
             console.error('Error initializing chart with ratings:', error);
         });
+
+        loadOverview();
+
     }
 });
 
@@ -110,6 +126,12 @@ function populateRatingsArr(data){
         ratingArr[index] = num;
     });
     return ratingArr;
+}
+
+function loadOverview(){
+
+
+
 }
 
 // load products into dashboard
