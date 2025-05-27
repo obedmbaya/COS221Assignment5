@@ -115,7 +115,6 @@
                                 <td>Audio</td>
                                 <td>R1,299</td>
                                 <td>
-                                    <button class="success" onclick="editProduct('R001')">Modify</button>
                                     <button class="remove">Remove</button>
                                 </td>
                             </tr>
@@ -126,7 +125,6 @@
                                 <td>Audio</td>
                                 <td>R899</td>
                                 <td>
-                                    <button class="success" onclick="editProduct('R002')">Modify</button>
                                     <button class="remove">Remove</button>
                                 </td>
                             </tr>
@@ -137,7 +135,6 @@
                                 <td>Audio</td>
                                 <td>R1,599</td>
                                 <td>
-                                    <button class="success" onclick="editProduct('R003')">Modify</button>
                                     <button class="remove">Remove</button>
                                 </td>
                             </tr>
