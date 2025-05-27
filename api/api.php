@@ -58,6 +58,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case "GetTopRated":
             handleTopRated($data);
             break;
+        case "GetRetailerRatings":
+            handleGetRetailerRatingsByApikey($data);
+            break;
         case "saveContacts":
             saveContacts($data);
             break;
