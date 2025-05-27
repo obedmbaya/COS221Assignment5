@@ -17,7 +17,7 @@ function search($data) {
     if (isset($data["search"]) && is_array($data["search"])) {
         foreach ($data["search"] as $entry => $value) {
             if (in_array($entry, ["ProductName", "Brand", "Description"])) {
-                if (!empty($data["fuzzy"])) {
+                if (!isset($data["fuzzy"]) || $data["fuzzy"] == "true") {
                     $query .= " AND p.$entry LIKE ?";
                     $params[] = "%$value%";
                 } else {
@@ -619,6 +619,7 @@ function insertReview($data){
     //Added some validation here to ensure that only users that exist can add reviews to products that exist and a check that the rating is between 0 and 5
 
     //UserID check
+    $output = true;
     $stmt = $conn->prepare("SELECT 1
                     FROM  User
                     WHERE UserID = ?");
@@ -654,7 +655,7 @@ function insertReview($data){
 
     $stmt->close();
 
-    if ($rating > 5 || $rating < 0){
+    if ($rating > 5 || $rating <= 0){
         $output = false;
     }
 
@@ -1052,7 +1053,61 @@ function handleGetRetailerRatingsByApikey($data){
     $output = $result->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
 
-    sendResponse("success", $output, 200);
+    sendResponse("success", $output, 200);  
+
+}
+
+function handleGetRetailerProducts($data){
+
+    $conn = Database::instance()->getConnection();
+
+    validateApikey($data);
+
+    // if (!isset($data["RetailerID"])){
+    //     sendResponse("failed", "No RetailerID provided", 400);
+    //     exit;
+    // }
+    $apikey = $data["ApiKey"];
+
+    //Get RetailerID using apikey
+    $stmt = $conn->prepare("SELECT re.RetailerID
+                    FROM User u
+                    JOIN Retailer re on u.Email =  re.Email
+                    WHERE u.ApiKey = ?");
+    if (!$stmt){
+        sendResponse("failed", "RetailerRatings prepare failed", 400);
+    }
+    $stmt->bind_param("s", $apikey);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $retailer = $result->fetch_assoc();
+    $stmt->close();
+
+    $retailerID = null; 
+
+    if ($retailer) {
+        $retailerID = $retailer['RetailerID'];
+    } else {
+        sendResponse("failed", "No retailer found for the provided API key.", 404);
+        exit;
+    }
+
+    $stmt = $conn->prepare("SELECT p.ProductName, p.Description, p.Brand, c.CategoryName, pp.Price -- , AVG(Rating) as Rating
+                    FROM Retailer re
+                    JOIN ProductPrice pp ON pp.RetailerID = re.RetailerID
+                    JOIN Product p ON pp.ProductID = p.ProductID
+                    -- JOIN Review r ON r.ProductID = p.ProductID
+                    JOIN Category c ON c.CategoryID = p.CategoryID
+                    WHERE pp.RetailerID = ?
+                    GROUP BY p.ProductID");
+
+    $stmt->bind_param("i", $retailerID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $output = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    sendResponse("success", $output, 200);  
 
 }
 

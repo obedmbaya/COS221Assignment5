@@ -4,14 +4,12 @@ document.addEventListener('DOMContentLoaded', function() {
     var useremail = document.querySelector(".user-email");
 
     if (username) {
-        username.textContent = localStorage.getItem("name") + " " +  localStorage.getItem("surname") || "";
+        username.textContent = localStorage.getItem("name") + " " + localStorage.getItem("surname") || "";
     }
 
     if (useremail) {
         useremail.textContent = localStorage.getItem("email") || "";
     }
-
-
 
     initializeTabs(); // Initialize tab switching functionality
     initializeCharts(); // Sets up Chart.js charts
@@ -32,13 +30,15 @@ document.addEventListener('DOMContentLoaded', function() {
         loadUsers();
     }
 
+    if (document.getElementById('products')) {
+        loadProducts();
+    }
+
     document.querySelector(".logout-btn").addEventListener("click", function () {
         localStorage.clear();
         alert("You have been logged out successfully.");
         window.location.href = "index.php";
     });
-
-
 });
 
 function initializeTabs() {
@@ -56,6 +56,8 @@ function initializeTabs() {
 
             if (targetTab === 'users') {
                 loadUsers();
+            } else if (targetTab === 'products') {
+                loadProducts();
             }
         });
     });
@@ -255,53 +257,190 @@ function updateCustomerProductChart() {
     }
 }
 
-function editProduct(productId) {
-    const editForm = document.getElementById('editProductForm');
-    const products = {
-        '001': {
-            name: 'iPhone 14 Pro Max',
-            brand: 'Apple',
-            description: 'Latest iPhone with advanced camera system',
-            image: 'https://example.com/iphone14.jpg'
+function loadProducts() {
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) {
+        alert('Please log in to load products.');
+        return;
+    }
+
+    fetch('../api/api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
         },
-        '002': {
-            name: 'Samsung Galaxy S23 Ultra',
-            brand: 'Samsung',
-            description: 'Premium Android smartphone with S Pen',
-            image: 'https://example.com/samsung23.jpg'
-        },
-        '003': {
-            name: 'MacBook Pro M2',
-            brand: 'Apple',
-            description: 'Professional laptop with M2 chip',
-            image: 'https://example.com/macbook.jpg'
+        body: JSON.stringify({
+            type: 'getAllProducts',
+            api_key: apiKey
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            populateProductTable(data.products);
+        } else {
+            alert('Failed to load products: ' + (data.data || 'Unknown error'));
         }
-    };
-    
-    const product = products[productId];
-    if (product) {
-        document.getElementById('editProductName').value = product.name;
-        document.getElementById('editProductBrand').value = product.brand;
-        document.getElementById('editProductDescription').value = product.description;
-        document.getElementById('editProductImage').value = product.image;
-        editForm.style.display = 'block';
-        editForm.scrollIntoView({ behavior: 'smooth' });
+    })
+    .catch(error => {
+        console.error('Error loading products:', error);
+        alert('An error occurred while loading products.');
+    });
+}
+
+function populateProductTable(products) {
+    const tableBody = document.querySelector('#products table tbody');
+    if (!tableBody) return;
+
+    tableBody.innerHTML = '';
+
+    products.forEach(product => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${product.ProductID}</td>
+            <td>${product.ProductName}</td>
+            <td>${product.Brand}</td>
+            <td>${product.Description}</td>
+            <td>-</td> <!-- Price not available from getAllProducts -->
+            <td>
+                <button class="modify" onclick="editProduct('${product.ProductID}')">Modify</button>
+                <button class="remove" onclick="removeProduct('${product.ProductID}')">Remove</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+function removeProduct(productId) {
+    const apiKey = localStorage.getItem('apiKey');
+    const retailerEmail = localStorage.getItem('email');
+    if (!apiKey || !retailerEmail) {
+        alert('Please log in to remove a product.');
+        return;
+    }
+
+    if (confirm('Are you sure you want to remove this product? This action cannot be undone.')) {
+        fetch('../api/api.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                type: 'deleteProduct',
+                ApiKey: apiKey,
+                ProductID: productId,
+                RetailerEmail: retailerEmail
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Product removed successfully!');
+                loadProducts();
+            } else {
+                alert('Failed to remove product: ' + (data.data || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error removing product:', error);
+            alert('An error occurred while removing the product.');
+        });
     }
 }
 
+function editProduct(productId) {
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) {
+        alert('Please log in to edit a product.');
+        return;
+    }
+
+    fetch('../api/api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: 'ViewProduct',
+            api_key: apiKey,
+            ProductID: productId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            const product = data.data;
+            const editForm = document.getElementById('editProductForm');
+            if (product) {
+                document.getElementById('editProductName').value = product.ProductName;
+                document.getElementById('editProductBrand').value = product.Brand;
+                document.getElementById('editProductDescription').value = product.Description;
+                document.getElementById('editProductImage').value = product.IMG_Reference;
+                editForm.style.display = 'block';
+                editForm.scrollIntoView({ behavior: 'smooth' });
+                // Store productId for saving
+                editForm.dataset.productId = productId;
+            }
+        } else {
+            alert('Failed to load product details: ' + (data.data || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error loading product:', error);
+        alert('An error occurred while loading product details.');
+    });
+}
+
 function saveProduct() {
+    const editForm = document.getElementById('editProductForm');
+    const productId = editForm.dataset.productId;
     const name = document.getElementById('editProductName').value;
     const brand = document.getElementById('editProductBrand').value;
     const description = document.getElementById('editProductDescription').value;
     const image = document.getElementById('editProductImage').value;
+    const apiKey = localStorage.getItem('apiKey');
+    const retailerEmail = localStorage.getItem('email');
+    
+    if (!apiKey || !retailerEmail) {
+        alert('Please log in to save product.');
+        return;
+    }
     
     if (!name || !brand || !description) {
         alert('Please fill in all required fields');
         return;
     }
     
-    alert('Product saved successfully!');
-    cancelEdit();
+    fetch('../api/api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: 'editProduct',
+            apiKey: apiKey,
+            ProductID: productId,
+            ProductName: name,
+            Description: description,
+            Brand: brand,
+            IMG_Reference: image,
+            RetailerEmail: retailerEmail
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Product saved successfully!');
+            loadProducts();
+            cancelEdit();
+        } else {
+            alert('Failed to save product: ' + (data.data || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error saving product:', error);
+        alert('An error occurred while saving the product.');
+    });
 }
 
 function cancelEdit() {
@@ -312,6 +451,7 @@ function cancelEdit() {
     document.getElementById('editProductBrand').value = '';
     document.getElementById('editProductDescription').value = '';
     document.getElementById('editProductImage').value = '';
+    delete editForm.dataset.productId;
 }
 
 function loadUsers() {
@@ -593,15 +733,16 @@ document.addEventListener('click', function(e) {
         toggleAdminStatus(email, 'Standard User');
     } else if (e.target.textContent === 'Remove' && e.target.classList.contains('remove')) {
         if (isProductsTab) {
-            const confirmMessage = 'Are you sure you want to remove this product? This action cannot be undone.';
-            if (confirm(confirmMessage)) {
-                const row = e.target.closest('tr');
-                row.remove();
-                alert('Product removed successfully');
-            }
+            const productId = e.target.closest('tr').querySelector('td:nth-child(1)').textContent;
+            removeProduct(productId);
         } else if (isUsersTab) {
             const email = e.target.closest('tr').querySelector('td:nth-child(2)').textContent;
             removeUser(email);
+        }
+    } else if (e.target.textContent === 'Modify' && e.target.classList.contains('modify')) {
+        if (isProductsTab) {
+            const productId = e.target.closest('tr').querySelector('td:nth-child(1)').textContent;
+            editProduct(productId);
         }
     }
 });
@@ -613,8 +754,6 @@ document.addEventListener('submit', function(e) {
         const name = e.target.querySelector('input[type="text"]').value;
         const email = e.target.querySelector('input[type="email"]').value;
         const emailUpdate = document.getElementById("email-update").value;
-
-
         const password = e.target.querySelector('input[type="password"]').value;
         const confirmPassword = e.target.querySelectorAll('input[type="password"]')[1].value;
         
@@ -630,46 +769,11 @@ document.addEventListener('submit', function(e) {
             return;
         }
 
-        const apiKey = localStorage.getItem('apiKey');
-        if (!apiKey) {
-            alert('Please log in to update profile.');
-            return;
-        }
-
-        fetch('../api/api.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                type: 'editInfo',
-                api_key: apiKey,
-                name: name,
-                email: email,
-                password: password
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                alert('Profile updated successfully!');
-            } else {
-                alert('Failed to update profile: ' + (data.data || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            console.error('Error updating profile:', error);
-            alert('An error occurred while updating profile.');
-        });
-    }
-});
-
-        
         var payload = {
             type: "editInfo",
             email: emailUpdate,
             password: confirmPassword,
-            api_key : localStorage.getItem("apiKey")
+            api_key: localStorage.getItem("apiKey")
         };
 
         var xhr = new XMLHttpRequest();
@@ -677,33 +781,30 @@ document.addEventListener('submit', function(e) {
         xhr.setRequestHeader("Content-Type", "application/json");
 
         xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-            try {
-                var response = JSON.parse(xhr.responseText);
-                if (response.status === "success") {
-                    alert('Profile updated successfully!');
-                    document.getElementById("email-update").value="retailer@example.com"
-                    e.target.querySelector('input[type="password"]').value = "";
-                    e.target.querySelectorAll('input[type="password"]')[1].value = "";
-                    localStorage.setItem("email", response.data.email);
-                    document.querySelector(".user-email").textContent = localStorage.getItem("email");
-                } 
-                else {
-                alert("Login failed: " + JSON.stringify(response));
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.status === "success") {
+                            alert('Profile updated successfully!');
+                            document.getElementById("email-update").value = "retailer@example.com";
+                            e.target.querySelector('input[type="password"]').value = "";
+                            e.target.querySelectorAll('input[type="password"]')[1].value = "";
+                            localStorage.setItem("email", response.data.email);
+                            document.querySelector(".user-email").textContent = localStorage.getItem("email");
+                        } else {
+                            alert("Update failed: " + (response.data || 'Unknown error'));
+                        }
+                    } catch (e) {
+                        alert("Invalid response from server.");
+                    }
+                } else {
+                    alert("Update Failed. Status: " + xhr.status);
                 }
-            } catch (e) {
-                alert("Invalid response from server.");
             }
-            } else {
-            alert("Update Failed. Status: " + xhr.status);
-            }
-        }
         };
 
         xhr.send(JSON.stringify(payload));
-        
-        
     }
 });
 
@@ -887,4 +988,3 @@ function updateProductDisplay(reviewId, newRating) {
         }
     });
 }
-
